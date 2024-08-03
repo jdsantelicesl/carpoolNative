@@ -10,8 +10,8 @@ const TabLayout = () => {
     return (
         <Tabs screenOptions={{ 
             headerShown: false,
-            tabBarActiveTintColor:"#53AF2F",
-            tabBarInactiveTintColor:"black"
+            tabBarActiveTintColor:"#2E74DD",
+            tabBarInactiveTintColor:"#000000"
             }}>
             <Tabs.Screen name='ride'
                 options={{
