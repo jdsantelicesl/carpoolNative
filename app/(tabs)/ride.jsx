@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
+import RNPickerSelect from 'react-native-picker-select';
 // import axios from 'axios'; // Use this when we create a Flask server for data endpoints
 
 const { width, height } = Dimensions.get('window');
@@ -8,23 +9,36 @@ const vh = height * 0.01;
 const vw = width * 0.01;
 
 const DayButton = ({ title, onPress, isSelected }) => (
-    <TouchableOpacity 
-      style={[styles.dayButton, isSelected && styles.selectedDayButton]} 
-      onPress={onPress}
+    <TouchableOpacity
+        style={[styles.dayButton, isSelected && styles.selectedDayButton]}
+        onPress={onPress}
     >
-      <Text style={[styles.dayButtonText, isSelected && styles.selectedDayButtonText]}>{title}</Text>
+        <Text style={[styles.dayButtonText, isSelected && styles.selectedDayButtonText]}>{title}</Text>
     </TouchableOpacity>
 );
 
 const ride = () => {
-	const [destination, onChangeDest] = useState("");
-	const [from, onChangeFrom] = useState("");
+    const [destination, onChangeDest] = useState("");
+    const [from, onChangeFrom] = useState("");
     const [day, onChangeDay] = useState(null); // 1 - 7, Sun - Sat
-    const [time, onChangeTime] = useState("00:00"); // Using Military time 
+    const [hour, setHour] = useState(0);
+    const [minute, setMinute] = useState(0)
     const [amPm, onChangeAmPm] = useState("AM");
     const [haveCar, onChangeHaveCar] = useState(""); // Yes <-> No, I was worried about logic errors with TouchableOpacity
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
-    const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'];
+    const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+
+    // Create array for hours and minutes (to be used for time selector)
+    const hourItems = Array.from({ length: 13 }, (_, i) => ({
+        label: i < 10 ? `0${i}` : String(i),
+        value: i,
+    }));
+
+    // for minutes
+    const minuteItems = Array.from({ length: 61 }, (_, i) => ({
+        label: i < 10 ? `0${i}` : String(i),
+        value: i,
+    }));
 
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
@@ -40,34 +54,34 @@ const ride = () => {
         }
     }
 
-	return (
-		<SafeAreaView style={styles.container}>
+    return (
+        <SafeAreaView style={styles.container}>
 
             {/* Location Selection Component */}
 
-			<Text style={styles.title}>Find a Carpool</Text>
-			<View style={styles.inputContainer}>
-				<View style={styles.inputWrapper}>
-					<FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-					<TextInput
-						style={styles.locInput}
-						placeholder="Where to?"
-						placeholderTextColor="#6E6B6B"
-						value={destination}
-						onChangeText={onChangeDest}
-					/>
-				</View>
-				<View style={styles.inputWrapper}>
-					<FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-					<TextInput
-						style={styles.locInput}
-						placeholder="Where from?"
-						placeholderTextColor="#6E6B6B"
-						value={from}
-						onChangeText={onChangeFrom}
-					/>
-				</View>
-			</View>
+            <Text style={styles.title}>Find a Carpool</Text>
+            <View style={styles.inputContainer}>
+                <View style={styles.inputWrapper}>
+                    <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
+                    <TextInput
+                        style={styles.locInput}
+                        placeholder="Where to?"
+                        placeholderTextColor="#6E6B6B"
+                        value={destination}
+                        onChangeText={onChangeDest}
+                    />
+                </View>
+                <View style={styles.inputWrapper}>
+                    <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
+                    <TextInput
+                        style={styles.locInput}
+                        placeholder="Where from?"
+                        placeholderTextColor="#6E6B6B"
+                        value={from}
+                        onChangeText={onChangeFrom}
+                    />
+                </View>
+            </View>
 
             {/* Weekday Component */}
 
@@ -91,9 +105,23 @@ const ride = () => {
                     {/* onChangeTime, create function for modal or inline time selection.
                       * This current time button is interim placeholder
                       */}
-                    <TouchableOpacity onPress={() => onChangeTime(time)} style={styles.timePickerButton}>
-                        <Text style={styles.timePicker}>{time}</Text>
-                    </TouchableOpacity>
+
+                    <View style={styles.timePickerButton}>
+                        <RNPickerSelect
+                            onValueChange={(value) => setHour(value)}
+                            items={hourItems}
+                            style={pickerStyles}
+                            value={hour}
+                        />
+                        {/* RNPickerSelect can only take in a special format of style */}
+                        <Text style={{ fontSize: 2.5 * vh, color: "#6E6B6B", fontWeight: "bold"}}>:</Text>
+                        <RNPickerSelect
+                            onValueChange={(value) => setMinute(value)}
+                            items={minuteItems}
+                            style={pickerStyles}
+                            value={minute}
+                        />
+                    </View>
 
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
@@ -145,64 +173,64 @@ const ride = () => {
 
             {/* List of users (Make scrollable)*/}
 
-		</SafeAreaView>
-	);
+        </SafeAreaView>
+    );
 };
 
 export default ride;
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#F5F5F5',
-	},
-	title: {
-		marginTop: 7 * vh,
-		marginLeft: 6 * vw,
-		color: "#5A5A5A",
-		textAlign: "left",
-		fontWeight: "bold",
-		fontSize: 4 * vh,
-		marginBottom: 3 * vh,
-	},
+    container: {
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+    },
+    title: {
+        marginTop: 7 * vh,
+        marginLeft: 6 * vw,
+        color: "#5A5A5A",
+        textAlign: "left",
+        fontWeight: "bold",
+        fontSize: 4 * vh,
+        marginBottom: 3 * vh,
+    },
     subTitle: {
-		marginLeft: 5 * vw,
-		color: "#5A5A5A",
-		textAlign: "left",
-		fontWeight: "bold",
-		fontSize: 2.8 * vh,
-		marginBottom: 1 * vh,
-	},
-	inputContainer: {
-		alignItems: 'center',
+        marginLeft: 5 * vw,
+        color: "#5A5A5A",
+        textAlign: "left",
+        fontWeight: "bold",
+        fontSize: 2.8 * vh,
+        marginBottom: 1 * vh,
+    },
+    inputContainer: {
+        alignItems: 'center',
         marginTop: -2 * vh,
-	},
-	inputWrapper: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		backgroundColor: "#D9D9D9",
-		borderRadius: 3 * vh,
-		marginBottom: 2 * vh,
-		width: 90 * vw,
-	},
-	icon: {
-		marginLeft: 4 * vw,
-	},
-	locInput: {
-		flex: 1,
-		height: 6.5 * vh,
-		fontSize: 2.5 * vh,
-		fontWeight: "bold",
-		color: "#6E6B6B",
-		paddingLeft: 2 * vw,
-	},
+    },
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: "#D9D9D9",
+        borderRadius: 3 * vh,
+        marginBottom: 2 * vh,
+        width: 90 * vw,
+    },
+    icon: {
+        marginLeft: 4 * vw,
+    },
+    locInput: {
+        flex: 1,
+        height: 6.5 * vh,
+        fontSize: 2.5 * vh,
+        fontWeight: "bold",
+        color: "#6E6B6B",
+        paddingLeft: 2 * vw,
+    },
     weekdayContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 5 * vw,
         marginBottom: 2 * vh,
         marginTop: 0.5 * vh,
-      },
+    },
     dayButton: {
         width: 10 * vw,
         height: 10 * vw,
@@ -239,13 +267,17 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     timePickerButton: {
-        height: 6 * vh,
+        paddingBottom: 1.6*vh,
+        paddingTop: 1.1*vh,
+        paddingHorizontal: 5 * vw,
+
+        width: 30*vw,
         backgroundColor: '#D9D9D9',
         borderRadius: 3 * vh,
+        flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: "center",
         marginRight: 2 * vw,
-        paddingHorizontal: 5 * vw,
     },
     timePicker: {
         fontSize: 2.5 * vh,
@@ -275,5 +307,19 @@ const styles = StyleSheet.create({
     activeButtonsText: {
         color: 'white',
     },
-    
+
+});
+
+const pickerStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 2.5 * vh,
+        color: "#6E6B6B",
+        fontWeight: "bold",
+
+        paddingTop: .2*vh,
+    },
+    inputAndroid: {
+        fontSize: 2.5 * vh,
+        color: "#6E6B6B",
+    },
 });
