@@ -1,18 +1,24 @@
-import React from 'react'
-import { Text, View, StyleSheet, Dimensions } from 'react-native'
+import { React, useState } from 'react'
+import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput } from 'react-native'
 
 const { width, height } = Dimensions.get('window');
-const vh = height*0.01;
-const vw = width*0.01;
+const vh = height * 0.01;
+const vw = width * 0.01;
 
 const ride = () => {
+    const [destination, onChangeDest] = useState("");
     return (
-        <>
-            <Text style={styles.title}> Find a Ride </Text>
-            <View style={styles.container}>
+        <SafeAreaView>
+            <Text style={styles.title}> Find a Carpool </Text>
+            <TextInput
+                style={styles.locInput}
+                placeholder="Where to?"
+                placeholderTextColor="#6E6B6B"
+                value={destination}
+                onChangeText={onChangeDest}
+            />
 
-            </View>
-        </>
+        </SafeAreaView>
     )
 }
 
@@ -20,18 +26,23 @@ export default ride;
 
 const styles = StyleSheet.create({
     title: {
-        marginTop: 8*vh,
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: 4*vh,
-    },
-    container: {
-        marginLeft: 20*vw,
-        marginRight: 20*vw,
-        marginTop: 10*vh,
+        marginTop: 7 * vh,
+        marginLeft: 6 * vw,
 
-        height: 20*vh,
-        width: 60*vw,
-        backgroundColor: 'red'
+        color: "#5A5A5A",
+        textAlign: "left",
+        fontWeight: "bold",
+        fontSize: 4 * vh,
+    },
+    locInput: {
+        margin: 2 * vh,
+        padding: 2*vw,
+        height: 4 * vh,
+        width: 90 * vw,
+        borderRadius: 3*vh,
+
+
+        backgroundColor: "#D9D9D9",
+        color: "#6E6B6B",
     }
 });
