@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F5F5',
     },
     title: {
-        marginTop: 7 * vh,
+        marginTop: 1 * vh,
         marginLeft: 6 * vw,
         color: "#5A5A5A",
         textAlign: "left",
