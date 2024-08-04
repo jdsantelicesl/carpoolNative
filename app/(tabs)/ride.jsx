@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
+import Hr from '../../components/myComponents/hr';
 // import axios from 'axios'; // Use this when we create a Flask server for data endpoints
 
 const { width, height } = Dimensions.get('window');
@@ -17,16 +18,23 @@ const DayButton = ({ title, onPress, isSelected }) => (
     </TouchableOpacity>
 );
 
+const CustomButton = ({ onPress, title }) => (
+    <TouchableOpacity style={styles.submitButton} onPress={onPress}>
+      <Text style={styles.submitText}>{title}</Text>
+    </TouchableOpacity>
+);
+
 const ride = () => {
-    const [destination, onChangeDest] = useState("");
-    const [from, onChangeFrom] = useState("");
-    const [day, onChangeDay] = useState(null); // 1 - 7, Sun - Sat
+    const [destination, setDest] = useState("");
+    const [from, setFrom] = useState("");
+    const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0)
-    const [amPm, onChangeAmPm] = useState("AM");
-    const [haveCar, onChangeHaveCar] = useState(""); // Yes <-> No, I was worried about logic errors with TouchableOpacity
+    const [amPm, setAmPm] = useState("AM");
+    const [haveCar, setHaveCar] = useState(""); // Store Values: "Yes","No"
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+    const url = "https://localhost:8000/data"; // Subject to change
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
@@ -40,6 +48,15 @@ const ride = () => {
         value: i,
     }));
 
+    const Submit = () => (
+        <View style={styles.submitContainer}>
+          <CustomButton
+            title="Submit"
+            onPress={() => handleSubmit()}
+          />
+        </View>
+    );
+
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,11 +65,21 @@ const ride = () => {
             destination: destination,
             from: from,
             day: day,
-            time: time,
+            hour: hour,
+            minute: minute,
             amPm: amPm,
             haveCar: haveCar,
+        };
+        try {
+            await axios.post(url ,data);
+            console.log(data);
+            alert('Data sent to /data');
+        } catch (error) {
+            console.error('Error saving data', error);
+            alert('Failed to send data');
         }
-    }
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -68,7 +95,7 @@ const ride = () => {
                         placeholder="Where to?"
                         placeholderTextColor="#6E6B6B"
                         value={destination}
-                        onChangeText={onChangeDest}
+                        onChangeText={setDest}
                     />
                 </View>
                 <View style={styles.inputWrapper}>
@@ -78,7 +105,7 @@ const ride = () => {
                         placeholder="Where from?"
                         placeholderTextColor="#6E6B6B"
                         value={from}
-                        onChangeText={onChangeFrom}
+                        onChangeText={setFrom}
                     />
                 </View>
             </View>
@@ -91,7 +118,7 @@ const ride = () => {
                     <DayButton
                         key={index}
                         title={d}
-                        onPress={() => onChangeDay(index + 1)}
+                        onPress={() => setDay(index + 1)}
                         isSelected={day === index + 1}
                     />
                 ))}
@@ -126,13 +153,13 @@ const ride = () => {
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
                             style={[styles.buttons, amPm === 'AM' && styles.activeButtons]}
-                            onPress={() => onChangeAmPm('AM')}
+                            onPress={() => setAmPm('AM')}
                         >
                             <Text style={[styles.buttonsText, amPm === 'AM' && styles.activeButtonsText]}>AM</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.buttons, amPm === 'PM' && styles.activeButtons]}
-                            onPress={() => onChangeAmPm('PM')}
+                            onPress={() => setAmPm('PM')}
                         >
                             <Text style={[styles.buttonsText, amPm === 'PM' && styles.activeButtonsText]}>PM</Text>
                         </TouchableOpacity>
@@ -141,7 +168,7 @@ const ride = () => {
             </View>
 
             {/* Do You Have Car Component */}
-            {/* Yes, I resued the stylesheet from time selection's components */}
+            {/* I resued the timePickerContainer stylesheet from time selection's components */}
 
             <View style={styles.timeContainer}>
                 <Text style={styles.subTitle}>Do you have a car?:</Text>
@@ -153,13 +180,13 @@ const ride = () => {
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
                             style={[styles.buttons, haveCar === "Yes" && styles.activeButtons]}
-                            onPress={() => onChangeHaveCar('Yes')}
+                            onPress={() => setHaveCar('Yes')}
                         >
                             <Text style={[styles.buttonsText, haveCar === "Yes" && styles.activeButtonsText]}>Yes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.buttons, haveCar === "No" && styles.activeButtons]}
-                            onPress={() => onChangeHaveCar('No')}
+                            onPress={() => setHaveCar('No')}
                         >
                             <Text style={[styles.buttonsText, haveCar === "No" && styles.activeButtonsText]}>No</Text>
                         </TouchableOpacity>
@@ -167,7 +194,10 @@ const ride = () => {
                 </View>
             </View>
 
-            {/* Handle Submit */}
+            {/* Handle Submit Component */}
+            <Submit />
+            
+            <Hr style= {styles.hr}/>
 
             {/* Separating Line */}
 
@@ -181,6 +211,7 @@ export default ride;
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: 4 *vh,
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
@@ -268,7 +299,7 @@ const styles = StyleSheet.create({
     },
     timePickerButton: {
         paddingBottom: 1.6*vh,
-        paddingTop: 1.1*vh,
+        paddingTop: 1.1 *vh,
         paddingHorizontal: 5 * vw,
 
         width: 30*vw,
@@ -307,7 +338,28 @@ const styles = StyleSheet.create({
     activeButtonsText: {
         color: 'white',
     },
-
+    submitContainer: {
+        backgroundColor: '#F5F5F5',
+    },
+    submitButton: {
+        backgroundColor: '#D9D9D9',
+        padding: 1 * vh,
+        borderRadius: 5 * vw,
+        marginHorizontal: 20 * vw,
+    },
+    submitText: {
+        color: '#6E6B6B',
+        textAlign: 'center',
+        fontSize: 2.5 * vh,
+        fontWeight: 'bold',
+    },
+    hr: {
+        marginHorizontal: 2*vw,
+        marginTop: 1 * vh,
+        height: 0.2*vh,
+        width: 96*vw,
+        backgroundColor: "black",
+    },
 });
 
 const pickerStyles = StyleSheet.create({
@@ -322,4 +374,5 @@ const pickerStyles = StyleSheet.create({
         fontSize: 2.5 * vh,
         color: "#6E6B6B",
     },
+    
 });
