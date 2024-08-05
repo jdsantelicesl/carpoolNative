@@ -211,7 +211,7 @@ export default ride;
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 4 *vh,
+        paddingTop: 4 *vh,
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
