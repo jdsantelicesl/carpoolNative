@@ -34,7 +34,28 @@ const ride = () => {
     const [haveCar, setHaveCar] = useState(""); // Store Values: "Yes","No"
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = "https://localhost:8000/data"; // Subject to change
+    // Needs to be implemented, could be JSON object
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const data = {
+            destination: destination,
+            origin: from,
+            day: day,
+            hour: hour,
+            minute: minute,
+            amPm: amPm,
+            haveCar: haveCar,
+        };
+        try {
+            await axios.post("https://localhost:5000/ride/post" ,data);
+            console.log(data);
+            alert('Data sent to /data');
+        } catch (error) {
+            console.error('Error saving data', error);
+            alert('Failed to send data');
+        }
+    };
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
@@ -57,33 +78,9 @@ const ride = () => {
         </View>
     );
 
-    // Needs to be implemented, could be JSON object
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const data = {
-            destination: destination,
-            from: from,
-            day: day,
-            hour: hour,
-            minute: minute,
-            amPm: amPm,
-            haveCar: haveCar,
-        };
-        try {
-            await axios.post(url ,data);
-            console.log(data);
-            alert('Data sent to /data');
-        } catch (error) {
-            console.error('Error saving data', error);
-            alert('Failed to send data');
-        }
-    };
-
 
     return (
         <SafeAreaView style={styles.container}>
-
             {/* Location Selection Component */}
 
             <Text style={styles.title}>Find a Carpool</Text>
