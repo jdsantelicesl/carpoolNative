@@ -9,7 +9,7 @@ const vw = width * 0.01;
 
 const messages = () => {
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <Text style={styles.title}> Messages </Text>
             <Hr style={styles.hr}/>
 
@@ -26,6 +26,11 @@ const messages = () => {
 export default messages;
 
 const styles = StyleSheet.create({
+    container: {
+        paddingTop: 4 * vh,
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+    },
     title: {
         marginTop: 1 * vh,
         marginLeft: 6 * vw,
