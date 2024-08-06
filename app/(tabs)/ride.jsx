@@ -82,30 +82,6 @@ const ride = () => {
         </View>
     );
 
-    // Needs to be implemented, could be JSON object
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const arrival = `${hour}:${minute}${amPm}`
-
-        const data = {
-            destination: destination,
-            origin: from,
-            day: day,
-            arrival: arrival,
-            car: haveCar,
-            member: user_id
-        };
-        try {
-            await axios.post(url, data);
-            console.log(data);
-            alert('Data sent to /data');
-        } catch (error) {
-            console.error('Error saving data', error);
-            alert('Failed to send data');
-        }
-    };
-
 
     return (
         <SafeAreaView style={styles.container}>
