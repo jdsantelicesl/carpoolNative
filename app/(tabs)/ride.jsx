@@ -4,6 +4,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
+import SlideUpComponent from '../../components/myComponents/SlideUpComponent';
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = "66b05d4898e072e89f63483d";
@@ -37,7 +38,7 @@ const ride = () => {
     const [haveCar, setHaveCar] = useState(true); // true or false
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = "http://192.168.1.23:5000/ride/post"; // placeholder
+    const url = "http://192.168.0.15:5000/ride/post"; // placeholder
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
@@ -101,6 +102,7 @@ const ride = () => {
                         value={destination}
                         onChangeText={setDest}
                     />
+                    <SlideUpComponent />
                 </View>
                 <View style={styles.inputWrapper}>
                     <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
