@@ -177,10 +177,6 @@ const ride = () => {
             <View style={styles.timeContainer}>
                 <Text style={styles.subTitle}>Do you have a car?:</Text>
                 <View style={styles.timePickerContainer}>
-                    {/* onChangeTime, create function for modal or inline time selection.
-                      * This current time button is interim placeholder
-                      */}
-
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
                             style={[styles.buttons, haveCar == true && styles.activeButtons]}
@@ -303,7 +299,7 @@ const styles = StyleSheet.create({
     },
     timePickerButton: {
         paddingBottom: 1.6*vh,
-        paddingTop: 1.1 *vh,
+        paddingTop: 1.1*vh,
         paddingHorizontal: 5 * vw,
 
         width: 30*vw,
@@ -316,8 +312,6 @@ const styles = StyleSheet.create({
     },
     timePicker: {
         fontSize: 2.5 * vh,
-        fontWeight: "bold",
-        color: "#6E6B6B",
     },
     buttonsContainer: {
         flexDirection: 'row',
