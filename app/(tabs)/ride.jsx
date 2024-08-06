@@ -3,7 +3,10 @@ import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Al
 import { FontAwesome6 } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
 import Hr from '../../components/myComponents/hr';
-// import axios from 'axios'; // Use this when we create a Flask server for data endpoints
+import axios from 'axios'; // Use this when we create a Flask server for data endpoints
+
+// User id placeHolder. Replace after auth. The id is for test user
+const user_id = "66b05d4898e072e89f63483d";
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -31,10 +34,10 @@ const ride = () => {
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0)
     const [amPm, setAmPm] = useState("AM");
-    const [haveCar, setHaveCar] = useState(""); // Store Values: "Yes","No"
+    const [haveCar, setHaveCar] = useState(true); // true or false
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = "https://localhost:8000/data"; // Subject to change
+    const url = "http://192.168.1.23:5000/ride/post"; // placeholder
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
@@ -52,7 +55,7 @@ const ride = () => {
         <View style={styles.submitContainer}>
           <CustomButton
             title="Submit"
-            onPress={() => handleSubmit()}
+            onPress={(e) => handleSubmit(e)}
           />
         </View>
     );
@@ -61,17 +64,18 @@ const ride = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const arrival = `${hour}:${minute}${amPm}`
+
         const data = {
             destination: destination,
-            from: from,
+            origin: from,
             day: day,
-            hour: hour,
-            minute: minute,
-            amPm: amPm,
-            haveCar: haveCar,
+            arrival: arrival,
+            car: haveCar,
+            member: user_id
         };
         try {
-            await axios.post(url ,data);
+            await axios.post(url, data);
             console.log(data);
             alert('Data sent to /data');
         } catch (error) {
@@ -179,16 +183,16 @@ const ride = () => {
 
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
-                            style={[styles.buttons, haveCar === "Yes" && styles.activeButtons]}
-                            onPress={() => setHaveCar('Yes')}
+                            style={[styles.buttons, haveCar == true && styles.activeButtons]}
+                            onPress={() => setHaveCar(true)}
                         >
-                            <Text style={[styles.buttonsText, haveCar === "Yes" && styles.activeButtonsText]}>Yes</Text>
+                            <Text style={[styles.buttonsText, haveCar == true && styles.activeButtonsText]}>Yes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.buttons, haveCar === "No" && styles.activeButtons]}
-                            onPress={() => setHaveCar('No')}
+                            style={[styles.buttons, haveCar == false && styles.activeButtons]}
+                            onPress={() => setHaveCar(false)}
                         >
-                            <Text style={[styles.buttonsText, haveCar === "No" && styles.activeButtonsText]}>No</Text>
+                            <Text style={[styles.buttonsText, haveCar == false && styles.activeButtonsText]}>No</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
