@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated } from 'react-native';
 import Modal from 'react-native-modal';
+import MapScreen from './MapScreen';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height } = Dimensions.get('window');
@@ -24,7 +25,7 @@ const SlideUpComponent = () => {
 			isVisible={isModalVisible}
 			onBackdropPress={toggleModal}
 			onBackButtonPress={toggleModal}
-			swipeDirection="down"
+			//swipeDirection="down"
 			onSwipeComplete={toggleModal}
 			animationIn="slideInUp"
 			animationOut="slideOutDown"
@@ -51,11 +52,15 @@ const SlideUpComponent = () => {
 			}}
 			style={styles.modal}
 		>
+			<View style={styles.mapContainer}>
+				<MapScreen />
+			</View>
 			<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
-			<TouchableOpacity onPress={toggleModal}>
-				<Text style={styles.closeText}>Close</Text>
-			</TouchableOpacity>
-			<Text>Your Slide-Up Content Goes Here</Text>
+				<TouchableOpacity onPress={toggleModal}>
+					<Text style={styles.closeText}>Close</Text>
+				</TouchableOpacity>
+				<Text>Your Slide-Up Content Goes Here</Text>
+				<Text>Disabled Slide Down to Close for now, configuring Map to stay still, and including what renders depending on screen Height</Text>
 			</Animated.View>
 		</Modal>
 		</View>
@@ -75,12 +80,19 @@ const styles = StyleSheet.create({
 		width: '80%',
 		paddingHorizontal: 10,
 	},
+	mapContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
 	modal: {
 		justifyContent: 'flex-end',
 		margin: 0,
 	},
 	modalContent: {
-		height: height * 0.9,
+		height: height * 0.3,
 		backgroundColor: 'white',
 		padding: 20,
 		borderTopLeftRadius: 20,
