@@ -5,6 +5,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
 import SlideUpComponent from '../../components/myComponents/SlideUpComponent';
+import LocFind from '../../components/map/locFind';
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = "66b05d4898e072e89f63483d";
@@ -202,6 +203,8 @@ const ride = () => {
             <Hr style= {styles.hr}/>
 
             {/* Separating Line */}
+
+            <LocFind query={"SCC"} />
 
             {/* List of users (Make scrollable)*/}
 
