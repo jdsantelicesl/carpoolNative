@@ -39,7 +39,7 @@ const ride = () => {
     const [haveCar, setHaveCar] = useState(true); // true or false
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = "http://192.168.0.15:5000/ride/post"; // placeholder
+    const url = "http://192.168.1.23:5000/ride/post"; // placeholder
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
@@ -65,8 +65,33 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
+        let hours = "";
 
-        const arrival = `${hour}:${minute}${amPm}`
+        // map to 24 hour clock
+        if (amPm === "PM") {
+            if (hour == 12) {
+                hours = hour
+            }
+            else {
+                const hours = hour + 12;
+            }
+        }
+        else {
+            if (hour == 12) {
+                hours = "00";
+            }
+            else if (hour < 10) {
+                hours = `0${hour}`
+            }
+            else {
+                hour = hours;
+            }
+        }
+
+        // 00 formatting
+        const minutes = minute < 10 ? `0${minute}` : minute;
+
+        const arrival = `${hours}:${minutes}`
 
         const data = {
             destination: destination,
