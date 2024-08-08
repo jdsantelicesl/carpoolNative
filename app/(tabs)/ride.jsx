@@ -30,7 +30,7 @@ const CustomButton = ({ onPress, title }) => (
 
 const ride = () => {
     const [destination, setDest] = useState("");
-    const [from, setFrom] = useState("");
+    const [from, setFrom] = useState("placeholder");
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0)
@@ -64,33 +64,19 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let hours = "";
+        
+        let arrival = hour + minute/60;
 
-        // map to 24 hour clock
-        if (amPm === "PM") {
-            if (hour == 12) {
-                hours = hour
-            }
-            else {
-                hours = hour + 12;
+        if(amPm === "PM") {
+            if(hour != 12) {
+                arrival += 12;
             }
         }
         else {
-            if (hour == 12) {
-                hours = "00";
-            }
-            else if (hour < 10) {
-                hours = `0${hour}`
-            }
-            else {
-                hours = hour;
+            if(hour == 12) {
+                arrival -= 12;
             }
         }
-
-        // 00 formatting
-        const minutes = minute < 10 ? `0${minute}` : minute;
-
-        const arrival = `${hours}:${minutes}`
 
         const data = {
             destination: destination,
