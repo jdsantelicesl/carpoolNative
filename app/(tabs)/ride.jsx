@@ -4,7 +4,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
-import SlideUpComponent from '../../components/myComponents/SlideUpComponent';
+import SlideUpComponent from '../../components/map/SlideUpComponent';
 import LocFind from '../../components/map/locFind';
 
 // User id placeHolder. Replace after auth. The id is for test user

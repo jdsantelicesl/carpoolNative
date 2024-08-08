@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated } from 'react-native';
 import Modal from 'react-native-modal';
-import MapScreen from './MapScreen';
+import MapScreen from '../map/MapScreen';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height } = Dimensions.get('window');
