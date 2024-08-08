@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
 import Hr from '../../components/myComponents/hr';
@@ -25,7 +25,7 @@ const DayButton = ({ title, onPress, isSelected }) => (
 
 const CustomButton = ({ onPress, title }) => (
     <TouchableOpacity style={styles.submitButton} onPress={onPress}>
-      <Text style={styles.submitText}>{title}</Text>
+        <Text style={styles.submitText}>{title}</Text>
     </TouchableOpacity>
 );
 
@@ -55,10 +55,10 @@ const ride = () => {
 
     const Submit = () => (
         <View style={styles.submitContainer}>
-          <CustomButton
-            title="Submit"
-            onPress={(e) => handleSubmit(e)}
-          />
+            <CustomButton
+                title="Submit"
+                onPress={(e) => handleSubmit(e)}
+            />
         </View>
     );
 
@@ -89,125 +89,126 @@ const ride = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <ScrollView>
 
-            {/* Location Selection Component */}
+                {/* Location Selection Component */}
 
-            <Text style={styles.title}>Find a Carpool</Text>
-            <View style={styles.inputContainer}>
-                <View style={styles.inputWrapper}>
-                    <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-                    <TextInput
-                        style={styles.locInput}
-                        placeholder="Where to?"
-                        placeholderTextColor="#6E6B6B"
-                        value={destination}
-                        onChangeText={setDest}
-                    />
-                    <SlideUpComponent />
+                <Text style={styles.title}>Find a Carpool</Text>
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
+                        <TextInput
+                            style={styles.locInput}
+                            placeholder="Where to?"
+                            placeholderTextColor="#6E6B6B"
+                            value={destination}
+                            onChangeText={setDest}
+                        />
+                        <SlideUpComponent />
+                    </View>
+                    <View style={styles.inputWrapper}>
+                        <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
+                        <TextInput
+                            style={styles.locInput}
+                            placeholder="Where from?"
+                            placeholderTextColor="#6E6B6B"
+                            value={from}
+                            onChangeText={setFrom}
+                        />
+                    </View>
                 </View>
-                <View style={styles.inputWrapper}>
-                    <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-                    <TextInput
-                        style={styles.locInput}
-                        placeholder="Where from?"
-                        placeholderTextColor="#6E6B6B"
-                        value={from}
-                        onChangeText={setFrom}
-                    />
+
+                {/* Weekday Component */}
+
+                <Text style={styles.subTitle}>When do you need to be there?</Text>
+                <View style={styles.weekdayContainer}>
+                    {days.map((d, index) => (
+                        <DayButton
+                            key={index}
+                            title={d}
+                            onPress={() => setDay(index + 1)}
+                            isSelected={day === index + 1}
+                        />
+                    ))}
                 </View>
-            </View>
 
-            {/* Weekday Component */}
+                {/* Time Selection Component */}
 
-            <Text style={styles.subTitle}>When do you need to be there?</Text>
-            <View style={styles.weekdayContainer}>
-                {days.map((d, index) => (
-                    <DayButton
-                        key={index}
-                        title={d}
-                        onPress={() => setDay(index + 1)}
-                        isSelected={day === index + 1}
-                    />
-                ))}
-            </View>
-
-            {/* Time Selection Component */}
-
-            <View style={styles.timeContainer}>
-                <Text style={styles.subTitle}>Time:</Text>
-                <View style={styles.timePickerContainer}>
-                    {/* onChangeTime, create function for modal or inline time selection.
+                <View style={styles.timeContainer}>
+                    <Text style={styles.subTitle}>Time:</Text>
+                    <View style={styles.timePickerContainer}>
+                        {/* onChangeTime, create function for modal or inline time selection.
                       * This current time button is interim placeholder
                       */}
 
-                    <View style={styles.timePickerButton}>
-                        <RNPickerSelect
-                            onValueChange={(value) => setHour(value)}
-                            items={hourItems}
-                            style={pickerStyles}
-                            value={hour}
-                        />
-                        {/* RNPickerSelect can only take in a special format of style */}
-                        <Text style={{ fontSize: 2.5 * vh, color: "#6E6B6B", fontWeight: "bold"}}>:</Text>
-                        <RNPickerSelect
-                            onValueChange={(value) => setMinute(value)}
-                            items={minuteItems}
-                            style={pickerStyles}
-                            value={minute}
-                        />
-                    </View>
+                        <View style={styles.timePickerButton}>
+                            <RNPickerSelect
+                                onValueChange={(value) => setHour(value)}
+                                items={hourItems}
+                                style={pickerStyles}
+                                value={hour}
+                            />
+                            {/* RNPickerSelect can only take in a special format of style */}
+                            <Text style={{ fontSize: 2.5 * vh, color: "#6E6B6B", fontWeight: "bold" }}>:</Text>
+                            <RNPickerSelect
+                                onValueChange={(value) => setMinute(value)}
+                                items={minuteItems}
+                                style={pickerStyles}
+                                value={minute}
+                            />
+                        </View>
 
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity
-                            style={[styles.buttons, amPm === 'AM' && styles.activeButtons]}
-                            onPress={() => setAmPm('AM')}
-                        >
-                            <Text style={[styles.buttonsText, amPm === 'AM' && styles.activeButtonsText]}>AM</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.buttons, amPm === 'PM' && styles.activeButtons]}
-                            onPress={() => setAmPm('PM')}
-                        >
-                            <Text style={[styles.buttonsText, amPm === 'PM' && styles.activeButtonsText]}>PM</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-
-            {/* Do You Have Car Component */}
-            {/* I resued the timePickerContainer stylesheet from time selection's components */}
-
-            <View style={styles.timeContainer}>
-                <Text style={styles.subTitle}>Do you have a car?:</Text>
-                <View style={styles.timePickerContainer}>
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity
-                            style={[styles.buttons, haveCar == true && styles.activeButtons]}
-                            onPress={() => setHaveCar(true)}
-                        >
-                            <Text style={[styles.buttonsText, haveCar == true && styles.activeButtonsText]}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.buttons, haveCar == false && styles.activeButtons]}
-                            onPress={() => setHaveCar(false)}
-                        >
-                            <Text style={[styles.buttonsText, haveCar == false && styles.activeButtonsText]}>No</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonsContainer}>
+                            <TouchableOpacity
+                                style={[styles.buttons, amPm === 'AM' && styles.activeButtons]}
+                                onPress={() => setAmPm('AM')}
+                            >
+                                <Text style={[styles.buttonsText, amPm === 'AM' && styles.activeButtonsText]}>AM</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.buttons, amPm === 'PM' && styles.activeButtons]}
+                                onPress={() => setAmPm('PM')}
+                            >
+                                <Text style={[styles.buttonsText, amPm === 'PM' && styles.activeButtonsText]}>PM</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
 
-            {/* Handle Submit Component */}
-            <Submit />
-            
-            <Hr style= {styles.hr}/>
+                {/* Do You Have Car Component */}
+                {/* I resued the timePickerContainer stylesheet from time selection's components */}
 
-            {/* Separating Line */}
+                <View style={styles.timeContainer}>
+                    <Text style={styles.subTitle}>Do you have a car?:</Text>
+                    <View style={styles.timePickerContainer}>
+                        <View style={styles.buttonsContainer}>
+                            <TouchableOpacity
+                                style={[styles.buttons, haveCar == true && styles.activeButtons]}
+                                onPress={() => setHaveCar(true)}
+                            >
+                                <Text style={[styles.buttonsText, haveCar == true && styles.activeButtonsText]}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.buttons, haveCar == false && styles.activeButtons]}
+                                onPress={() => setHaveCar(false)}
+                            >
+                                <Text style={[styles.buttonsText, haveCar == false && styles.activeButtonsText]}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
 
-            <LocFind query={"SCC"} />
+                {/* Handle Submit Component */}
+                <Submit />
 
-            {/* List of users (Make scrollable)*/}
+                <Hr style={styles.hr} />
 
+                {/* Separating Line */}
+
+                <LocFind query={"SCC"} />
+
+                {/* List of users (Make scrollable)*/}
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -216,7 +217,7 @@ export default ride;
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 4 *vh,
+        paddingTop: 4 * vh,
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
@@ -303,11 +304,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     timePickerButton: {
-        paddingBottom: 1.6*vh,
-        paddingTop: 1.1*vh,
+        paddingBottom: 1.6 * vh,
+        paddingTop: 1.1 * vh,
         paddingHorizontal: 5 * vw,
 
-        width: 30*vw,
+        width: 30 * vw,
         backgroundColor: '#D9D9D9',
         borderRadius: 3 * vh,
         flexDirection: 'row',
@@ -357,10 +358,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     hr: {
-        marginHorizontal: 2*vw,
+        marginHorizontal: 2 * vw,
         marginTop: 1 * vh,
-        height: 0.2*vh,
-        width: 96*vw,
+        height: 0.2 * vh,
+        width: 96 * vw,
         backgroundColor: "black",
     },
 });
@@ -371,11 +372,11 @@ const pickerStyles = StyleSheet.create({
         color: "#6E6B6B",
         fontWeight: "bold",
 
-        paddingTop: .2*vh,
+        paddingTop: .2 * vh,
     },
     inputAndroid: {
         fontSize: 2.5 * vh,
         color: "#6E6B6B",
     },
-    
+
 });
