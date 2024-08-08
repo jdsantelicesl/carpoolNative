@@ -73,7 +73,7 @@ const ride = () => {
                 hours = hour
             }
             else {
-                const hours = hour + 12;
+                hours = hour + 12;
             }
         }
         else {
@@ -84,7 +84,7 @@ const ride = () => {
                 hours = `0${hour}`
             }
             else {
-                hour = hours;
+                hours = hour;
             }
         }
 
