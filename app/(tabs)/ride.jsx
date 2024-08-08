@@ -8,7 +8,7 @@ import SlideUpComponent from '../../components/map/SlideUpComponent';
 import LocFind from '../../components/map/locFind';
 
 // User id placeHolder. Replace after auth. The id is for test user
-const user_id = "66b05d4898e072e89f63483d";
+const user_id = "66b43302b73820e5f0b813a6";
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
