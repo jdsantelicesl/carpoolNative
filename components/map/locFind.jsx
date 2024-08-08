@@ -16,7 +16,6 @@ const LocFind = ({ style, query }) => {
 
         axios.get(reqUrl)
             .then(response => {
-                console.log(response.data);
                 setLocations(response.data.places)
             })
             .catch(error => {
