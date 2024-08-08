@@ -24,11 +24,9 @@ const SlideUpComponent = () => {
 
 	return (
 		<View style={styles.container}>
-		<Button
-			style={styles.textInput}
-			title="Open Map"
-			onPress={toggleModal}
-		/>
+			<TouchableOpacity onPress={() => toggleModal()}>
+				<FontAwesome6 name="map-pin" size={24} color="#6E6B6B" style={styles.mapPin} />
+			</TouchableOpacity>
 		<Modal
 			isVisible={isModalVisible}
 			onBackdropPress={toggleModal}
@@ -51,7 +49,8 @@ const SlideUpComponent = () => {
 			
 			<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
 				<TouchableOpacity onPress={toggleModal}>
-					<Text style={styles.closeText}>Close</Text>
+					{/* <Text style={styles.closeText}>Close</Text> */}
+					<FontAwesome6 name="circle-arrow-left" size={24} color="#000000" style={styles.xIcon} />
 				</TouchableOpacity>
 				<Text style={styles.subTitle}>Set your origin</Text>
 				<Text style={styles.subSubTitle}>Drag map to move pin</Text>
@@ -82,6 +81,9 @@ const SlideUpComponent = () => {
 };
 
 const styles = StyleSheet.create({
+	mapPin: {
+		marginLeft: 10 * vw,
+	},
 	container: {
 		flex: 1,
 		justifyContent: 'center',
