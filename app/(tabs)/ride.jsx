@@ -39,6 +39,7 @@ const ride = () => {
     const [haveCar, setHaveCar] = useState(true); // true or false
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = IP_ADDRESS + "/ride/post"; // placeholder
+    console.log(url)
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
