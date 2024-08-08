@@ -36,7 +36,6 @@ const ride = () => {
     const [minute, setMinute] = useState(0)
     const [amPm, setAmPm] = useState("AM");
     const [haveCar, setHaveCar] = useState(true); // true or false
-    const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
     console.log(url)
@@ -126,12 +125,12 @@ const ride = () => {
                             style={styles.locInput}
                             placeholder="Where to?"
                             placeholderTextColor="#6E6B6B"
-                            value={destination}
+                            value={destination} 
                             onChangeText={setDest}
                         />
                         <SlideUpComponent />
                     </View>
-                    <View style={styles.inputWrapper}>
+                    {/* <View style={styles.inputWrapper}>
                         <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
                         <TextInput
                             style={styles.locInput}
@@ -140,7 +139,7 @@ const ride = () => {
                             value={from}
                             onChangeText={setFrom}
                         />
-                    </View>
+                    </View> */}
                 </View>
 
                 {/* Weekday Component */}
