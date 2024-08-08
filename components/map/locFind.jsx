@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import axios from 'axios';
+import { IP_ADDRESS } from "@env";
 
-const url = "http://192.168.1.23:5000/ride/locFind"
+const url = IP_ADDRESS + "/ride/locFind";
 
 const LocFind = ({ style, query }) => {
     const [locations, setLocations] = useState([])
