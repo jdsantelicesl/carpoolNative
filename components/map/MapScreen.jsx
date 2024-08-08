@@ -7,6 +7,8 @@ const MapScreen = () => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
+        mapType="mutedStandard"
+        userInterfaceStyle="light"
         initialRegion={{
           latitude: 38.5384,
           longitude: -121.4845,
