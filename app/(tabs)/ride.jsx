@@ -40,6 +40,7 @@ const ride = () => {
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = IP_ADDRESS + "/ride/post"; // placeholder
+    console.log(url)
 
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
