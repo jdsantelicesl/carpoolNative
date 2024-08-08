@@ -6,7 +6,6 @@ import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
 import SlideUpComponent from '../../components/map/SlideUpComponent';
 import LocFind from '../../components/map/locFind';
-import { IP_ADDRESS } from "@env";
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = "66b43302b73820e5f0b813a6";
@@ -39,7 +38,7 @@ const ride = () => {
     const [haveCar, setHaveCar] = useState(true); // true or false
     const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = IP_ADDRESS + "/ride/post"; // placeholder
+    const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
     console.log(url)
 
     // Create array for hours and minutes (to be used for time selector)
