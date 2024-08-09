@@ -31,6 +31,15 @@ const TabLayout = () => {
                     tabBarIcon: ({ color }) => <FontAwesome name="user" size={24} color={color} />
                 }}
             />
+
+            {/* <Tabs.Screen name='map'
+                // This is used to make map a hidden tab
+                // Uncomment line 35-41 to hide tab
+                options={{
+                    href:null,
+                }}
+            /> */}
+
         </Tabs>
     )
 }

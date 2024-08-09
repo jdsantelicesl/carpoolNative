@@ -27,8 +27,8 @@ const MapScreen = () => {
         >
             <Marker
             coordinate={{ latitude: currentRegion.latitude, longitude: currentRegion.longitude}}
-            title={ "Title" }
-            description={ "Desc" }
+            title={"Real marker"}
+            description={"The other marker on screen is fake"}
             tappable= {true}
             />
         </MapView>

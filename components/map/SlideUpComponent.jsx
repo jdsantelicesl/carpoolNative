@@ -22,6 +22,7 @@ const SlideUpComponent = () => {
 		Alert.alert("Touched confirm");
 	}
 
+
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity onPress={() => toggleModal()}>
@@ -44,7 +45,7 @@ const SlideUpComponent = () => {
 			style={styles.modal}
 		>
 			<View style={styles.mapContainer}>
-				<MapScreen />
+				<MapScreen/>
 			</View>
 			
 			<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
@@ -62,6 +63,9 @@ const SlideUpComponent = () => {
 						placeholder="Current..."
 						placeholderTextColor="grey"
 						value={origin} 
+						// Future changes:
+						// When typed in a certain place, query a list of possible places,
+						// Pan the map to location which the user puts
 						onChangeText={setOrigin}
 					/>
 					<TouchableOpacity onPress={() => setOrigin("")}>
