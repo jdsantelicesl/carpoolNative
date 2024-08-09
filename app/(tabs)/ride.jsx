@@ -40,6 +40,15 @@ const ride = () => {
     const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
     console.log(url)
 
+    const handleLocClick = (locId) => {
+        // this is the 'callback' function
+        /* this function will take the locId from the LocFind element clicked and
+         * set it as the current location or origin/destination */
+
+        // need to edit backend to send lat and long too
+        console.log(locId)
+    }
+
     // Create array for hours and minutes (to be used for time selector)
     const hourItems = Array.from({ length: 13 }, (_, i) => ({
         label: i < 10 ? `0${i}` : String(i),
@@ -215,7 +224,7 @@ const ride = () => {
 
                 {/* Separating Line */}
 
-                <LocFind query={"SCC"} />
+                <LocFind query={destination} handleLocClick={handleLocClick} />
 
                 {/* List of users (Make scrollable)*/}
             </ScrollView>

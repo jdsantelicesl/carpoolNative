@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const url = process.env.EXPO_PUBLIC_API_URL + "/ride/locFind";
 
-const LocFind = ({ style, query }) => {
+const LocFind = ({ style, query, handleLocClick }) => {
     const [locations, setLocations] = useState([])
     // placeholder for lat, long
     const lat = 38.5544
