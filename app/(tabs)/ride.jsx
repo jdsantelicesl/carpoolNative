@@ -35,7 +35,6 @@ const ride = () => {
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0)
     const [amPm, setAmPm] = useState("AM");
-    const [haveCar, setHaveCar] = useState(true); // true or false
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
     console.log(url)
@@ -92,7 +91,6 @@ const ride = () => {
             origin: from,
             day: day,
             arrival: arrival,
-            car: haveCar,
             member: user_id
         };
         try {
@@ -189,29 +187,6 @@ const ride = () => {
                                 onPress={() => setAmPm('PM')}
                             >
                                 <Text style={[styles.buttonsText, amPm === 'PM' && styles.activeButtonsText]}>PM</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-
-                {/* Do You Have Car Component */}
-                {/* I resued the timePickerContainer stylesheet from time selection's components */}
-
-                <View style={styles.timeContainer}>
-                    <Text style={styles.subTitle}>Do you have a car?:</Text>
-                    <View style={styles.timePickerContainer}>
-                        <View style={styles.buttonsContainer}>
-                            <TouchableOpacity
-                                style={[styles.buttons, haveCar == true && styles.activeButtons]}
-                                onPress={() => setHaveCar(true)}
-                            >
-                                <Text style={[styles.buttonsText, haveCar == true && styles.activeButtonsText]}>Yes</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.buttons, haveCar == false && styles.activeButtons]}
-                                onPress={() => setHaveCar(false)}
-                            >
-                                <Text style={[styles.buttonsText, haveCar == false && styles.activeButtonsText]}>No</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
