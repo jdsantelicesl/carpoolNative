@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -7,7 +7,7 @@ import polyline from '@mapbox/polyline';
 const MapScreen = () => {
     
     const [currentRegion, setCurrentRegion] = useState({
-        latitude: 38.5655,
+        latitude:  38.5655,
         longitude: -121.6346,
         latitudeDelta: 0.2591,
         longitudeDelta: 0.2251,
@@ -25,11 +25,6 @@ const MapScreen = () => {
       latitude: point[0],
       longitude: point[1],
     }));
-
-    console.log(" ")
-    console.log(" ")
-    console.log(" ")
-    console.log(decodedPoints);
 
     return (
         <View style={styles.container}>
@@ -50,7 +45,7 @@ const MapScreen = () => {
             <Polyline 
             coordinates={decodedPoints}
             strokeColor="red"
-            strokeWidth={4}
+            strokeWidth={2}
             />
         </MapView>
         <View style={styles.iconContainer}>

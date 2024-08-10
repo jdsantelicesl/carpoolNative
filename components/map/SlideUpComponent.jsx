@@ -3,11 +3,13 @@ import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated,
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import MapScreen from './MapScreen';
+import axios from 'axios';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
+const url = process.env.EXPO_PUBLIC_API_URL
 
 const SlideUpComponent = () => {
 	const [isModalVisible, setModalVisible] = useState(false);
