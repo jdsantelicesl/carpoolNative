@@ -16,10 +16,10 @@ const LocFind = ({ style, query, handleLocClick }) => {
 
         axios.get(reqUrl)
             .then(response => {
-                setLocations(response.data.places)
+                setLocations(response.data.suggestions)
             })
             .catch(error => {
-                //handle error
+                console.log(error)
             });
     }, [query]);
 
@@ -29,7 +29,7 @@ const LocFind = ({ style, query, handleLocClick }) => {
                 <FlatList
                     data={locations}
                     renderItem={({ item }) =>
-                        <Text key={item.id}>{item.displayName.text}</Text>
+                        <Text key={item.placePrediction.placeId}>{item.placePrediction.text.text}</Text>
                     }
                     keyExtractor={(item) => item.id}
                     scrollEnabled={false} // Disable scrolling for FlatList

@@ -37,7 +37,6 @@ const ride = () => {
     const [amPm, setAmPm] = useState("AM");
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
-    console.log(url)
 
     const handleLocClick = (locId) => {
         // this is the 'callback' function
