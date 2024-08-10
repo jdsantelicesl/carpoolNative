@@ -3,7 +3,6 @@ import { StyleSheet, View, Text } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome6 } from '@expo/vector-icons';
 import polyline from '@mapbox/polyline';
-import DestinationSlideUp from './DestinationSlideUp';
 // Refer to docs: https://github.com/react-native-maps/react-native-maps
 const MapScreen = ({onLatChange, onLongChange}) => {
 
