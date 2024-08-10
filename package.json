@@ -36,7 +36,6 @@
     "react-native-auth0": "^3.2.1",
     "react-native-date-picker": "^5.0.4",
     "react-native-dotenv": "^3.4.11",
-    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-maps": "^1.17.3",
     "react-native-modal": "^13.0.1",

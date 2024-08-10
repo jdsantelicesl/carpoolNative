@@ -4,6 +4,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import MapScreen from './MapScreen';
 import axios from 'axios';
+
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
@@ -41,11 +42,9 @@ const DestinationSlideUp = ({originLat, originLong, destinationLat, destinationL
 		axios.post(url, data)
         .then(response => {
             console.log('Response:', response.data);
-            // Handle the response, such as updating state or navigating to a different screen
         })
         .catch(error => {
             console.error('Error:', error);
-            // Handle any errors, such as showing an alert or logging
         });
 	};
 
