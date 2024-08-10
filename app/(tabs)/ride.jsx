@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
 import OriginSlideUp from '../../components/map/OriginSlideUp';
@@ -30,15 +32,12 @@ const ride = () => {
     // Used for when user wants to refresh by pulling down page
     const [refreshing, setRefreshing] = useState(false);
 
-    const [pickTimeVis, setTimeVis] = useState(true)
-    const [date, setDate] = useState(null)
+    const [date, setDate] = useState(new Date)
+    const [sendDate, setSendDate] = useState(getHours(date)+(getMinutes(date)*0.1))
 
-    const [destination, setDest] = useState(null);
-    const [from, setFrom] = useState(null);
+    const [destination, setDest] = useState("test");
+    const [from, setFrom] = useState("test");
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
-    const [hour, setHour] = useState("00");
-    const [minute, setMinute] = useState("00")
-    const [amPm, setAmPm] = useState("AM");
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
 
@@ -50,6 +49,7 @@ const ride = () => {
         setDest(null);
         setFrom(null);
         setDay(null);
+        setDate(new Date);
 
         setRefreshing(false);
     }
@@ -63,34 +63,44 @@ const ride = () => {
         console.log(locId)
     }
 
-    const handleDate = (date) => {
-        console.log('success')
+    const handleDate = (event, new_date) => {
+        if (new_date instanceof Date) {
+            setDate(new_date)
+            const hours = getHours(new_date)
+            const minutes = getMinutes(new_date)
+            const calculatedTime = hours + (minutes * 0.01)
+            setSendDate(calculatedTime)
+
+        } else {
+            console.log('No date selected or invalid date:', new_date);
+        }
     }
 
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        let arrival = hour + minute / 60;
-
-        if (amPm === "PM") {
-            if (hour != 12) {
-                arrival += 12;
-            }
-        }
-        else {
-            if (hour == 12) {
-                arrival -= 12;
-            }
-        }
+        // placeholder
+        const lat = 38.1;
+        const long = -121.1
 
         const data = {
-            destination: destination,
-            origin: from,
+            destination: {
+                name: destination,
+                lat: lat,
+                long: long
+            },
+            origin: {
+                name: from,
+                lat: lat,
+                long: long
+            },
             day: day,
-            arrival: arrival,
+            arrival: sendDate,
             member: user_id
         };
+        console.log(data)
+        console.log(url)
         try {
             await axios.post(url, data);
             console.log(data);
@@ -104,7 +114,7 @@ const ride = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            { !mapActive && <ScrollView
+            {!mapActive && <ScrollView
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -146,14 +156,11 @@ const ride = () => {
                 <View style={styles.timeContainer}>
                     <Text style={styles.subTitle}>Time:</Text>
                     <View style={styles.timePickerContainer}>
-                        <TouchableOpacity style={styles.timePickerButton} onPress={() => setTimeVis(true)}>
-                            <Text>{hour}:{minute}</Text>
-                        </TouchableOpacity>
-                        <DateTimePickerModal
-                            isVisible={pickTimeVis}
+                        <RNDateTimePicker
                             mode="time"
-                            onConfirm={(date) => handleDate(date)}
-                            onCancel={() => setTimeVis(false)}
+                            display='default'
+                            value={date}
+                            onChange={handleDate}
                         />
                     </View>
                 </View>
@@ -164,10 +171,10 @@ const ride = () => {
                         onPress={(e) => handleSubmit(e)}
 
                         // Apply disabled style conditionally
-                        style={[styles.submitButton, (destination && from && day && hour && minute && amPm) && { backgroundColor: '#2E74DD' }]}
-                        disabled={!(destination && from && day && hour && minute && amPm)} // Disable button press functionality
+                        style={[styles.submitButton, (destination && from && day) && { backgroundColor: '#2E74DD' }]}
+                        disabled={!(destination && from && day)} // Disable button press functionality
                     >
-                        <Text style={[styles.submitText, (destination && from && day && hour && minute && amPm) && { color: 'black' }]}>Submit</Text>
+                        <Text style={[styles.submitText, (destination && from && day) && { color: 'black' }]}>Submit</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -178,9 +185,9 @@ const ride = () => {
                 <LocFind query={destination} handleLocClick={handleLocClick} />
 
                 {/* List of users (Make scrollable)*/}
-            </ScrollView> }
+            </ScrollView>}
 
-            { mapActive && <OriginSlideUp setMapActive={setMapActive} /> }
+            {mapActive && <OriginSlideUp setMapActive={setMapActive} />}
         </SafeAreaView>
     );
 };
@@ -260,15 +267,20 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     timeContainer: {
+        marginLeft: 20*vw,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         marginBottom: 2 * vh,
         paddingHorizontal: 0 * vw,
         justifyContent: 'space-between',
     },
     timePickerContainer: {
+        marginRight: 28*vw,
         flexDirection: 'row',
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 3 * vh,
         paddingHorizontal: 2 * vw,
         paddingVertical: -0.5 * vh,
