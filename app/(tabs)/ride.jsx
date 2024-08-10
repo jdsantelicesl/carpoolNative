@@ -4,7 +4,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
-import SlideUpComponent from '../../components/map/SlideUpComponent';
+import OriginSlideUp from '../../components/map/OriginSlideUp';
 import LocFind from '../../components/map/locFind';
 
 // User id placeHolder. Replace after auth. The id is for test user
@@ -120,7 +120,7 @@ const ride = () => {
                             value={destination} 
                             onChangeText={setDest}
                         />
-                        <SlideUpComponent />
+                        <OriginSlideUp />
                     </View>
                     {/* <View style={styles.inputWrapper}>
                         <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />

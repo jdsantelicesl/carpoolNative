@@ -3,26 +3,28 @@ import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated,
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import MapScreen from './MapScreen';
-import axios from 'axios';
+import DestinationSlideUp from './DestinationSlideUp';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
-const url = process.env.EXPO_PUBLIC_API_URL
 
-const SlideUpComponent = () => {
+const OriginSlideUp = ({ originLat, originLong }) => {
 	const [isModalVisible, setModalVisible] = useState(false);
 	const pan = useState(new Animated.ValueXY())[0];
-	const [origin, setOrigin] = useState("");
+	const [originText, setOriginText] = useState("");
 
+	const handleChangeText = () => {
+		// Make this refer to Workflow #2, so it could let them query.
+	};
+	
 	const toggleModal = () => {
 		setModalVisible(!isModalVisible);
 	};
 
-	const handleConfirm = () =>{
-		Alert.alert("Touched confirm");
-	}
+	[originLat, setLat] = useState();
+	[originLong, setLong] = useState();
 
 
 	return (
@@ -47,7 +49,10 @@ const SlideUpComponent = () => {
 			style={styles.modal}
 		>
 			<View style={styles.mapContainer}>
-				<MapScreen/>
+				<MapScreen
+				onLatChange={setLat}
+				onLongChange={setLong}
+				/>
 			</View>
 			
 			<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
@@ -62,22 +67,20 @@ const SlideUpComponent = () => {
 					<FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
 					<TextInput
 						style={styles.locInput}
-						placeholder="Current..."
+						placeholder= {String(originLat)}
 						placeholderTextColor="grey"
-						value={origin} 
-						// Future changes:
-						// When typed in a certain place, query a list of possible places,
-						// Pan the map to location which the user puts
-						onChangeText={setOrigin}
+						value={originText} 
+						onChangeText={() => handleChangeText()}
 					/>
-					<TouchableOpacity onPress={() => setOrigin("")}>
+					<TouchableOpacity onPress={() => setOriginText("")}>
 						<FontAwesome6 name="xmark" size={24} color="#000000" style={styles.xIcon} />
 					</TouchableOpacity>
 				</View>
-				<TouchableOpacity onPress={() => handleConfirm()}>
-					<View style={styles.confirmButton}>
-						<Text style={styles.confirmText}>Confirm</Text>
-					</View>
+				<TouchableOpacity>
+						<DestinationSlideUp
+						originLat = {originLat}
+						originLong = {originLong}
+						/>
 				</TouchableOpacity>
 			</Animated.View>
 		</Modal>
@@ -187,4 +190,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default SlideUpComponent;
+export default OriginSlideUp;
