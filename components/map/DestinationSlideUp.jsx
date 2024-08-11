@@ -61,8 +61,11 @@ const DestinationSlideUp = ({originLat, originLong, destinationLat, destinationL
 			onBackdropPress={toggleModal}
 			onBackButtonPress={toggleModal}
 			animationInTiming = {100}
+			animationOutTiming = {100}
 			animationIn="fadeIn"
 			animationOut="fadeOut"
+			avoidKeyboard={true}
+			// coverScreen={false}
 			style={styles.modal}
 		>
 			<View style={styles.mapContainer}>
