@@ -4,7 +4,7 @@ import {
     TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl
 } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import * as Localization from 'expo-localization';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
@@ -32,8 +32,17 @@ const ride = () => {
     // Used for when user wants to refresh by pulling down page
     const [refreshing, setRefreshing] = useState(false);
 
-    const [date, setDate] = useState(new Date)
-    const [sendDate, setSendDate] = useState(getHours(date)+(getMinutes(date)*0.1))
+    /** Need all of these conversions in order for date form submission to run smooth, trust.
+     * Will need to implement for android later.
+     * .timzone is deprecated but works very well
+     */
+    const clientTimeZone = Localization.timezone;
+    const dateObj = new Date(); // Your date object
+    const options = { timeZone: clientTimeZone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(dateObj);
+    const [date, setDate] = useState(dateObj)
+    const [sendDate, setSendDate] = useState(getHours(formattedDate)+(getMinutes(formattedDate)*0.1))
+    console.log("send Date", sendDate)
 
     const [destination, setDest] = useState("test");
     const [from, setFrom] = useState("test");
@@ -79,6 +88,7 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(sendDate)
 
         // placeholder
         const lat = 38.1;
@@ -100,10 +110,8 @@ const ride = () => {
             member: user_id
         };
         console.log(data)
-        console.log(url)
         try {
             await axios.post(url, data);
-            console.log(data);
             alert('Data sent to /data');
         } catch (error) {
             console.error('Error saving data', error);
