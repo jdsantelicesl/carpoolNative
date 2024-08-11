@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
-import MapScreen from './MapScreen';
-import DestinationSlideUp from './DestinationSlideUp';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
@@ -14,8 +12,7 @@ const OriginSlideUp = ({ setMapActive }) => {
 	const [isModalVisible, setModalVisible] = useState(true);
 	const pan = useState(new Animated.ValueXY())[0];
 	const [originText, setOriginText] = useState("");
-
-	const [isStretched, setIsStretched] = useState(false)
+	const [destinationText, setDestinationText] = useState("");
 
 	const [originLat, setLat] = useState(null);
 	const [originLong, setLong] = useState(null);
@@ -23,6 +20,12 @@ const OriginSlideUp = ({ setMapActive }) => {
 	const handleChangeText = () => {
 		// Make this refer to Workflow #2, so it could let them query.
 	};
+
+    // When pressed either origin or destination box, calls this function
+    const returnList = (input) =>{
+        // input: originText | deestinationText
+       // Makes sure the list returns the location/destination text
+    }
 
 	const toggleModal = () => {
 		setModalVisible(!isModalVisible);
@@ -43,49 +46,49 @@ const OriginSlideUp = ({ setMapActive }) => {
 				avoidKeyboard={true}
 				propagateSwipe={true}
 				animationInTiming={100}
+                coverScreen={false}
 				animationIn="fadeIn"
 				animationOut="fadeOut"
 				style={styles.modal}
 			>
-			<View style={styles.mapContainer}>
-				<MapScreen
-					onLatChange={setLat}
-					onLongChange={setLong}
-				/>
-			</View>
-				
-				{ !isStretched && 
 				<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
 					<TouchableOpacity onPress={() => setMapActive(false)}>
 						{/* <Text style={styles.closeText}>Close</Text> */}
-						<FontAwesome6 name="circle-arrow-left" size={24} color="#000000" style={styles.xIcon} />
+						<FontAwesome6 name="circle-arrow-left" size={24} color="#000000" />
 					</TouchableOpacity>
-					<Text style={styles.subTitle}>Set your origin</Text>
-					<Text style={styles.subSubTitle}>Drag map to move pin</Text>
-					<Text style={styles.subSubTitle}>_________________________</Text>
-					<View style={styles.inputWrapper}>
-						<FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
-						<TextInput
-							style={styles.locInput}
-							placeholder={String(originLat)}
-							placeholderTextColor="grey"
-							value={originText}
-							onChangeText={() => handleChangeText()}
-						/>
-						<TouchableOpacity onPress={() => setOriginText("")}>
-							<FontAwesome6 name="xmark" size={24} color="#000000" style={styles.xIcon} />
-						</TouchableOpacity>
-					</View>
-					<TouchableOpacity>
-						
-						<DestinationSlideUp
-							originLat={originLat}
-							originLong={originLong}
-						/>
-					</TouchableOpacity>
-				</Animated.View> }
 
-				{ /*isStretched && */ }
+					<Text style={styles.subTitle}>Organize your trip</Text>
+
+					<View style={styles.inputWrapper}>
+                        <View style={styles.inputContent}>
+                            <FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
+                            <TextInput
+                                style={styles.locInput}
+                                placeholder={"Where from?"}
+                                placeholderTextColor="grey"
+                                value={originText}
+                                onChangeText={() => setOriginText()}
+                                onPressIn={() => returnList(originText)}
+                            />
+                        </View>
+                        <View style={styles.inputContent}>
+                            <FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
+                            <TextInput
+                                style={styles.locInput}
+                                placeholder={"Where to?"}
+                                placeholderTextColor="grey"
+                                value={destinationText}
+                                onChangeText={() => setDestinationText()}
+                                onPressIn= {() => returnList(destinationText)}
+                            />
+                        </View>
+					</View>
+
+                    <View style={styles.locFindListContainer}>
+                        <Text> LocFind Query Container </Text>
+                    </View>
+					
+				</Animated.View> 
 				
 			</Modal>
 
@@ -118,23 +121,24 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		fontWeight: "bold",
 		fontSize: 20,
-		marginTop: -1 * vh,
+		marginTop: -1.5 * vh,
 	},
-	subSubTitle: {
-		color: "#6E6B6B",
+	bodyText: {
+		color: "black",
 		textAlign: "center",
 		fontSize: 17,
-		marginBottom: -1 * vh,
 	},
-	mapContainer: {
-		...StyleSheet.absoluteFillObject,
+    subBodyText: {
+		color: "#6E6B6B",
+		textAlign: "center",
+		fontSize: 15,
 	},
 	modal: {
 		justifyContent: 'flex-end',
 		margin: 0,
 	},
 	modalContent: {
-		height: height * 0.37,
+		height: height * 0.8,
 		backgroundColor: 'white',
 		padding: 20,
 		borderTopLeftRadius: 20,
@@ -146,22 +150,23 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	inputWrapper: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		backgroundColor: '#D9D9D9',
 		borderRadius: 5 * vw,
 		justifyContent: "center",
 		alignItems: "center",
-		width: 75 * vw,
-		height: 10 * vh,
+		width: 70 * vw,
+		height: 12 * vh,
 		// Bro how do you center this View
 		marginTop: 3.5 * vh,
-		marginHorizontal: 7 * vw,
+		marginHorizontal: 4 * vw,
 	},
+    inputContent: {
+        flexDirection: 'row'
+    },
 	locDotIcon: {
+        marginTop: 3 * vw,
 		marginLeft: 4 * vw,
-	},
-	xIcon: {
-		marginRight: 5 * vw,
 	},
 	locInput: {
 		flex: 1,
@@ -171,22 +176,14 @@ const styles = StyleSheet.create({
 		color: "black",
 		paddingLeft: 3 * vw,
 	},
-	confirmButton: {
-		backgroundColor: '#D9D9D9',
-		borderRadius: 5 * vw,
-		width: 75 * vw,
-		height: 4 * vh,
-		marginHorizontal: 7 * vw,
-		marginTop: 2 * vh,
-	},
-	confirmText: {
-		color: "#6E6B6B",
-		justifyContent: "center",
-		textAlign: "center",
-		fontWeight: "bold",
-		fontSize: 20,
-		marginTop: 0.5 * vh,
-	},
+    locFindListContainer: {
+        backgroundColor: "red",
+        flexDirection: "column",
+        marginTop: 2 * vh,
+    },
+    locFindListContent: {
+
+    },
 });
 
 export default OriginSlideUp;

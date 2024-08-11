@@ -34,16 +34,8 @@ const MapScreen = () => {
         </MapView>
         <View style={styles.iconContainer}>
             <FontAwesome6 name="location-dot" size={24} color="black" style={styles.iconContainer} />
-            <FontAwesome6 name="location-dot" size={24} color="black" style={styles.iconContainer} />
         </View>
-        <Text style= {styles.text}> 
-            Current Region: 
-            {"\n"}Latitude: {currentRegion.latitude.toFixed(4)}
-            {"\n"}Longitude: {currentRegion.longitude.toFixed(4)}
-            {"\n"}LatitudeDelta: {currentRegion.latitudeDelta.toFixed(4)}
-            {"\n"}LongitudeDelta: {currentRegion.longitudeDelta.toFixed(4)}
-        </Text>
-        </View>
+      </View>
     );
 };
 
@@ -59,7 +51,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: 'absolute',
-    top: '40.5%',
+    top: '50%',
     left: '48%',
   },
 });
