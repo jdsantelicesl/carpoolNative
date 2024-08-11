@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
+import {
+    Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert,
+    TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl
+} from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
-import RNPickerSelect from 'react-native-picker-select';
+import * as Localization from 'expo-localization';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
+import OriginSlideUp from '../../components/map/OriginSlideUp';
+import LocFind from '../../components/map/locFind';
 
 // User id placeHolder. Replace after auth. The id is for test user
-const user_id = "66b05d4898e072e89f63483d";
-
+const user_id = "66b573b5bd03d4f38b185868";
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
@@ -21,62 +27,91 @@ const DayButton = ({ title, onPress, isSelected }) => (
     </TouchableOpacity>
 );
 
-const CustomButton = ({ onPress, title }) => (
-    <TouchableOpacity style={styles.submitButton} onPress={onPress}>
-      <Text style={styles.submitText}>{title}</Text>
-    </TouchableOpacity>
-);
-
 const ride = () => {
-    const [destination, setDest] = useState("");
-    const [from, setFrom] = useState("");
+    const [mapActive, setMapActive] = useState(false)
+    // Used for when user wants to refresh by pulling down page
+    const [refreshing, setRefreshing] = useState(false);
+
+    /** Need all of these conversions in order for date form submission to run smooth, trust.
+     * Will need to implement for android later.
+     * .timzone is deprecated but works very well
+     */
+    const clientTimeZone = Localization.timezone;
+    const dateObj = new Date(); // Your date object
+    const options = { timeZone: clientTimeZone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(dateObj);
+    const [date, setDate] = useState(dateObj)
+    const [sendDate, setSendDate] = useState(getHours(formattedDate)+(getMinutes(formattedDate)*0.1))
+    console.log("send Date", sendDate)
+
+    const [destination, setDest] = useState("test");
+    const [from, setFrom] = useState("test");
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
-    const [hour, setHour] = useState(0);
-    const [minute, setMinute] = useState(0)
-    const [amPm, setAmPm] = useState("AM");
-    const [haveCar, setHaveCar] = useState(true); // true or false
-    const [date, setDate] = useState(new Date()); // Used later for time selection after researched
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = "http://192.168.1.23:5000/ride/post"; // placeholder
+    const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
 
-    // Create array for hours and minutes (to be used for time selector)
-    const hourItems = Array.from({ length: 13 }, (_, i) => ({
-        label: i < 10 ? `0${i}` : String(i),
-        value: i,
-    }));
+    const onRefresh = () => {
+        // display refreshing animation
+        setRefreshing(true);
 
-    // for minutes
-    const minuteItems = Array.from({ length: 61 }, (_, i) => ({
-        label: i < 10 ? `0${i}` : String(i),
-        value: i,
-    }));
+        // reset all values
+        setDest(null);
+        setFrom(null);
+        setDay(null);
+        setDate(new Date);
 
-    const Submit = () => (
-        <View style={styles.submitContainer}>
-          <CustomButton
-            title="Submit"
-            onPress={(e) => handleSubmit(e)}
-          />
-        </View>
-    );
+        setRefreshing(false);
+    }
+
+    const handleLocClick = (locId) => {
+        // this is the 'callback' function
+        /* this function will take the locId from the LocFind element clicked and
+         * set it as the current location or origin/destination */
+
+        // need to edit backend to send lat and long too
+        console.log(locId)
+    }
+
+    const handleDate = (event, new_date) => {
+        if (new_date instanceof Date) {
+            setDate(new_date)
+            const hours = getHours(new_date)
+            const minutes = getMinutes(new_date)
+            const calculatedTime = hours + (minutes * 0.01)
+            setSendDate(calculatedTime)
+
+        } else {
+            console.log('No date selected or invalid date:', new_date);
+        }
+    }
 
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(sendDate)
 
-        const arrival = `${hour}:${minute}${amPm}`
+        // placeholder
+        const lat = 38.1;
+        const long = -121.1
 
         const data = {
-            destination: destination,
-            origin: from,
+            destination: {
+                name: destination,
+                lat: lat,
+                long: long
+            },
+            origin: {
+                name: from,
+                lat: lat,
+                long: long
+            },
             day: day,
-            arrival: arrival,
-            car: haveCar,
+            arrival: sendDate,
             member: user_id
         };
+        console.log(data)
         try {
             await axios.post(url, data);
-            console.log(data);
             alert('Data sent to /data');
         } catch (error) {
             console.error('Error saving data', error);
@@ -87,122 +122,80 @@ const ride = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-
-            {/* Location Selection Component */}
-
-            <Text style={styles.title}>Find a Carpool</Text>
-            <View style={styles.inputContainer}>
-                <View style={styles.inputWrapper}>
-                    <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-                    <TextInput
-                        style={styles.locInput}
-                        placeholder="Where to?"
-                        placeholderTextColor="#6E6B6B"
-                        value={destination}
-                        onChangeText={setDest}
+            {!mapActive && <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#2E74DD']}
                     />
+                }
+            >
+
+                {/* Location Selection Component */}
+
+                <Text style={styles.title}>Find a Carpool</Text>
+
+                <View style={styles.inputContainer}>
+                    <TouchableOpacity style={styles.inputWrapper} onPress={() => setMapActive(true)}>
+                        <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
+                        <Text style={styles.locInput}>
+                            {destination ? destination : 'Where to?'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.inputWrapper}>
-                    <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-                    <TextInput
-                        style={styles.locInput}
-                        placeholder="Where from?"
-                        placeholderTextColor="#6E6B6B"
-                        value={from}
-                        onChangeText={setFrom}
-                    />
-                </View>
-            </View>
 
-            {/* Weekday Component */}
+                {/* Weekday Component */}
 
-            <Text style={styles.subTitle}>When do you need to be there?</Text>
-            <View style={styles.weekdayContainer}>
-                {days.map((d, index) => (
-                    <DayButton
-                        key={index}
-                        title={d}
-                        onPress={() => setDay(index + 1)}
-                        isSelected={day === index + 1}
-                    />
-                ))}
-            </View>
-
-            {/* Time Selection Component */}
-
-            <View style={styles.timeContainer}>
-                <Text style={styles.subTitle}>Time:</Text>
-                <View style={styles.timePickerContainer}>
-                    {/* onChangeTime, create function for modal or inline time selection.
-                      * This current time button is interim placeholder
-                      */}
-
-                    <View style={styles.timePickerButton}>
-                        <RNPickerSelect
-                            onValueChange={(value) => setHour(value)}
-                            items={hourItems}
-                            style={pickerStyles}
-                            value={hour}
+                <Text style={styles.subTitle}>When do you need to be there?</Text>
+                <View style={styles.weekdayContainer}>
+                    {days.map((d, index) => (
+                        <DayButton
+                            key={index}
+                            title={d}
+                            onPress={() => setDay(index + 1)}
+                            isSelected={day === index + 1}
                         />
-                        {/* RNPickerSelect can only take in a special format of style */}
-                        <Text style={{ fontSize: 2.5 * vh, color: "#6E6B6B", fontWeight: "bold"}}>:</Text>
-                        <RNPickerSelect
-                            onValueChange={(value) => setMinute(value)}
-                            items={minuteItems}
-                            style={pickerStyles}
-                            value={minute}
+                    ))}
+                </View>
+
+                {/* Time Selection Component */}
+
+                <View style={styles.timeContainer}>
+                    <Text style={styles.subTitle}>Time:</Text>
+                    <View style={styles.timePickerContainer}>
+                        <RNDateTimePicker
+                            mode="time"
+                            display='default'
+                            value={date}
+                            onChange={handleDate}
                         />
                     </View>
-
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity
-                            style={[styles.buttons, amPm === 'AM' && styles.activeButtons]}
-                            onPress={() => setAmPm('AM')}
-                        >
-                            <Text style={[styles.buttonsText, amPm === 'AM' && styles.activeButtonsText]}>AM</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.buttons, amPm === 'PM' && styles.activeButtons]}
-                            onPress={() => setAmPm('PM')}
-                        >
-                            <Text style={[styles.buttonsText, amPm === 'PM' && styles.activeButtonsText]}>PM</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
-            </View>
 
-            {/* Do You Have Car Component */}
-            {/* I resued the timePickerContainer stylesheet from time selection's components */}
+                {/* Handle Submit Component */}
+                <View style={styles.submitContainer}>
+                    <TouchableOpacity
+                        onPress={(e) => handleSubmit(e)}
 
-            <View style={styles.timeContainer}>
-                <Text style={styles.subTitle}>Do you have a car?:</Text>
-                <View style={styles.timePickerContainer}>
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity
-                            style={[styles.buttons, haveCar == true && styles.activeButtons]}
-                            onPress={() => setHaveCar(true)}
-                        >
-                            <Text style={[styles.buttonsText, haveCar == true && styles.activeButtonsText]}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.buttons, haveCar == false && styles.activeButtons]}
-                            onPress={() => setHaveCar(false)}
-                        >
-                            <Text style={[styles.buttonsText, haveCar == false && styles.activeButtonsText]}>No</Text>
-                        </TouchableOpacity>
-                    </View>
+                        // Apply disabled style conditionally
+                        style={[styles.submitButton, (destination && from && day) && { backgroundColor: '#2E74DD' }]}
+                        disabled={!(destination && from && day)} // Disable button press functionality
+                    >
+                        <Text style={[styles.submitText, (destination && from && day) && { color: 'black' }]}>Submit</Text>
+                    </TouchableOpacity>
                 </View>
-            </View>
 
-            {/* Handle Submit Component */}
-            <Submit />
-            
-            <Hr style= {styles.hr}/>
+                <Hr style={styles.hr} />
 
-            {/* Separating Line */}
+                {/* Separating Line */}
 
-            {/* List of users (Make scrollable)*/}
+                <LocFind query={destination} handleLocClick={handleLocClick} />
 
+                {/* List of users (Make scrollable)*/}
+            </ScrollView>}
+
+            {mapActive && <OriginSlideUp setMapActive={setMapActive} />}
         </SafeAreaView>
     );
 };
@@ -211,7 +204,7 @@ export default ride;
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 4 *vh,
+        paddingTop: 4 * vh,
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
@@ -234,14 +227,14 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         alignItems: 'center',
-        marginTop: -2 * vh,
+        marginTop: -1 * vh,
     },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: "#D9D9D9",
         borderRadius: 3 * vh,
-        marginBottom: 2 * vh,
+        marginBottom: 1.8 * vh,
         width: 90 * vw,
     },
     icon: {
@@ -249,7 +242,7 @@ const styles = StyleSheet.create({
     },
     locInput: {
         flex: 1,
-        height: 6.5 * vh,
+        paddingVertical: 1.6 * vh,
         fontSize: 2.5 * vh,
         fontWeight: "bold",
         color: "#6E6B6B",
@@ -282,15 +275,20 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     timeContainer: {
+        marginLeft: 20*vw,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         marginBottom: 2 * vh,
         paddingHorizontal: 0 * vw,
         justifyContent: 'space-between',
     },
     timePickerContainer: {
+        marginRight: 28*vw,
         flexDirection: 'row',
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 3 * vh,
         paddingHorizontal: 2 * vw,
         paddingVertical: -0.5 * vh,
@@ -298,11 +296,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     timePickerButton: {
-        paddingBottom: 1.6*vh,
-        paddingTop: 1.1*vh,
+        paddingBottom: 1.6 * vh,
+        paddingTop: 1.1 * vh,
         paddingHorizontal: 5 * vw,
 
-        width: 30*vw,
+        width: 30 * vw,
         backgroundColor: '#D9D9D9',
         borderRadius: 3 * vh,
         flexDirection: 'row',
@@ -352,10 +350,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     hr: {
-        marginHorizontal: 2*vw,
+        marginHorizontal: 2 * vw,
         marginTop: 1 * vh,
-        height: 0.2*vh,
-        width: 96*vw,
+        height: 0.2 * vh,
+        width: 96 * vw,
         backgroundColor: "black",
     },
 });
@@ -366,11 +364,11 @@ const pickerStyles = StyleSheet.create({
         color: "#6E6B6B",
         fontWeight: "bold",
 
-        paddingTop: .2*vh,
+        paddingTop: .2 * vh,
     },
     inputAndroid: {
         fontSize: 2.5 * vh,
         color: "#6E6B6B",
     },
-    
+
 });
