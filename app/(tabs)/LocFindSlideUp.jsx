@@ -2,45 +2,56 @@ import React, { useState } from 'react';
 import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
+import MapScreen from '../.././components/map/MapScreen'
+import { useNavigation } from 'expo-router';
+import OriginSlideUp from '../../components/map/OriginSlideUp';
+import DestinationSlideUp from '../../components/map/DestinationSlideUp';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-const OriginSlideUp = ({ setMapActive }) => {
+const LocFindSlideUp = () => {
 	const [isModalVisible, setModalVisible] = useState(true);
 	const pan = useState(new Animated.ValueXY())[0];
 	const [originText, setOriginText] = useState("");
 	const [destinationText, setDestinationText] = useState("");
-
+	
 	const [originLat, setLat] = useState(null);
 	const [originLong, setLong] = useState(null);
-
+	
 	const handleChangeText = () => {
 		// Make this refer to Workflow #2, so it could let them query.
-	};
-
-    // When pressed either origin or destination box, calls this function
-    const returnList = (input) =>{
-        // input: originText | deestinationText
-       // Makes sure the list returns the location/destination text
-    }
-
+		};
+		
+	// When pressed either origin or destination box, calls this function
+	const returnList = (input) =>{
+		// input: originText | deestinationText
+		// Makes sure the list returns the location/destination text
+		}
+			
 	const toggleModal = () => {
 		setModalVisible(!isModalVisible);
-	};
-
+		};
+	
+	// Used to navigate to another tab
+	const navigation = useNavigation();
+	const handleChangeTab = (tab) => {
+		navigation.navigate(tab)
+	}
+				
 	return (
 		<View style={styles.container}>
-
-
+			<MapScreen 
+			onLatChange = {setLat}
+			onLongChange = {setLong}/>
 			<Modal
 				isVisible={isModalVisible}
 				backdropOpacity={0}
 				//onBackdropPress={toggleModal}
 				onBackButtonPress={toggleModal}
-				//swipeDirection={["down", "up"]}
+				swipeDirection= "down"
 				swipeThreshold={500}
 				//onSwipeComplete={toggleModal}
 				avoidKeyboard={true}
@@ -52,7 +63,7 @@ const OriginSlideUp = ({ setMapActive }) => {
 				style={styles.modal}
 			>
 				<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
-					<TouchableOpacity onPress={() => setMapActive(false)}>
+					<TouchableOpacity onPress={() => handleChangeTab("ride")}>
 						{/* <Text style={styles.closeText}>Close</Text> */}
 						<FontAwesome6 name="circle-arrow-left" size={24} color="#000000" />
 					</TouchableOpacity>
@@ -69,8 +80,9 @@ const OriginSlideUp = ({ setMapActive }) => {
                                 value={originText}
                                 onChangeText={() => setOriginText()}
                                 onPressIn={() => returnList(originText)}
-                            />
-                        </View>
+								/>
+						</View>
+							<OriginSlideUp />
                         <View style={styles.inputContent}>
                             <FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
                             <TextInput
@@ -82,10 +94,13 @@ const OriginSlideUp = ({ setMapActive }) => {
                                 onPressIn= {() => returnList(destinationText)}
                             />
                         </View>
+							<DestinationSlideUp />
 					</View>
 
                     <View style={styles.locFindListContainer}>
-                        <Text> LocFind Query Container </Text>
+						<View style={styles.locFindListContent}>
+                        	<Text> LocFind Query Container </Text>
+						</View>
                     </View>
 					
 				</Animated.View> 
@@ -162,11 +177,16 @@ const styles = StyleSheet.create({
 		marginHorizontal: 4 * vw,
 	},
     inputContent: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+		flex: 1,
     },
 	locDotIcon: {
         marginTop: 3 * vw,
 		marginLeft: 4 * vw,
+	},
+	mapPin: {
+        marginTop: 3 * vw,
+		marginRight: 4 * vw,
 	},
 	locInput: {
 		flex: 1,
@@ -186,4 +206,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OriginSlideUp;
+export default LocFindSlideUp;

@@ -9,8 +9,8 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
-import OriginSlideUp from '../../components/map/OriginSlideUp';
 import LocFind from '../../components/map/locFind';
+import { useNavigation } from 'expo-router';
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = "66b573b5bd03d4f38b185868";
@@ -28,7 +28,7 @@ const DayButton = ({ title, onPress, isSelected }) => (
 );
 
 const ride = () => {
-    const [mapActive, setMapActive] = useState(false)
+    
     // Used for when user wants to refresh by pulling down page
     const [refreshing, setRefreshing] = useState(false);
 
@@ -119,10 +119,16 @@ const ride = () => {
         }
     };
 
+    // Used to navigate to another tab
+	const navigation = useNavigation();
+	const handleChangeTab = (tab) => {
+		navigation.navigate(tab)
+	}
+
 
     return (
         <SafeAreaView style={styles.container}>
-            {!mapActive && <ScrollView
+            <ScrollView
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -137,7 +143,7 @@ const ride = () => {
                 <Text style={styles.title}>Find a Carpool</Text>
 
                 <View style={styles.inputContainer}>
-                    <TouchableOpacity style={styles.inputWrapper} onPress={() => setMapActive(true)}>
+                    <TouchableOpacity style={styles.inputWrapper} onPress={() => handleChangeTab("LocFindSlideUp")}>
                         <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
                         <Text style={styles.locInput}>
                             {destination ? destination : 'Where to?'}
@@ -193,9 +199,8 @@ const ride = () => {
                 <LocFind query={destination} handleLocClick={handleLocClick} />
 
                 {/* List of users (Make scrollable)*/}
-            </ScrollView>}
+            </ScrollView>
 
-            {mapActive && <OriginSlideUp setMapActive={setMapActive} />}
         </SafeAreaView>
     );
 };

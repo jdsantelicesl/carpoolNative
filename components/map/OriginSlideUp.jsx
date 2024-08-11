@@ -10,8 +10,8 @@ const { height, width } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-const OriginSlideUp = ({ setMapActive }) => {
-	const [isModalVisible, setModalVisible] = useState(true);
+const OriginSlideUp = () => {
+	const [isModalVisible, setModalVisible] = useState(false);
 	const pan = useState(new Animated.ValueXY())[0];
 	const [originText, setOriginText] = useState("");
 
@@ -28,16 +28,23 @@ const OriginSlideUp = ({ setMapActive }) => {
 		setModalVisible(!isModalVisible);
 	};
 
-	return (
-		<View style={styles.container}>
+	const handleConfirm = () => {
+		alert("called handleConfirm(), redirects and make sure to give data to origin");
+		toggleModal();
+	};
 
+	return (
+		<View>
+			<TouchableOpacity>
+				<FontAwesome6 name="map-pin" size={24} color="#000000" style={styles.mapPin} onPress={toggleModal} />
+			</TouchableOpacity>
 
 			<Modal
 				isVisible={isModalVisible}
 				backdropOpacity={0}
 				//onBackdropPress={toggleModal}
 				onBackButtonPress={toggleModal}
-				//swipeDirection={["down", "up"]}
+				swipeDirection="down"
 				swipeThreshold={500}
 				//onSwipeComplete={toggleModal}
 				avoidKeyboard={true}
@@ -56,7 +63,7 @@ const OriginSlideUp = ({ setMapActive }) => {
 				
 				{ !isStretched && 
 				<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
-					<TouchableOpacity onPress={() => setMapActive(false)}>
+					<TouchableOpacity onPress={() => toggleModal()}>
 						{/* <Text style={styles.closeText}>Close</Text> */}
 						<FontAwesome6 name="circle-arrow-left" size={24} color="#000000" style={styles.xIcon} />
 					</TouchableOpacity>
@@ -76,12 +83,10 @@ const OriginSlideUp = ({ setMapActive }) => {
 							<FontAwesome6 name="xmark" size={24} color="#000000" style={styles.xIcon} />
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity>
-						
-						<DestinationSlideUp
-							originLat={originLat}
-							originLong={originLong}
-						/>
+					<TouchableOpacity onPress={() => handleConfirm()}>
+						<View style={styles.confirmButton}>
+							<Text style={styles.confirmText}>Confirm</Text>
+						</View>
 					</TouchableOpacity>
 				</Animated.View> }
 
@@ -97,9 +102,6 @@ const OriginSlideUp = ({ setMapActive }) => {
 const styles = StyleSheet.create({
 	mapPin: {
 		marginLeft: 10 * vw,
-	},
-	container: {
-		flex: 1,
 	},
 	textInput: {
 		height: 40,
@@ -186,6 +188,10 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		fontSize: 20,
 		marginTop: 0.5 * vh,
+	},
+	mapPin : {
+		marginLeft: 55 * vw,
+		marginTop: -4 * vh,
 	},
 });
 

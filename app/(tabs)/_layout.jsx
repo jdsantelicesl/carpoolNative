@@ -40,6 +40,13 @@ const TabLayout = () => {
                 }}
             /> */}
 
+            <Tabs.Screen name='LocFindSlide'
+                // This is used to make map a hidden tab
+                // Uncomment line 35-41 to hide tab
+                options={{
+                    href:null,
+                }}
+            />
         </Tabs>
     )
 }
