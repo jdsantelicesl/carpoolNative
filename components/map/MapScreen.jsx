@@ -16,19 +16,17 @@ const MapScreen = ({ origin, dest }) => {
 
   useEffect(() => {
     if(origin.lat && origin.long && dest.lat && dest.long) {
-      const setLat = (origin.lat + dest.lat)/2;
+      const setLat = (origin.lat + dest.lat) / 2;
       const setLong = (origin.long + dest.long) / 2;
-      const deltaLat = Math.abs(setLat - origin.lat)*1.2;
-      const deltaLong = Math.abs(setLong - origin.long)*1.2;
+      const deltaLat = Math.abs(setLat - origin.lat)*4;
+      const deltaLong = Math.abs(setLong - origin.long)*3;
       
       setCurrentRegion({
         latitude: setLat,
         longitude: setLong,
         latitudeDelta: deltaLat,
-        latitudeDelta: deltaLong,
+        longitudeDelta: deltaLong,
       })
-      console.log("rpint")
-      console.log(currentRegion)
     }
   }, [origin, dest]);
 
@@ -58,6 +56,12 @@ const MapScreen = ({ origin, dest }) => {
         style={styles.map}
         userInterfaceStyle="light"
         region={currentRegion}
+        /*region={{
+          latitude: 38.6485,
+          longitude: -121.51426,
+          latitudeDelta: 0.271,
+          longitudeDelta: 0.23,
+        }}*/
         onRegionChangeComplete={handleRegionChangeComplete}
       >
 
