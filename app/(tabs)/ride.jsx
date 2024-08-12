@@ -40,14 +40,9 @@ const ride = () => {
      * Will need to implement for android later.
      * .timzone is deprecated but works very well
      */
-    const clientTimeZone = Localization.timezone;
     const dateObj = new Date(); // Your date object
-    const options = { timeZone: clientTimeZone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(dateObj);
     const [date, setDate] = useState(dateObj)
-    const [sendDate, setSendDate] = useState(getHours(formattedDate) + (getMinutes(formattedDate) * 0.1))
-    console.log("send Date", sendDate)
-
+    const [sendDate, setSendDate] = useState(getHours(Date()) + (getMinutes(Date())/60)) // need to use Date() directly!
     const [destination, setDest] = useState(null);
     const [from, setFrom] = useState(null);
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
@@ -72,7 +67,7 @@ const ride = () => {
             setDate(new_date)
             const hours = getHours(new_date)
             const minutes = getMinutes(new_date)
-            const calculatedTime = hours + (minutes * 0.01)
+            const calculatedTime = hours + (minutes/60)
             setSendDate(calculatedTime)
 
         } else {
@@ -83,7 +78,6 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(sendDate)
 
         const data = {
             destination: {
