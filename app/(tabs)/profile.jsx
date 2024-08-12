@@ -1,26 +1,70 @@
-import React, { useState } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+    Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView, RefreshControl, FlatList
+} from 'react-native';
+import axios from 'axios';
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
+import RideObject from '../../components/myComponents/rideObject';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
+// placeholder
+const user_id = "66b573b5bd03d4f38b185868";
+
 const profile = () => {
+    const [refreshing, setRefreshing] = useState(false);
     // for either rides or reviews
-    const [page, setPage] = useState('reviews');
+    const [page, setPage] = useState('rides');
+    const [displayRides, setDisplayRides] = useState(null);
+
+    const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
     const pagePress = (value) => {
         setPage(value);
     }
 
+    useEffect(() => {
+        console.log('refreshing');
+
+        // reset all values
+
+        // fetch new rides
+        const send_id = encodeURIComponent(user_id)
+        send_url = url + `/ride/getUserRides?client_id=${send_id}`
+        axios.get(send_url)
+            .then(response => {
+                setDisplayRides(response.data);
+            })
+            .catch(error => {
+                console.log("error fetching rides: ", error);
+            })
+    }, [refreshing]);
+
+    const onRefresh = async () => {
+        // display refreshing animation
+        setRefreshing(true);
+        // Simulate a delay to ensure that refreshing state is properly updated
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setRefreshing(false);
+    }
+
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#2E74DD']}
+                    />
+                }
+            >
 
                 {/** User pfp, name and rating */}
                 <View style={userStyle.userContainer}>
@@ -70,6 +114,42 @@ const profile = () => {
                         </TouchableWithoutFeedback>
                     </View>
                 </View>
+
+                {/** Content: User Rides or Ratings. Use conditional rendering based on state. */}
+                <View style={contentStyles.container}>
+
+                    {/** Rides */}
+                    {(page === "rides") && <View>
+                        {(displayRides != "empty") && displayRides && <FlatList
+                            scrollEnabled={false}
+                            // data is going to taken in an object which fetches DB to get all rides
+                            data={displayRides}
+                            renderItem={({ item }) => (
+                                <RideObject
+                                    origin={item.origins}
+                                    destination={item.destination}
+                                    day={item.day}
+                                    arrival={item.arrival}
+                                    members={item.members}
+                                />
+                            )}
+                            keyExtractor={item => item.id}
+                        />}
+
+                        {(displayRides === "empty") && <Text>Post a ride to see recommendations! :) </Text>}
+                        {!displayRides && <Text>Loading...</Text>}
+                    </View>}
+
+                    {/** Reviews here, to do...  */}
+                    {(page === "reviews") && <View>
+                        <Text>Reviews</Text>
+
+                    </View>}
+
+
+                    {/** Ratings */}
+                </View>
+
             </ScrollView>
         </SafeAreaView>
     )
@@ -145,5 +225,11 @@ const userStyle = StyleSheet.create({
         color: "#6E6B6B",
         fontWeight: 'bold',
         fontSize: 2 * vh,
+    }
+});
+
+const contentStyles = StyleSheet.create({
+    container: {
+        marginTop: 2.5 * vh,
     }
 });
