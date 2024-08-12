@@ -4,7 +4,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 # Todo List:
 
 - [X] maps
-- [ ] routes
+- [X] routes
 - [ ] rides
 - [ ] messages
 - [ ] notifications and cache
