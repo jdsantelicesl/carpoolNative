@@ -16,7 +16,7 @@ import RideObject from '../../components/myComponents/rideObject';
 
 
 // User id placeHolder. Replace after auth. The id is for test user
-const user_id = "66b690a0c48abbd2f6bcadfc";
+const user_id = "66b573b5bd03d4f38b185868";
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
@@ -60,8 +60,8 @@ const ride = () => {
         setDate(new Date);
 
         // fetch new rides
-        send_id = encodeURIComponent(user_id)
-        send_url = url + `/ride/getRides?client_id=${user_id}`
+        const send_id = encodeURIComponent(user_id)
+        send_url = url + `/ride/getRides?client_id=${send_id}`
         axios.get(send_url)
             .then(response => {
                 setDisplayRides(response.data);
@@ -95,36 +95,50 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // run refresh in the background
+        setRefreshing(true);
+        //first get users name, then post
+        const send_id = encodeURIComponent(user_id);
+        const detailsUrl = url + `/user/getUser?client_id=${send_id}`;
+        axios.get(detailsUrl)
+            .then(response => {
+                const user_name = response.data.name;
 
-
-        const data = {
-            destination: {
-                name: destination.name,
-                short: destination.shortName,
-                lat: destination.lat,
-                long: destination.long
-            },
-            origin: {
-                name: from.name,
-                short: from.shortName,
-                lat: from.lat,
-                long: from.long
-            },
-            day: day,
-            arrival: sendDate,
-            member: user_id
-        };
-        try {
-            send_url = url + "/ride/post"
-            setRefreshing(true);
-            await axios.post(send_url, data);
-            setRefreshing(false);
-            alert('Data sent to /data');
-        } catch (error) {
-            console.error('Error saving data', error);
-            alert('Failed to send data');
-        }
-    };
+                const data = {
+                    destination: {
+                        name: destination.name,
+                        short: destination.shortName,
+                        lat: destination.lat,
+                        long: destination.long
+                    },
+                    origin: {
+                        name: from.name,
+                        short: from.shortName,
+                        lat: from.lat,
+                        long: from.long
+                    },
+                    day: day,
+                    arrival: sendDate,
+                    member: {
+                        id: user_id,
+                        name: user_name
+                    }
+                };
+                send_url = url + "/ride/post"
+                axios.post(send_url, data)
+                    .then(response => {
+                        alert('Data sent to /data');
+                        setRefreshing(false);
+                    })
+                    .catch(error => {
+                        console.error('Error saving data', error);
+                        alert('Failed to send data');
+                    })
+            })
+            .catch(error => {
+                console.log("error getting user's name: ", error);
+            })
+    }
 
     return (
         <>
@@ -199,7 +213,6 @@ const ride = () => {
 
                         <Hr style={styles.hr} />
 
-                        {/* List rides below*/}
                         {/* List rides below*/}
 
                         <View style={{ marginTop: 1.5 * vh }}>
