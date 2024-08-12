@@ -9,8 +9,11 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
-import OriginSlideUp from '../../components/map/OriginSlideUp';
 import LocFind from '../../components/map/locFind';
+import { render } from 'react-native-web';
+import LocFindSlideUp from '../../components/map/LocFindSlideUp';
+import RideObject from '../../components/myComponents/rideObject';
+
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = "66b573b5bd03d4f38b185868";
@@ -28,24 +31,20 @@ const DayButton = ({ title, onPress, isSelected }) => (
 );
 
 const ride = () => {
-    const [mapActive, setMapActive] = useState(false)
+
     // Used for when user wants to refresh by pulling down page
     const [refreshing, setRefreshing] = useState(false);
+    const [renderMap, setRenderMap] = useState(false);
 
     /** Need all of these conversions in order for date form submission to run smooth, trust.
      * Will need to implement for android later.
      * .timzone is deprecated but works very well
      */
-    const clientTimeZone = Localization.timezone;
     const dateObj = new Date(); // Your date object
-    const options = { timeZone: clientTimeZone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(dateObj);
     const [date, setDate] = useState(dateObj)
-    const [sendDate, setSendDate] = useState(getHours(formattedDate)+(getMinutes(formattedDate)*0.1))
-    console.log("send Date", sendDate)
-
-    const [destination, setDest] = useState("test");
-    const [from, setFrom] = useState("test");
+    const [sendDate, setSendDate] = useState(getHours(Date()) + (getMinutes(Date())/60)) // need to use Date() directly!
+    const [destination, setDest] = useState(null);
+    const [from, setFrom] = useState(null);
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
@@ -63,21 +62,12 @@ const ride = () => {
         setRefreshing(false);
     }
 
-    const handleLocClick = (locId) => {
-        // this is the 'callback' function
-        /* this function will take the locId from the LocFind element clicked and
-         * set it as the current location or origin/destination */
-
-        // need to edit backend to send lat and long too
-        console.log(locId)
-    }
-
     const handleDate = (event, new_date) => {
         if (new_date instanceof Date) {
             setDate(new_date)
             const hours = getHours(new_date)
             const minutes = getMinutes(new_date)
-            const calculatedTime = hours + (minutes * 0.01)
+            const calculatedTime = hours + (minutes/60)
             setSendDate(calculatedTime)
 
         } else {
@@ -88,28 +78,22 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(sendDate)
-
-        // placeholder
-        const lat = 38.1;
-        const long = -121.1
 
         const data = {
             destination: {
-                name: destination,
-                lat: lat,
-                long: long
+                name: destination.name,
+                lat: destination.lat,
+                long: destination.long
             },
             origin: {
-                name: from,
-                lat: lat,
-                long: long
+                name: from.name,
+                lat: from.lat,
+                long: from.long
             },
             day: day,
             arrival: sendDate,
             member: user_id
         };
-        console.log(data)
         try {
             await axios.post(url, data);
             alert('Data sent to /data');
@@ -119,84 +103,105 @@ const ride = () => {
         }
     };
 
-
     return (
-        <SafeAreaView style={styles.container}>
-            {!mapActive && <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        colors={['#2E74DD']}
-                    />
-                }
-            >
-
-                {/* Location Selection Component */}
-
-                <Text style={styles.title}>Find a Carpool</Text>
-
-                <View style={styles.inputContainer}>
-                    <TouchableOpacity style={styles.inputWrapper} onPress={() => setMapActive(true)}>
-                        <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-                        <Text style={styles.locInput}>
-                            {destination ? destination : 'Where to?'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Weekday Component */}
-
-                <Text style={styles.subTitle}>When do you need to be there?</Text>
-                <View style={styles.weekdayContainer}>
-                    {days.map((d, index) => (
-                        <DayButton
-                            key={index}
-                            title={d}
-                            onPress={() => setDay(index + 1)}
-                            isSelected={day === index + 1}
-                        />
-                    ))}
-                </View>
-
-                {/* Time Selection Component */}
-
-                <View style={styles.timeContainer}>
-                    <Text style={styles.subTitle}>Time:</Text>
-                    <View style={styles.timePickerContainer}>
-                        <RNDateTimePicker
-                            mode="time"
-                            display='default'
-                            value={date}
-                            onChange={handleDate}
-                        />
-                    </View>
-                </View>
-
-                {/* Handle Submit Component */}
-                <View style={styles.submitContainer}>
-                    <TouchableOpacity
-                        onPress={(e) => handleSubmit(e)}
-
-                        // Apply disabled style conditionally
-                        style={[styles.submitButton, (destination && from && day) && { backgroundColor: '#2E74DD' }]}
-                        disabled={!(destination && from && day)} // Disable button press functionality
+        <>
+            {!renderMap &&
+                <SafeAreaView style={styles.container}>
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={['#2E74DD']}
+                            />
+                        }
                     >
-                        <Text style={[styles.submitText, (destination && from && day) && { color: 'black' }]}>Submit</Text>
-                    </TouchableOpacity>
-                </View>
 
-                <Hr style={styles.hr} />
+                        {/* Location Selection Component */}
 
-                {/* Separating Line */}
+                        <Text style={styles.title}>Find a Carpool</Text>
 
-                <LocFind query={destination} handleLocClick={handleLocClick} />
+                        <View style={styles.inputContainer}>
+                            <TouchableOpacity style={styles.inputWrapper} onPress={() => setRenderMap(true)}>
+                                <FontAwesome6 name="location-dot" size={24} style={[styles.icon, (destination && {color: "black"})]} />
+                                <Text style={[styles.locInput, (destination && {color: "black"})]}>
+                                    {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
 
-                {/* List of users (Make scrollable)*/}
-            </ScrollView>}
+                        {/* Weekday Component */}
 
-            {mapActive && <OriginSlideUp setMapActive={setMapActive} />}
-        </SafeAreaView>
+                        <Text style={styles.subTitle}>When do you need to be there?</Text>
+                        <View style={styles.weekdayContainer}>
+                            {days.map((d, index) => (
+                                <DayButton
+                                    key={index}
+                                    title={d}
+                                    onPress={() => setDay(index + 1)}
+                                    isSelected={day === index + 1}
+                                />
+                            ))}
+                        </View>
+
+                        {/* Time Selection Component */}
+
+                        <View style={styles.timeContainer}>
+                            <Text style={styles.subTitle}>Time:</Text>
+                            <View style={styles.timePickerContainer}>
+                                <RNDateTimePicker
+                                    mode="time"
+                                    display='default'
+                                    value={date}
+                                    onChange={handleDate}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Handle Submit Component */}
+                        <View style={styles.submitContainer}>
+                            <TouchableOpacity
+                                onPress={(e) => handleSubmit(e)}
+
+                                // Apply disabled style conditionally
+                                style={[styles.submitButton, (destination && from && day) && { backgroundColor: '#2E74DD' }]}
+                                disabled={!(destination && from && day)} // Disable button press functionality
+                            >
+                                <Text style={[styles.submitText, (destination && from && day) && { color: 'black' }]}>Submit</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Hr style={styles.hr} />
+
+                        {/* List rides below*/}
+                        <View style={{marginTop: 1.5 * vh}}>
+                            <RideObject 
+                            origin="West Davis"
+                            destination="Sacramento City College"
+                            day= {1}
+                            depart="7:30am"
+                            arrival="8:10am"
+                            members="John Smith"
+                            />
+                            <RideObject 
+                            origin="West Davis"
+                            destination="Sacramento City College"
+                            day= {1}
+                            depart="7:30am"
+                            arrival="8:10am"
+                            members="Harry Potter"
+                            />
+                        </View>
+
+
+                    </ScrollView>
+
+
+
+                </SafeAreaView>}
+
+            {renderMap && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom}/> }
+        </>
     );
 };
 
@@ -239,6 +244,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginLeft: 4 * vw,
+        color: "#6E6B6B"
     },
     locInput: {
         flex: 1,
@@ -275,7 +281,7 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     timeContainer: {
-        marginLeft: 20*vw,
+        marginLeft: 20 * vw,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -284,7 +290,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     timePickerContainer: {
-        marginRight: 28*vw,
+        marginRight: 28 * vw,
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',

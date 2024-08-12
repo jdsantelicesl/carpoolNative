@@ -1,92 +1,194 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert } from 'react-native';
+import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert, Touchable } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
-import MapScreen from './MapScreen';
-import DestinationSlideUp from './DestinationSlideUp';
+import MapScreen from './MapScreen'
+import LocFind from './locFind';
+import axios from 'axios';
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-const OriginSlideUp = ({ setMapActive }) => {
+const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 	const [isModalVisible, setModalVisible] = useState(true);
+	const [isConfVisible, setConfVisible] = useState(false);
 	const pan = useState(new Animated.ValueXY())[0];
+
 	const [originText, setOriginText] = useState("");
+	const [destinationText, setDestinationText] = useState("");
+	const [query, setQuery] = useState("")
 
-	const [isStretched, setIsStretched] = useState(false)
+	// need this data for ride and dont want to have to edit others
+	const [originShort, setOriginShort] = useState("");
+	const [destShort, setDestShort] = useState("");
 
-	const [originLat, setLat] = useState(null);
-	const [originLong, setLong] = useState(null);
+	const [originLat, setOriginLat] = useState(null);
+	const [originLong, setOriginLong] = useState(null);
 
-	const handleChangeText = () => {
-		// Make this refer to Workflow #2, so it could let them query.
-	};
+	const [destLat, setDestLat] = useState(null);
+	const [destLong, setDestLong] = useState(null);
 
-	const toggleModal = () => {
-		setModalVisible(!isModalVisible);
-	};
+	const url = process.env.EXPO_PUBLIC_API_URL + "/ride/getCoordinates";
+
+	const confirmRoute = () => {
+		setDest({
+			name: destinationText,
+			lat: destLat,
+			long: destLong,
+			shortName: originShort
+		});
+		setFrom({
+			name: originText,
+			lat: originLat,
+			long: originLong,
+			shortName: destShort
+		});
+		setModalVisible(true);
+		setConfVisible(false);
+		setRenderMap(false);
+	}
+
+	// handles location selection from LocFind
+	const locClick = (loc_id, loc_name, short_name) => {
+		// this variable is used to store wether we are editing origin or dest
+		let originOrDest = ""
+		// Check if we are referring to origin or dest
+		if (query == originText) {
+			setOriginText(loc_name);
+			setOriginShort(short_name);
+			setQuery("");
+			originOrDest = "origin";
+		}
+		else if (query == destinationText) {
+			setDestinationText(loc_name);
+			setDestShort(short_name);
+			setQuery("");
+			originOrDest = "dest"
+		}
+
+		encode_id = encodeURIComponent(loc_id)
+		fetch_url = `${url}?placeId=${encode_id}`
+
+
+		axios.get(fetch_url)
+			.then(response => {
+				const get_lat = response.data.location.latitude;
+				const get_long = response.data.location.longitude;
+
+				if (originOrDest === "origin") {
+					setOriginLat(get_lat);
+					setOriginLong(get_long);
+
+					if (destLat && destLong) {
+						setModalVisible(false);
+						setConfVisible(true);
+					}
+				}
+				else if (originOrDest === "dest") {
+					setDestLat(get_lat);
+					setDestLong(get_long);
+
+					if (originLat && originLong) {
+						setModalVisible(false);
+						setConfVisible(true);
+					}
+				}
+				else {
+					throw new Error("query is editing neither origin or dest");
+				}
+			})
+			.catch(error => {
+				console.log("error getting coordinates: ", error);
+			});
+	}
 
 	return (
 		<View style={styles.container}>
-
+			<MapScreen origin={{lat: originLat, long: originLong}} dest={{lat: destLat, long: destLong}} />
 
 			<Modal
 				isVisible={isModalVisible}
 				backdropOpacity={0}
-				//onBackdropPress={toggleModal}
-				onBackButtonPress={toggleModal}
-				//swipeDirection={["down", "up"]}
+				swipeDirection="down"
 				swipeThreshold={500}
-				//onSwipeComplete={toggleModal}
 				avoidKeyboard={true}
 				propagateSwipe={true}
 				animationInTiming={100}
+				coverScreen={false}
 				animationIn="fadeIn"
 				animationOut="fadeOut"
 				style={styles.modal}
 			>
-			<View style={styles.mapContainer}>
-				<MapScreen
-					onLatChange={setLat}
-					onLongChange={setLong}
-				/>
-			</View>
-				
-				{ !isStretched && 
 				<Animated.View style={[styles.modalContent, { transform: [{ translateY: pan.y }] }]}>
-					<TouchableOpacity onPress={() => setMapActive(false)}>
-						{/* <Text style={styles.closeText}>Close</Text> */}
-						<FontAwesome6 name="circle-arrow-left" size={24} color="#000000" style={styles.xIcon} />
+					<TouchableOpacity
+						style={{ marginRight: 80 * vw }}
+						onPress={() => setRenderMap(false)}>
+						<FontAwesome6 name="circle-arrow-left" size={30} color="#000000" />
 					</TouchableOpacity>
-					<Text style={styles.subTitle}>Set your origin</Text>
-					<Text style={styles.subSubTitle}>Drag map to move pin</Text>
-					<Text style={styles.subSubTitle}>_________________________</Text>
+
+					<Text style={styles.subTitle}>Organize your trip</Text>
+
 					<View style={styles.inputWrapper}>
-						<FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
-						<TextInput
-							style={styles.locInput}
-							placeholder={String(originLat)}
-							placeholderTextColor="grey"
-							value={originText}
-							onChangeText={() => handleChangeText()}
-						/>
-						<TouchableOpacity onPress={() => setOriginText("")}>
-							<FontAwesome6 name="xmark" size={24} color="#000000" style={styles.xIcon} />
+						<View style={styles.inputContent}>
+							<FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
+							<TextInput
+								style={styles.locInput}
+								placeholder={"Where from?"}
+								placeholderTextColor="grey"
+								value={originText}
+								onChangeText={(data) => { setOriginText(data); setQuery(data) }}
+							/>
+						</View>
+						<View style={styles.inputContent}>
+							<FontAwesome6 name="location-dot" size={24} color="#000000" style={styles.locDotIcon} />
+							<TextInput
+								style={styles.locInput}
+								placeholder={"Where to?"}
+								placeholderTextColor="grey"
+								value={destinationText}
+								onChangeText={(data) => { setDestinationText(data); setQuery(data) }}
+							/>
+						</View>
+					</View>
+
+					<View style={styles.locFindListContainer}>
+						<LocFind query={query} handleLocClick={locClick} />
+					</View>
+
+				</Animated.View>
+
+			</Modal>
+
+
+			<Modal
+				isVisible={isConfVisible}
+				backdropOpacity={0}
+				swipeDirection="down"
+				swipeThreshold={500}
+				avoidKeyboard={true}
+				propagateSwipe={true}
+				animationInTiming={100}
+				coverScreen={false}
+				animationIn="fadeIn"
+				animationOut="fadeOut"
+				style={styles.modal}
+			>
+				<Animated.View style={[styles.confRoute, { transform: [{ translateY: pan.y }] }]}>
+					<TouchableOpacity
+						style={{ marginRight: 80 * vw }}
+						onPress={() => { setModalVisible(true); setConfVisible(false) }}>
+						<FontAwesome6 name="circle-arrow-left" size={30} color="#000000" />
+					</TouchableOpacity>
+
+					<View style={styles.submitContainer}>
+						<TouchableOpacity style={styles.submitButton} onPress={confirmRoute}>
+							<Text style={styles.submitText}>Confirm Route</Text>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity>
-						
-						<DestinationSlideUp
-							originLat={originLat}
-							originLong={originLong}
-						/>
-					</TouchableOpacity>
-				</Animated.View> }
+				</Animated.View>
 
-				{ /*isStretched && */ }
-				
 			</Modal>
 
 
@@ -118,23 +220,24 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		fontWeight: "bold",
 		fontSize: 20,
-		marginTop: -1 * vh,
+		marginTop: -1.5 * vh,
 	},
-	subSubTitle: {
-		color: "#6E6B6B",
+	bodyText: {
+		color: "black",
 		textAlign: "center",
 		fontSize: 17,
-		marginBottom: -1 * vh,
 	},
-	mapContainer: {
-		...StyleSheet.absoluteFillObject,
+	subBodyText: {
+		color: "#6E6B6B",
+		textAlign: "center",
+		fontSize: 15,
 	},
 	modal: {
 		justifyContent: 'flex-end',
 		margin: 0,
 	},
 	modalContent: {
-		height: height * 0.37,
+		height: height * 0.8,
 		backgroundColor: 'white',
 		padding: 20,
 		borderTopLeftRadius: 20,
@@ -146,22 +249,28 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	inputWrapper: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		backgroundColor: '#D9D9D9',
 		borderRadius: 5 * vw,
 		justifyContent: "center",
 		alignItems: "center",
-		width: 75 * vw,
-		height: 10 * vh,
+		width: 70 * vw,
+		height: 12 * vh,
 		// Bro how do you center this View
-		marginTop: 3.5 * vh,
-		marginHorizontal: 7 * vw,
+		marginTop: 2.5 * vh,
+		marginHorizontal: 4 * vw,
+	},
+	inputContent: {
+		flexDirection: 'row',
+		flex: 1,
 	},
 	locDotIcon: {
+		marginTop: 3 * vw,
 		marginLeft: 4 * vw,
 	},
-	xIcon: {
-		marginRight: 5 * vw,
+	mapPin: {
+		marginTop: 3 * vw,
+		marginRight: 4 * vw,
 	},
 	locInput: {
 		flex: 1,
@@ -171,22 +280,35 @@ const styles = StyleSheet.create({
 		color: "black",
 		paddingLeft: 3 * vw,
 	},
-	confirmButton: {
-		backgroundColor: '#D9D9D9',
-		borderRadius: 5 * vw,
-		width: 75 * vw,
-		height: 4 * vh,
-		marginHorizontal: 7 * vw,
+	locFindListContainer: {
+		flexDirection: "column",
 		marginTop: 2 * vh,
 	},
-	confirmText: {
-		color: "#6E6B6B",
-		justifyContent: "center",
-		textAlign: "center",
-		fontWeight: "bold",
-		fontSize: 20,
-		marginTop: 0.5 * vh,
+	confRoute: {
+		height: height * .16,
+		backgroundColor: 'white',
+		padding: 20,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.8,
+		shadowRadius: 8,
+		elevation: 5,
+	},
+	submitButton: {
+		backgroundColor: '#2E74DD',
+		paddingHorizontal: 1 * vh,
+		paddingVertical: 1.5*vh,
+		borderRadius: 6 * vw,
+		marginHorizontal: 20 * vw,
+	},
+	submitText: {
+		color: 'black',
+		textAlign: 'center',
+		fontSize: 2.5 * vh,
+		fontWeight: 'bold',
 	},
 });
 
-export default OriginSlideUp;
+export default LocFindSlideUp;

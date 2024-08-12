@@ -50,11 +50,9 @@ const DestinationSlideUp = ({originLat, originLong, destinationLat, destinationL
 
 
 	return (
-		<View style={styles.container}>
-			<TouchableOpacity onPress={() => toggleModal()}>
-				<View style={styles.confirmButton}>
-					<Text style={styles.confirmText}> Confirm </Text>
-				</View>
+		<View>
+			<TouchableOpacity>
+				<FontAwesome6 name="map-pin" size={24} color="#000000" style={styles.mapPin} onPress={toggleModal} />
 			</TouchableOpacity>
 		<Modal
 			isVisible={isModalVisible}
@@ -110,11 +108,6 @@ const DestinationSlideUp = ({originLat, originLong, destinationLat, destinationL
 const styles = StyleSheet.create({
 	mapPin: {
 		marginLeft: 10 * vw,
-	},
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 	textInput: {
 		height: 40,
@@ -205,6 +198,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 20,
 		marginTop: 0.5 * vh,
+	},
+	mapPin : {
+		marginLeft: 55 * vw,
+		marginTop: -4 * vh,
 	},
 });
 
