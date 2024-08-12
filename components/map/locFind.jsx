@@ -39,7 +39,9 @@ const LocFind = ({ style, query, handleLocClick }) => {
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={styles.locContainer}
-                                onPress={() => handleLocClick(item.placePrediction.placeId, item.placePrediction.text.text)}
+                                onPress={() =>
+                                    handleLocClick(item.placePrediction.placeId, item.placePrediction.text.text, item.placePrediction.structuredFormat.mainText.text)
+                                }
                             >
                                 <Text style={styles.locText}>{item.placePrediction.text.text}</Text>
                             </TouchableOpacity>
@@ -62,13 +64,13 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     locText: {
-        marginHorizontal: 4*vw,
+        marginHorizontal: 4 * vw,
         fontSize: 2 * vh,
         fontWeight: 'bold',
         color: 'black'
     },
     locContainer: {
-        marginVertical: .5*vh,
+        marginVertical: .5 * vh,
         backgroundColor: "#D9D9D9",
         width: 86 * vw,
         paddingVertical: 1.5 * vh,

@@ -84,26 +84,21 @@ const ride = () => {
         e.preventDefault();
         console.log(sendDate)
 
-        // placeholder
-        const lat = 38.1;
-        const long = -121.1
-
         const data = {
             destination: {
-                name: destination,
-                lat: lat,
-                long: long
+                name: destination.name,
+                lat: destination.lat,
+                long: destination.long
             },
             origin: {
-                name: from,
-                lat: lat,
-                long: long
+                name: from.name,
+                lat: from.lat,
+                long: from.long
             },
             day: day,
             arrival: sendDate,
             member: user_id
         };
-        console.log(data)
         try {
             await axios.post(url, data);
             alert('Data sent to /data');
@@ -133,9 +128,9 @@ const ride = () => {
 
                         <View style={styles.inputContainer}>
                             <TouchableOpacity style={styles.inputWrapper} onPress={() => setRenderMap(true)}>
-                                <FontAwesome6 name="magnifying-glass" size={24} color="#6E6B6B" style={styles.icon} />
-                                <Text style={styles.locInput}>
-                                    {destination ? destination : 'Where to?'}
+                                <FontAwesome6 name="location-dot" size={24} style={[styles.icon, (destination && {color: "black"})]} />
+                                <Text style={[styles.locInput, (destination && {color: "black"})]}>
+                                    {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -192,7 +187,7 @@ const ride = () => {
 
                 </SafeAreaView>}
 
-            {renderMap && <LocFindSlideUp setRenderMap={setRenderMap} /> }
+            {renderMap && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom}/> }
         </>
     );
 };
@@ -236,6 +231,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginLeft: 4 * vw,
+        color: "#6E6B6B"
     },
     locInput: {
         flex: 1,

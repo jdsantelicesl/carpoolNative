@@ -11,7 +11,7 @@ const { height, width } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-const LocFindSlideUp = ({ setRenderMap }) => {
+const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 	const [isModalVisible, setModalVisible] = useState(true);
 	const [isConfVisible, setConfVisible] = useState(false);
 	const pan = useState(new Animated.ValueXY())[0];
@@ -19,6 +19,10 @@ const LocFindSlideUp = ({ setRenderMap }) => {
 	const [originText, setOriginText] = useState("");
 	const [destinationText, setDestinationText] = useState("");
 	const [query, setQuery] = useState("")
+
+	// need this data for ride and dont want to have to edit others
+	const [originShort, setOriginShort] = useState("");
+	const [destShort, setDestShort] = useState("");
 
 	const [originLat, setOriginLat] = useState(null);
 	const [originLong, setOriginLong] = useState(null);
@@ -28,18 +32,38 @@ const LocFindSlideUp = ({ setRenderMap }) => {
 
 	const url = process.env.EXPO_PUBLIC_API_URL + "/ride/getCoordinates";
 
+	const confirmRoute = () => {
+		setDest({
+			name: destinationText,
+			lat: destLat,
+			long: destLong,
+			shortName: originShort
+		});
+		setFrom({
+			name: originText,
+			lat: originLat,
+			long: originLong,
+			shortName: destShort
+		});
+		setModalVisible(true);
+		setConfVisible(false);
+		setRenderMap(false);
+	}
+
 	// handles location selection from LocFind
-	const locClick = (loc_id, loc_name) => {
+	const locClick = (loc_id, loc_name, short_name) => {
 		// this variable is used to store wether we are editing origin or dest
 		let originOrDest = ""
 		// Check if we are referring to origin or dest
 		if (query == originText) {
 			setOriginText(loc_name);
+			setOriginShort(short_name);
 			setQuery("");
 			originOrDest = "origin";
 		}
 		else if (query == destinationText) {
 			setDestinationText(loc_name);
+			setDestShort(short_name);
 			setQuery("");
 			originOrDest = "dest"
 		}
@@ -154,12 +178,12 @@ const LocFindSlideUp = ({ setRenderMap }) => {
 				<Animated.View style={[styles.confRoute, { transform: [{ translateY: pan.y }] }]}>
 					<TouchableOpacity
 						style={{ marginRight: 80 * vw }}
-						onPress={() => setRenderMap(false)}>
+						onPress={() => { setModalVisible(true); setConfVisible(false) }}>
 						<FontAwesome6 name="circle-arrow-left" size={30} color="#000000" />
 					</TouchableOpacity>
 
 					<View style={styles.submitContainer}>
-						<TouchableOpacity style={styles.submitButton}>
+						<TouchableOpacity style={styles.submitButton} onPress={confirmRoute}>
 							<Text style={styles.submitText}>Confirm Route</Text>
 						</TouchableOpacity>
 					</View>
