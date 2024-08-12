@@ -12,6 +12,7 @@ import axios from 'axios'; // Use this when we create a Flask server for data en
 import LocFind from '../../components/map/locFind';
 import { render } from 'react-native-web';
 import LocFindSlideUp from '../../components/map/LocFindSlideUp';
+import RideObject from '../../components/myComponents/rideObject';
 
 
 // User id placeHolder. Replace after auth. The id is for test user
@@ -178,7 +179,25 @@ const ride = () => {
 
                         <Hr style={styles.hr} />
 
-                        {/* Separating Line , list rides below*/}
+                        {/* List rides below*/}
+                        <View style={{marginTop: 1.5 * vh}}>
+                            <RideObject 
+                            origin="West Davis"
+                            destination="Sacramento City College"
+                            day= {1}
+                            depart="7:30am"
+                            arrival="8:10am"
+                            members="John Smith"
+                            />
+                            <RideObject 
+                            origin="West Davis"
+                            destination="Sacramento City College"
+                            day= {1}
+                            depart="7:30am"
+                            arrival="8:10am"
+                            members="Harry Potter"
+                            />
+                        </View>
 
 
                     </ScrollView>
