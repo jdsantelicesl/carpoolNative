@@ -24,7 +24,7 @@ const RideObject = ({ origin, destination, day, arrival, members }) => {
             <View style={styles.infoContainer}>
                 <View style={styles.userContainer}>
                     <FontAwesome6 name="user" size={25}/> 
-                    <Text style={styles.members}> {members[0]} </Text>
+                    <Text style={styles.members}> Name </Text>
                 </View>
 
                 <View style={styles.locationContainer}>

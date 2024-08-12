@@ -16,7 +16,7 @@ import RideObject from '../../components/myComponents/rideObject';
 
 
 // User id placeHolder. Replace after auth. The id is for test user
-const user_id = "66b573b5bd03d4f38b185868";
+const user_id = "66b690a0c48abbd2f6bcadfc";
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
@@ -52,6 +52,14 @@ const ride = () => {
 
     useEffect(() => {
         console.log('refreshing');
+
+        // reset all values
+        setDest(null);
+        setFrom(null);
+        setDay(null);
+        setDate(new Date);
+
+        // fetch new rides
         send_id = encodeURIComponent(user_id)
         send_url = url + `/ride/getRides?client_id=${user_id}`
         axios.get(send_url)
@@ -66,15 +74,8 @@ const ride = () => {
     const onRefresh = async () => {
         // display refreshing animation
         setRefreshing(true);
-
-        // reset all values
-        setDest(null);
-        setFrom(null);
-        setDay(null);
-        setDate(new Date);
         // Simulate a delay to ensure that refreshing state is properly updated
         await new Promise(resolve => setTimeout(resolve, 1000));
-
         setRefreshing(false);
     }
 
@@ -115,7 +116,9 @@ const ride = () => {
         };
         try {
             send_url = url + "/ride/post"
+            setRefreshing(true);
             await axios.post(send_url, data);
+            setRefreshing(false);
             alert('Data sent to /data');
         } catch (error) {
             console.error('Error saving data', error);
