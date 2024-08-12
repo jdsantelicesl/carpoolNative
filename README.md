@@ -11,6 +11,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] profile
 - [ ] ratings
 - [ ] auth
+- [ ] color pallete and darkmode/lightmode support
+- [ ] design details, graphics, icons, animations
 - [ ] deploy
 
 
