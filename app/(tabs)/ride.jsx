@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert,
-    TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl
+    TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl, FlatList,
 } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
@@ -127,6 +127,9 @@ const ride = () => {
                                 <Text style={[styles.locInput, (destination && {color: "black"})]}>
                                     {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
+                            <TouchableOpacity style={{marginRight: 7 * vw}}onPress={() => onRefresh()} >
+                                <FontAwesome6 name="xmark" size={24} style={[styles.icon, (destination && {color: "black"})]} />
+                            </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
 
@@ -174,26 +177,45 @@ const ride = () => {
                         <Hr style={styles.hr} />
 
                         {/* List rides below*/}
+                        {/* List rides below*/}
+
                         <View style={{marginTop: 1.5 * vh}}>
-                            <RideObject 
-                            origin="West Davis"
-                            destination="Sacramento City College"
-                            day= {1}
-                            depart="7:30am"
-                            arrival="8:10am"
-                            members="John Smith"
-                            />
-                            <RideObject 
-                            origin="West Davis"
-                            destination="Sacramento City College"
-                            day= {1}
-                            depart="7:30am"
-                            arrival="8:10am"
-                            members="Harry Potter"
-                            />
+                            {!destination && !from && <FlatList
+                                scrollEnabled={false}
+                                // data is going to taken in an object which fetches DB to get all rides
+                                data={[
+                                    {
+                                        id: '1',
+                                        origin: "West Davis",
+                                        destination: "Sacramento City College",
+                                        day: 1,
+                                        depart: "7:30am",
+                                        arrival: "8:10am",
+                                        members: "John Smith"
+                                    },
+                                    {
+                                        id: '2',
+                                        origin: "West Davis",
+                                        destination: "Sacramento City College",
+                                        day: 1,
+                                        depart: "7:30am",
+                                        arrival: "8:10am",
+                                        members: "Harry Potter"
+                                    },
+                                ]}
+                                renderItem={({ item }) => (
+                                    <RideObject 
+                                        origin={item.origin}
+                                        destination={item.destination}
+                                        day={item.day}
+                                        depart={item.depart}
+                                        arrival={item.arrival}
+                                        members={item.members}
+                                    />
+                                )}
+                                keyExtractor={item => item.id}
+                            /> }
                         </View>
-
-
                     </ScrollView>
 
 
