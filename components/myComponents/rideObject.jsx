@@ -12,7 +12,7 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const RideObject = ({ origin, destination, day, depart, arrival, members }) => {
+const RideObject = ({ origin, destination, day, arrival, members }) => {
     const dayOfWeek = convertDay(day);
 
     const handleButtonPress = () => {
@@ -24,20 +24,19 @@ const RideObject = ({ origin, destination, day, depart, arrival, members }) => {
             <View style={styles.infoContainer}>
                 <View style={styles.userContainer}>
                     <FontAwesome6 name="user" size={25}/> 
-                    <Text style={styles.members}> {members} </Text>
+                    <Text style={styles.members}> {members[0]} </Text>
                 </View>
 
                 <View style={styles.locationContainer}>
                     <Text style={styles.locationContent}> 
-                        {origin} <Text> </Text>
-                        <FontAwesome6 name="arrow-right" size={12}/> <Text> </Text>
-                        {destination}
+                        {origin.short}
+                        <Text> </Text> <FontAwesome6 name="arrow-right" size={12}/> <Text> </Text>
+                        {destination.short}
                     </Text>
                 </View>
 
                 <View style={styles.timeContainer}>
-                    <Text> Depart {dayOfWeek} by {depart} </Text>
-                    <Text> Arrive {dayOfWeek} by {arrival} </Text>
+                    <Text>Arrive {dayOfWeek} by {arrival} </Text>
                 </View>
             </View>
             <TouchableOpacity style={styles.button} onPress={handleButtonPress}>

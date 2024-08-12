@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert,
     TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl, FlatList,
@@ -32,6 +32,7 @@ const DayButton = ({ title, onPress, isSelected }) => (
 
 const ride = () => {
 
+    const [displayRides, setDisplayRides] = useState(null)
     // Used for when user wants to refresh by pulling down page
     const [refreshing, setRefreshing] = useState(false);
     const [renderMap, setRenderMap] = useState(false);
@@ -42,14 +43,27 @@ const ride = () => {
      */
     const dateObj = new Date(); // Your date object
     const [date, setDate] = useState(dateObj)
-    const [sendDate, setSendDate] = useState(getHours(Date()) + (getMinutes(Date())/60)) // need to use Date() directly!
+    const [sendDate, setSendDate] = useState(getHours(Date()) + (getMinutes(Date()) / 60)) // need to use Date() directly!
     const [destination, setDest] = useState(null);
     const [from, setFrom] = useState(null);
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-    const url = process.env.EXPO_PUBLIC_API_URL + "/ride/post"; // placeholder
+    const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
-    const onRefresh = () => {
+    useEffect(() => {
+        console.log('refreshing');
+        send_id = encodeURIComponent(user_id)
+        send_url = url + `/ride/getRides?client_id=${user_id}`
+        axios.get(send_url)
+            .then(response => {
+                setDisplayRides(response.data);
+            })
+            .catch(error => {
+                console.log("error fetching rides: ", error);
+            })
+    }, [refreshing])
+
+    const onRefresh = async () => {
         // display refreshing animation
         setRefreshing(true);
 
@@ -58,6 +72,8 @@ const ride = () => {
         setFrom(null);
         setDay(null);
         setDate(new Date);
+        // Simulate a delay to ensure that refreshing state is properly updated
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         setRefreshing(false);
     }
@@ -67,7 +83,7 @@ const ride = () => {
             setDate(new_date)
             const hours = getHours(new_date)
             const minutes = getMinutes(new_date)
-            const calculatedTime = hours + (minutes/60)
+            const calculatedTime = hours + (minutes / 60)
             setSendDate(calculatedTime)
 
         } else {
@@ -79,14 +95,17 @@ const ride = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
         const data = {
             destination: {
                 name: destination.name,
+                short: destination.shortName,
                 lat: destination.lat,
                 long: destination.long
             },
             origin: {
                 name: from.name,
+                short: from.shortName,
                 lat: from.lat,
                 long: from.long
             },
@@ -95,7 +114,8 @@ const ride = () => {
             member: user_id
         };
         try {
-            await axios.post(url, data);
+            send_url = url + "/ride/post"
+            await axios.post(send_url, data);
             alert('Data sent to /data');
         } catch (error) {
             console.error('Error saving data', error);
@@ -123,13 +143,13 @@ const ride = () => {
 
                         <View style={styles.inputContainer}>
                             <TouchableOpacity style={styles.inputWrapper} onPress={() => setRenderMap(true)}>
-                                <FontAwesome6 name="location-dot" size={24} style={[styles.icon, (destination && {color: "black"})]} />
-                                <Text style={[styles.locInput, (destination && {color: "black"})]}>
+                                <FontAwesome6 name="location-dot" size={24} style={[styles.icon, (destination && { color: "black" })]} />
+                                <Text style={[styles.locInput, (destination && { color: "black" })]}>
                                     {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
-                            <TouchableOpacity style={{marginRight: 7 * vw}}onPress={() => onRefresh()} >
-                                <FontAwesome6 name="xmark" size={24} style={[styles.icon, (destination && {color: "black"})]} />
-                            </TouchableOpacity>
+                                <TouchableOpacity style={{ marginRight: 7 * vw }} onPress={() => onRefresh()} >
+                                    <FontAwesome6 name="xmark" size={24} style={[styles.icon, (destination && { color: "black" })]} />
+                                </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
 
@@ -179,42 +199,25 @@ const ride = () => {
                         {/* List rides below*/}
                         {/* List rides below*/}
 
-                        <View style={{marginTop: 1.5 * vh}}>
-                            {!destination && !from && <FlatList
+                        <View style={{ marginTop: 1.5 * vh }}>
+                            {(displayRides != "empty") && displayRides && <FlatList
                                 scrollEnabled={false}
                                 // data is going to taken in an object which fetches DB to get all rides
-                                data={[
-                                    {
-                                        id: '1',
-                                        origin: "West Davis",
-                                        destination: "Sacramento City College",
-                                        day: 1,
-                                        depart: "7:30am",
-                                        arrival: "8:10am",
-                                        members: "John Smith"
-                                    },
-                                    {
-                                        id: '2',
-                                        origin: "West Davis",
-                                        destination: "Sacramento City College",
-                                        day: 1,
-                                        depart: "7:30am",
-                                        arrival: "8:10am",
-                                        members: "Harry Potter"
-                                    },
-                                ]}
+                                data={displayRides}
                                 renderItem={({ item }) => (
-                                    <RideObject 
-                                        origin={item.origin}
+                                    <RideObject
+                                        origin={item.origins}
                                         destination={item.destination}
                                         day={item.day}
-                                        depart={item.depart}
                                         arrival={item.arrival}
                                         members={item.members}
                                     />
                                 )}
                                 keyExtractor={item => item.id}
-                            /> }
+                            />}
+
+                            {(displayRides === "empty") && <Text>Post a ride to see recommendations! :) </Text>}
+                            {!displayRides && <Text>Loading...</Text>}
                         </View>
                     </ScrollView>
 
@@ -222,7 +225,7 @@ const ride = () => {
 
                 </SafeAreaView>}
 
-            {renderMap && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom}/> }
+            {renderMap && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom} />}
         </>
     );
 };

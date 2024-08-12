@@ -37,13 +37,13 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 			name: destinationText,
 			lat: destLat,
 			long: destLong,
-			shortName: originShort
+			shortName: destShort
 		});
 		setFrom({
 			name: originText,
 			lat: originLat,
 			long: originLong,
-			shortName: destShort
+			shortName: originShort
 		});
 		setModalVisible(true);
 		setConfVisible(false);
