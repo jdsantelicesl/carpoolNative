@@ -15,6 +15,12 @@ const convertDay = (day) => {
 const RideObject = ({ origin, destination, day, arrival, members }) => {
     const dayOfWeek = convertDay(day);
 
+    // sets hour, minute, amPm from 24h to 12h clock
+    const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
+    const roundMin = Math.round((arrival - Math.floor(arrival))*60);
+    const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
+    const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
+
     const handleButtonPress = () => {
         Alert.alert('Requested to join ride');
     };
@@ -36,7 +42,7 @@ const RideObject = ({ origin, destination, day, arrival, members }) => {
                 </View>
 
                 <View style={styles.timeContainer}>
-                    <Text>Arrive {dayOfWeek} by {arrival} </Text>
+                    <Text>Arrive {dayOfWeek} by {hour}:{minute}{amPm} </Text>
                 </View>
             </View>
             <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
