@@ -3,7 +3,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 # Todo List:
 
-- [ ] maps
+- [X] maps
 - [ ] routes
 - [ ] rides
 - [ ] messages
