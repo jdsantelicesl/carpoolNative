@@ -10,6 +10,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] notifications and cache
 - [ ] profile
 - [ ] ratings
+- [ ] get user current location for security measures and data log purposes
 - [ ] auth
 - [ ] color pallete and darkmode/lightmode support
 - [ ] design details, graphics, icons, animations

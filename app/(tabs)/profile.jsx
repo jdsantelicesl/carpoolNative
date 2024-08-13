@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView, RefreshControl, FlatList
+    Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView, RefreshControl, FlatList
 } from 'react-native';
 import axios from 'axios';
 
@@ -8,6 +8,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
 import RideObject from '../../components/myComponents/rideObject';
+import RideGroup from '../../components/myComponents/rideGroup';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -21,7 +22,8 @@ const profile = () => {
     // for either rides or reviews
     const [page, setPage] = useState('rides');
     const [displayRides, setDisplayRides] = useState(null);
-
+    const [renderRideGroup, setRenderRideGroup] = useState(false);
+    
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
     const pagePress = (value) => {
@@ -54,8 +56,10 @@ const profile = () => {
     }
 
 
+
     return (
-        <SafeAreaView style={styles.container}>
+        <>
+        {!renderRideGroup && <SafeAreaView style={styles.container}>
             <ScrollView
                 refreshControl={
                     <RefreshControl
@@ -131,6 +135,7 @@ const profile = () => {
                                     day={item.day}
                                     arrival={item.arrival}
                                     members={item.members}
+                                    onPress={() => setRenderRideGroup(true) }
                                 />
                             )}
                             keyExtractor={item => item.id}
@@ -151,7 +156,22 @@ const profile = () => {
                 </View>
 
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView>}
+
+        { renderRideGroup && 
+            <RideGroup
+            origin={"West Davis"}
+            destination={"Sacramento City College"}
+            day={2}
+            arrival={8.5}
+            memberGroup={[  { name: 'John Doe' },
+                            { name: 'Jane Smith' },
+                            { name: 'Floyd Mayweather' },
+                            { name: 'Empty' },
+                        ]}
+            setRenderRideGroup={setRenderRideGroup}/>
+        }
+        </>
     )
 }
 
