@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import MapScreen from '../map/MapScreen';
 
 const { width, height } = Dimensions.get('window');
@@ -12,11 +13,12 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRideGroup}) => {
+const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRideGroup }) => {
+
     const dayOfWeek = convertDay(day);
     // sets hour, minute, amPm from 24h to 12h clock
     const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
-    const roundMin = Math.round((arrival - Math.floor(arrival))*60);
+    const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
     const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
     const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
     const [message, setMessage] = useState("Hello! I am interested in joining your carpool. I can contribute with gas money.");
@@ -28,31 +30,30 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
         </View>
     );
     return (
-        <> 
-        <View style={styles.container}>
+        <KeyboardAwareScrollView>
+            <View style={styles.container}>
 
-            {/* Exit Button */}
-            <View style={styles.leftArrow} >
-                <TouchableOpacity onPress={() => setRenderRideGroup(false)}>
-                    <FontAwesome6 name="arrow-left" size={24}></FontAwesome6>
-                </TouchableOpacity>
-            </View>
+                {/* Exit Button */}
+                <View style={styles.leftArrow} >
+                    <TouchableOpacity onPress={() => setRenderRideGroup(false)}>
+                        <FontAwesome6 name="arrow-left" size={24}></FontAwesome6>
+                    </TouchableOpacity>
+                </View>
 
-            {/* Begin Content */}
-            <View style={styles.infoContainer}>
+                {/* Begin Content */}
 
                 {/* Location */}
                 <View style={styles.location}>
-                    <Text style={{fontSize: 6 * vw, textAlign: "center", fontWeight: "bold"}}> {origin}  <FontAwesome6 name="arrow-right"size={17}/> {destination}</Text> 
+                    <Text style={{ fontSize: 6 * vw, textAlign: "center", fontWeight: "bold" }}> {origin}  <FontAwesome6 name="arrow-right" size={17} /> {destination}</Text>
                 </View>
-                
+
                 {/* Time and Date */}
                 <View style={styles.time}>
                     <Text style={styles.time}> Every {dayOfWeek} at {hour}:{minute}{amPm} </Text>
                 </View>
-                
+
                 {/* Map Container */}
-                <View style={styles.mapContainer}> 
+                <View style={styles.mapContainer}>
                     <MapScreen
                         origin={1} //Place holder Values just to render map
                         dest={1}   // Place holder Values just to render map
@@ -75,18 +76,16 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
                     placeholderTextColor="#888"
                     multiline
                 />
-            </View>
-
                 {/* Submit Button */}
                 <TouchableOpacity style={styles.button} onPress={() => alert("Yo")}>
-                    <FontAwesome6 name="telegram" size={50}/>
+                    <FontAwesome6 name="telegram" size={50} />
                 </TouchableOpacity>
-                
-        </View>
-        </>
-     );
+
+            </View>
+        </KeyboardAwareScrollView>
+    );
 }
- 
+
 export default RideGroup;
 
 const styles = StyleSheet.create({
@@ -99,13 +98,13 @@ const styles = StyleSheet.create({
         marginLeft: 4 * vw,
     },
     location: {
-        justifyContent: "center", 
-        alignItems: "center", 
+        justifyContent: "center",
+        alignItems: "center",
         flexDirection: "row",
     },
     time: {
-        justifyContent: "center", 
-        alignItems: "center", 
+        justifyContent: "center",
+        alignItems: "center",
         flexDirection: "row",
     },
     mapContainer: {
@@ -115,8 +114,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 2 * vh,
         height: 30 * vh,
         overflow: 'hidden', // Ensures the map content is clipped to the rounded border
-        borderWidth: .2 * vh, 
-        borderColor: 'green', 
+        borderWidth: .2 * vh,
+        borderColor: 'green',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.4,
