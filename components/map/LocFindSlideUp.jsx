@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert, Touchable } from 'react-native';
+import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert, StatusBar, } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import MapScreen from './MapScreen'
@@ -106,6 +106,7 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 
 	return (
 		<View style={styles.container}>
+			<StatusBar barStyle = "dark-content"/>
 			<MapScreen origin={{lat: originLat, long: originLong}} dest={{lat: destLat, long: destLong}} />
 
 			<Modal
