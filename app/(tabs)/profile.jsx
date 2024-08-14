@@ -9,6 +9,7 @@ import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
 import RideObject from '../../components/myComponents/rideObject';
 import RideGroup from '../../components/myComponents/rideGroup';
+import RidePopUp from '../../components/myComponents/ridePopUp';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -22,6 +23,11 @@ const profile = () => {
     // for either rides or reviews
     const [page, setPage] = useState('rides');
     const [displayRides, setDisplayRides] = useState(null);
+
+    // Conditionally rendering popUp
+    const [popUpVisible, setPopUpVisible] = useState(false);
+    // Passing in selected ride's data to RidePopUp
+    const [selectedRide, setSelectedRide] = useState(null); 
     
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
@@ -52,9 +58,13 @@ const profile = () => {
         // Simulate a delay to ensure that refreshing state is properly updated
         await new Promise(resolve => setTimeout(resolve, 1000));
         setRefreshing(false);
-    }
+    };
 
-
+    const handleRideClick = (ride) => {
+        // Set the selected ride data
+        setSelectedRide(ride); 
+        setPopUpVisible(true); 
+    };
 
     return (
         <>
@@ -72,23 +82,16 @@ const profile = () => {
                 {/** User pfp, name and rating */}
                 <View style={userStyle.userContainer}>
                     <View>
-                        {/** Place holder. This icon should be retained as deafult pfp, but if user has one
-                     * then that should be rendered instead. I did the graduate cap to emphazise that the
-                     * site is for students only
-                     */}
                         <FontAwesome6 name="user-graduate" size={10 * vh} color="black" />
                     </View>
                     <View style={userStyle.info}>
                         <Text style={userStyle.name}> Jerry Smith </Text>
 
-                        {/** rating is number of stars out of 5, total is total ratings/reviews */}
                         <Rating style={userStyle.rating} size={3 * vh} rating={2.5} total={10} />
                     </View>
                 </View>
 
-                {/** User bio. We probably want to force users to list their school. To ensure security?
-             * Might make this a view and add subcomponents later on
-             */}
+                {/** User bio. We probably want to force users to list their school. To ensure security? */}
                 <View style={userStyle.bio}>
                     <Text style={userStyle.bioText}>Student at Sacramento City College</Text>
                     <Text style={userStyle.bioText}>Have you ever watched Rick and Morty?</Text>
@@ -97,10 +100,6 @@ const profile = () => {
                 {/** Rides and Raitings, will call components for this */}
                 <View style={styles.contentBar}>
                     <View style={styles.selector}>
-                        {/** Touchable can only contain 1 element. The view needs to be transparent or it 
-                     * collapses and doesn't allow press. Logic in styles fires when page is current page,
-                     * highlighting the selected page.
-                     */}
                         <TouchableWithoutFeedback onPress={() => pagePress('rides')}>
                             <View style={{ backgroundColor: "transparent" }}>
                                 <Text style={[styles.heading, (page == 'rides') && { color: '#2E74DD' }]}> Rides </Text>
@@ -134,7 +133,7 @@ const profile = () => {
                                     day={item.day}
                                     arrival={item.arrival}
                                     members={item.members}
-                                    // onPress="display the popup"
+                                    onRideClick={() => handleRideClick(item)} // Pass the ride data to handleRideClick
                                 />
                             )}
                             keyExtractor={item => item.id}
@@ -158,6 +157,12 @@ const profile = () => {
         </SafeAreaView>}
         
         {/** Render ride options. Delete and details probably? Something similar to rideGroup but diff component */}
+        {popUpVisible &&
+            <RidePopUp 
+                visible={popUpVisible}
+                onClose={() => setPopUpVisible(false)}
+                rideData={selectedRide} // Pass the selected ride data to the popup
+            />}
         </>
     )
 }
