@@ -12,7 +12,7 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const RideObject = ({ origin, destination, day, arrival, members, onPress}) => {
+const RideObject = ({ origin, destination, day, arrival, members, rideData, onRideClick}) => {
     const dayOfWeek = convertDay(day);
 
     // sets hour, minute, amPm from 24h to 12h clock
@@ -20,6 +20,7 @@ const RideObject = ({ origin, destination, day, arrival, members, onPress}) => {
     const roundMin = Math.round((arrival - Math.floor(arrival))*60);
     const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
     const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
+    const formattedTime = `${hour}:${minute}${amPm}`;
 
     return ( 
         <View style={styles.container}>
@@ -38,10 +39,10 @@ const RideObject = ({ origin, destination, day, arrival, members, onPress}) => {
                 </View>
 
                 <View style={styles.timeContainer}>
-                    <Text>Arrive {dayOfWeek} by {hour}:{minute}{amPm} </Text>
+                    <Text>Arrive {dayOfWeek} by {formattedTime} </Text>
                 </View>
             </View>
-            <TouchableOpacity style={styles.button} onPress={onPress}>
+            <TouchableOpacity style={styles.button} onPress={() => onRideClick(rideData)}>
                 <FontAwesome6 name="arrow-right" size={4 * vh} color="#fff" />
             </TouchableOpacity>
         </View>

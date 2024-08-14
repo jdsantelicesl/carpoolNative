@@ -16,11 +16,12 @@ const convertDay = (day) => {
 const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRideGroup }) => {
 
     const dayOfWeek = convertDay(day);
-    // sets hour, minute, amPm from 24h to 12h clock
     const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
     const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
     const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
     const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
+    const formattedTime = `${hour}:${minute}${amPm}`;
+    
     const [message, setMessage] = useState("Hello! I am interested in joining your carpool. I can contribute with gas money.");
 
     const renderMember = ({ item }) => (
@@ -49,14 +50,15 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
 
                 {/* Time and Date */}
                 <View style={styles.time}>
-                    <Text style={styles.time}> Every {dayOfWeek} at {hour}:{minute}{amPm} </Text>
+                    <Text style={styles.time}> Every {dayOfWeek} at {formattedTime} </Text>
                 </View>
 
                 {/* Map Container */}
                 <View style={styles.mapContainer}>
                     <MapScreen
                         origin={1} //Place holder Values just to render map
-                        dest={1}   // Place holder Values just to render map
+                        dest={1} 
+                          // Place holder Values just to render map
                     />
                 </View>
 
@@ -72,8 +74,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
                 {/* Text Input */}
                 <TextInput
                     style={styles.textInput}
-                    placeholder={message}
-                    placeholderTextColor="#888"
+                    value={message}
+                    onChange={setMessage}
                     multiline
                 />
                 {/* Submit Button */}
@@ -148,6 +150,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 2 * vh,
+        marginHorizontal: 40*vw,
         justifyContent: 'center',
         alignItems: 'center',
     },

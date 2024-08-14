@@ -15,14 +15,13 @@ const vh = height * 0.01;
 const vw = width * 0.01;
 
 // placeholder
-const user_id = "66b573b5bd03d4f38b185868";
+const user_id = "66b690a0c48abbd2f6bcadfc";
 
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
     // for either rides or reviews
     const [page, setPage] = useState('rides');
     const [displayRides, setDisplayRides] = useState(null);
-    const [renderRideGroup, setRenderRideGroup] = useState(false);
     
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
@@ -59,7 +58,7 @@ const profile = () => {
 
     return (
         <>
-        {!renderRideGroup && <SafeAreaView style={styles.container}>
+        {!false /**Placeholder for renderPopup */ && <SafeAreaView style={styles.container}>
             <ScrollView
                 refreshControl={
                     <RefreshControl
@@ -135,7 +134,7 @@ const profile = () => {
                                     day={item.day}
                                     arrival={item.arrival}
                                     members={item.members}
-                                    onPress={() => setRenderRideGroup(true) }
+                                    // onPress="display the popup"
                                 />
                             )}
                             keyExtractor={item => item.id}
@@ -157,20 +156,8 @@ const profile = () => {
 
             </ScrollView>
         </SafeAreaView>}
-
-        { renderRideGroup && 
-            <RideGroup
-            origin={"West Davis"}
-            destination={"Sacramento City College"}
-            day={2}
-            arrival={8.5}
-            memberGroup={[  { name: 'John Doe' },
-                            { name: 'Jane Smith' },
-                            { name: 'Floyd Mayweather' },
-                            { name: 'Empty' },
-                        ]}
-            setRenderRideGroup={setRenderRideGroup}/>
-        }
+        
+        {/** Render ride options. Delete and details probably? Something similar to rideGroup but diff component */}
         </>
     )
 }

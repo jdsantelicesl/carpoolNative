@@ -13,10 +13,11 @@ import LocFind from '../../components/map/locFind';
 import { render } from 'react-native-web';
 import LocFindSlideUp from '../../components/map/LocFindSlideUp';
 import RideObject from '../../components/myComponents/rideObject';
+import RideGroup from '../../components/myComponents/rideGroup';
 
 
 // User id placeHolder. Replace after auth. The id is for test user
-const user_id = "66b573b5bd03d4f38b185868";
+const user_id = "66b690a0c48abbd2f6bcadfc";
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
@@ -33,6 +34,7 @@ const DayButton = ({ title, onPress, isSelected }) => (
 const ride = () => {
 
     const [displayRides, setDisplayRides] = useState(null)
+    const [renderRideGroup, setRenderRideGroup] = useState(false);
     // Used for when user wants to refresh by pulling down page
     const [refreshing, setRefreshing] = useState(false);
     const [renderMap, setRenderMap] = useState(false);
@@ -49,6 +51,10 @@ const ride = () => {
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
+
+    // Use these for rendering rideGroup
+    const [rideData, setRideData] = useState(null);
+    
 
     useEffect(() => {
         console.log('refreshing');
@@ -78,6 +84,13 @@ const ride = () => {
         await new Promise(resolve => setTimeout(resolve, 1000));
         setRefreshing(false);
     }
+
+    // renders rideGroup and passes props
+    const clickedRide = (rideData) => {
+        setRideData(rideData);
+        setRenderRideGroup(true);
+    }
+
 
     const handleDate = (event, new_date) => {
         if (new_date instanceof Date) {
@@ -142,7 +155,7 @@ const ride = () => {
 
     return (
         <>
-            {!renderMap &&
+            {!renderMap && !renderRideGroup &&
                 <SafeAreaView style={styles.container}>
                     <ScrollView
                         refreshControl={
@@ -227,6 +240,8 @@ const ride = () => {
                                         day={item.day}
                                         arrival={item.arrival}
                                         members={item.members}
+                                        rideData={item}
+                                        onRideClick={clickedRide}
                                     />
                                 )}
                                 keyExtractor={item => item.id}
@@ -241,7 +256,17 @@ const ride = () => {
 
                 </SafeAreaView>}
 
-            {renderMap && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom} />}
+            {renderMap && !renderRideGroup && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom} />}
+
+            {renderRideGroup &&
+                <RideGroup
+                    origin={rideData.origins.short}
+                    destination={rideData.destination.short}
+                    day={rideData.day}
+                    arrival={rideData.arrival}
+                    memberGroup={rideData.members}
+                    setRenderRideGroup={setRenderRideGroup} />
+            }
         </>
     );
 };
