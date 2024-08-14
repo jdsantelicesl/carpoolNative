@@ -68,7 +68,7 @@ const profile = () => {
 
     return (
         <>
-        {!false /**Placeholder for renderPopup */ && <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <ScrollView
                 refreshControl={
                     <RefreshControl
@@ -154,7 +154,7 @@ const profile = () => {
                 </View>
 
             </ScrollView>
-        </SafeAreaView>}
+        </SafeAreaView>
         
         {/** Render ride options. Delete and details probably? Something similar to rideGroup but diff component */}
         {popUpVisible &&

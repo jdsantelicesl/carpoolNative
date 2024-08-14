@@ -31,7 +31,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
         </View>
     );
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={{backgroundColor: "white"}}>
             <View style={styles.container}>
 
                 {/* Exit Button */}
@@ -72,7 +72,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
                 />
 
                 {/* Text Input */}
-                <TextInput
+                <TextInput 
                     style={styles.textInput}
                     value={message}
                     onChange={setMessage}
@@ -80,7 +80,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
                 />
                 {/* Submit Button */}
                 <TouchableOpacity style={styles.button} onPress={() => alert("Yo")}>
-                    <FontAwesome6 name="telegram" size={50} />
+                    <FontAwesome6 name="telegram" color={"#2E74DD"} size={50} />
                 </TouchableOpacity>
 
             </View>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        marginTop: 8 * vh,
+        marginTop: 5 * vh,
     },
     leftArrow: {
         marginLeft: 4 * vw,
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         height: 30 * vh,
         overflow: 'hidden', // Ensures the map content is clipped to the rounded border
         borderWidth: .2 * vh,
-        borderColor: 'green',
+        borderColor: '#2E74DD', // wtf was that green border? respectfully
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.4,
@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
     memberContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 1 * vh,
+        paddingVertical: 0.65* vh,
+        paddingHorizontal: 4*vw
     },
     icon: {
         marginRight: 2 * vw,
@@ -137,7 +138,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     list: {
+        marginVertical: 1.15*vh,
         marginHorizontal: 5 * vw,
+        height: 21.5*vh,
     },
     textInput: {
         backgroundColor: '#E1E1E1',
@@ -149,7 +152,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     button: {
-        marginTop: 2 * vh,
+        marginTop: 0.5 * vh,
         marginHorizontal: 40*vw,
         justifyContent: 'center',
         alignItems: 'center',

@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     title: {
         marginTop: 1 * vh,
         marginLeft: 6 * vw,
-        color: "#5A5A5A",
+        color: "black",
         textAlign: "left",
         fontWeight: "bold",
         fontSize: 4 * vh,
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     },
     hr: {
         marginHorizontal: 2 * vw,
-        marginTop: 1 * vh,
+        marginTop: 1.5 * vh,
         height: 0.2 * vh,
         width: 96 * vw,
         backgroundColor: "black",

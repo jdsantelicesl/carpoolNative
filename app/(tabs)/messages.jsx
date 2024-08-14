@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     title: {
         marginTop: 1 * vh,
         marginLeft: 6 * vw,
-        color: "#5A5A5A",
+        color: "black",
         textAlign: "left",
         fontWeight: "bold",
         fontSize: 4 * vh,
