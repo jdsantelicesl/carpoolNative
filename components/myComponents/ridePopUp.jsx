@@ -5,6 +5,7 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -17,6 +18,10 @@ const convertDay = (day) => {
 };
 
 const RidePopUp = ({ visible, onClose, rideData }) => {
+
+	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
+	const user_id = "66b690a0c48abbd2f6bcadfc";
+
 	if (!rideData) return null;
 
 	// Takes in JSON object and store
@@ -31,6 +36,24 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 	const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
 	const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
 	const formattedTime = `${hour}:${minute}${amPm}`;
+
+	const leaveRide = () => {
+		send_userId = encodeURIComponent(user_id);
+		send_rideId = encodeURIComponent(rideData._id)
+		send_url = url + `/ride/delete?client_id=${send_userId}&ride_id=${send_rideId}`;
+
+		axios.get(send_url)
+			.then(response => {
+				alert("Left Ride");
+				onClose();
+			})
+			.catch(error => {
+				alert("Could not leave ride");
+				console.log("error leaving ride: ", error);
+				onClose();
+			})
+
+	}
 
 	const renderUser = ({ item }) => (
 		<View style={styles.userItem}>
@@ -85,7 +108,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 					{/* Leave Button */}
 					<TouchableOpacity
 						style={[styles.button, styles.leaveButton]}
-						onPress={() => Alert.alert('Leave', 'Are you sure you want to leave this ride?')}
+						onPress={() => leaveRide()}
 					>
 						<Text style={styles.buttonText}>Leave</Text>
 					</TouchableOpacity>
