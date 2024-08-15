@@ -15,10 +15,31 @@ const messages = () => {
                 <Hr style={styles.hr} />
 
                 {/** Example only. Should fetch data and use component to display data retrieved. */}
-                <Message name={"West Davis to Sacramento City College"} day={"Monday"} depart={"7:30am"} arrive={"8:10am"} />
-                <Hr style={styles.hr} />
-                <Message name={"Sacramento City College to East Davis"} day={"Monday"} depart={"1:00pm"} arrive={"1:35pm"} />
-                <Hr style={styles.hr} />
+                <Message 
+                    origin={"West Davis"} 
+                    destination={"Sacramento City College"} 
+                    day={2} 
+                    arrival={11.5}
+                    prevText={"Lets plan to leave by 7:10am tomorrow"}
+                />
+
+                <Message 
+                    origin={"Sacramento"} 
+                    destination={"East Davis"} 
+                    day={2} 
+                    arrival={18.5} 
+                    prevText={"Headng back, anyone still up for Joe's Sandwiches"}
+                />
+                
+                <Message 
+                    origin={"Message from developers"} 
+                    day={2} // Make it day of download app
+                    arrival={2.5} // Make it time of download app
+                    // Or maybe disregard, these are placeholders for now
+                    // Not given value shows NaN
+                    prevText={"Make sure to know your carpool friends well"}
+                />
+
             </ScrollView>
         </SafeAreaView>
     )
