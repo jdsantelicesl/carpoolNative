@@ -38,7 +38,7 @@ const Message = ({ style, origin, destination, day, arrival, prevText, people, p
                 {/* Display Ride Information Origin -> Destination */}
                 <View style={styles.top}>
                     <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
-                        {origin} <Text></Text> <FontAwesome6 name="arrow-right" size={16}/> {destination} 
+                        {origin} <Text></Text> {destination && <FontAwesome6 name="arrow-right" size={16}/>} {destination} 
                     </Text>
                 </View>
                 
@@ -46,7 +46,7 @@ const Message = ({ style, origin, destination, day, arrival, prevText, people, p
                 <View style={styles.bottom}>
                     {/* Sepparate the bottom into 3, day, arrival, and profile*/}
                     <View style={styles.arrivalPromptContainer}>
-                        <Text style={styles.arrivalPrompt}>{dayOfWeek} {formattedTime} </Text>
+                        <Text style={styles.arrivalPrompt}>{day && dayOfWeek} {arrival && formattedTime} </Text>
                     </View>
 
 

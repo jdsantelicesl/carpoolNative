@@ -33,10 +33,6 @@ const messages = () => {
                 
                 <Message 
                     origin={"Message from developers"} 
-                    day={2} // Make it day of download app
-                    arrival={2.5} // Make it time of download app
-                    // Or maybe disregard, these are placeholders for now
-                    // Not given value shows NaN
                     prevText={"Make sure to know your carpool friends well"}
                 />
 
