@@ -5,7 +5,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 - [X] maps
 - [X] routes
-- [ ] rides
+- [X] rides
 - [ ] messages
 - [ ] ratings
 - [ ] notifications and cache
