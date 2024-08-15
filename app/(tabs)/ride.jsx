@@ -265,6 +265,7 @@ const ride = () => {
                     day={rideData.day}
                     arrival={rideData.arrival}
                     memberGroup={rideData.members}
+                    rideId={rideData._id}
                     setRenderRideGroup={setRenderRideGroup} />
             }
         </>
