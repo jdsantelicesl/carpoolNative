@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, TextInput, StatusBar } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import MapScreen from '../map/MapScreen';
 
@@ -32,6 +32,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, setRenderRi
     );
     return (
         <KeyboardAwareScrollView style={{backgroundColor: "white"}}>
+            <StatusBar barStyle="dark-content"/>
             <View style={styles.container}>
 
                 {/* Exit Button */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert,
-    TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl, FlatList,
+    TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl, FlatList, StatusBar,
 } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
@@ -166,6 +166,8 @@ const ride = () => {
                             />
                         }
                     >
+                        {/* Just makes top statusbar dark mode */}
+                        <StatusBar barStyle = "dark-content"/>
 
                         {/* Location Selection Component */}
 
@@ -257,7 +259,7 @@ const ride = () => {
                 </SafeAreaView>}
 
             {renderMap && !renderRideGroup && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom} />}
-
+            
             {renderRideGroup &&
                 <RideGroup
                     origin={rideData.origins.short}
