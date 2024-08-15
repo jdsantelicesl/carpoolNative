@@ -160,7 +160,7 @@ const profile = () => {
         {popUpVisible &&
             <RidePopUp 
                 visible={popUpVisible}
-                onClose={() => setPopUpVisible(false)}
+                onClose={() => {setPopUpVisible(false); onRefresh();}}
                 rideData={selectedRide} // Pass the selected ride data to the popup
             />}
         </>

@@ -108,8 +108,6 @@ const ride = () => {
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // run refresh in the background
-        setRefreshing(true);
         //first get users name, then post
         const send_id = encodeURIComponent(user_id);
         const detailsUrl = url + `/user/getUser?client_id=${send_id}`;
@@ -141,7 +139,7 @@ const ride = () => {
                 axios.post(send_url, data)
                     .then(response => {
                         alert('Data sent to /data');
-                        setRefreshing(false);
+                        onRefresh();
                     })
                     .catch(error => {
                         console.error('Error saving data', error);
