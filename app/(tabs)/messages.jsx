@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar } from 'react-native'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
 
@@ -10,6 +10,7 @@ const vw = width * 0.01;
 const messages = () => {
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" />
             <ScrollView>
                 <Text style={styles.title}> Messages </Text>
                 <Hr style={styles.hr} />
