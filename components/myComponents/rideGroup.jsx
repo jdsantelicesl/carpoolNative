@@ -4,6 +4,13 @@ import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import MapScreen from '../map/MapScreen';
 import axios from 'axios';
+import UserProfilePopUp from './userProfilePopUp';
+
+// Find a way to grab userId and pass it through userProfilePopUp
+// So when I press the user in the RideGroup pop up, I'm gonna see 
+
+// Note: variable name "Member" is strictly for rideGroup file
+//       variable name "User" is strictly related to userProfilePopUp
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -58,12 +65,31 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
             });
     }
 
+    // Below handles when a user is clicked
+    // ------------------------------------
+    const [renderProfile, setRenderProfile] = useState(false);
+
+    const [userName,setUserName] = useState("");
+
+    // Called when click on user name
+    handleUserClick = (name) => {
+        setUserName(name);
+        setRenderProfile(true);
+        };
+
+    // Called when click on close on popUp
+    handleUserClose = () => {
+        setRenderProfile(false);
+    };
+
     const renderMember = ({ item }) => (
-        <View style={styles.memberContainer}>
+        <TouchableOpacity style={styles.memberContainer} onPress={() => handleUserClick(item.name)}>
             <FontAwesome6 name="user" size={24} style={styles.icon} />
             <Text style={styles.memberName}>{item.name}</Text>
-        </View>
+        </TouchableOpacity>
     );
+    // ------------------------------------
+
     return (
         <KeyboardAwareScrollView style={{ backgroundColor: "white" }}>
             <StatusBar barStyle="dark-content" />
@@ -119,6 +145,16 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
                 </TouchableOpacity>
 
             </View>
+
+            {/* User Profile Pop Up,
+                Grab data from user db and convert. */}
+            <UserProfilePopUp 
+                name={userName} 
+                ratings={"4.5/5"} 
+                visible={renderProfile} 
+                onClose={() => handleUserClose()}
+            />
+
         </KeyboardAwareScrollView>
     );
 }

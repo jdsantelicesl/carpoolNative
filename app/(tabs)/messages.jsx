@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     },
     hr: {
         marginHorizontal: 2 * vw,
-
+        marginBottom: -1 * vh,
         height: 0.2 * vh,
         width: 96 * vw,
         backgroundColor: "black",

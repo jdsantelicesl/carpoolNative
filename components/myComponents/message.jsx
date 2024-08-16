@@ -29,9 +29,8 @@ const Message = ({ style, origin, destination, day, arrival, prevText, people, p
     return (
         <>
         <View style={[style, styles.container]}>
-            
             {/* This is the grey circle, currently place holder for user profile */}
-            <FontAwesome style={styles.profile} name="circle" size={10 * vh} color="#D9D9D9" />
+            <FontAwesome style={styles.profile} name="user-circle" size={10 * vh} color="#D9D9D9" />
 
             <View style={styles.content}>
 
