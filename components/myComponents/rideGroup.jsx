@@ -69,11 +69,11 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
     // ------------------------------------
     const [renderProfile, setRenderProfile] = useState(false);
 
-    const [userName,setUserName] = useState("");
+    const [user, setUser] = useState(null);
 
     // Called when click on user name
-    handleUserClick = (name) => {
-        setUserName(name);
+    handleUserClick = (userData) => {
+        setUser(userData);
         setRenderProfile(true);
         };
 
@@ -83,7 +83,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
     };
 
     const renderMember = ({ item }) => (
-        <TouchableOpacity style={styles.memberContainer} onPress={() => handleUserClick(item.name)}>
+        <TouchableOpacity style={styles.memberContainer} onPress={() => handleUserClick(item)}>
             <FontAwesome6 name="user" size={24} style={styles.icon} />
             <Text style={styles.memberName}>{item.name}</Text>
         </TouchableOpacity>
@@ -148,12 +148,11 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
             {/* User Profile Pop Up,
                 Grab data from user db and convert. */}
-            <UserProfilePopUp 
-                name={userName} 
-                ratings={"4.5/5"} 
+            { renderProfile && <UserProfilePopUp 
+                userData={user} 
                 visible={renderProfile} 
                 onClose={() => handleUserClose()}
-            />
+            />}
 
         </KeyboardAwareScrollView>
     );
