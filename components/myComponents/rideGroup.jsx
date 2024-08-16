@@ -14,7 +14,7 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const clientId = "66b690a0c48abbd2f6bcadfc" //placeholder
+const clientId = process.env.EXPO_PUBLIC_USER_ID //placeholder
 
 const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, setRenderRideGroup }) => {
 

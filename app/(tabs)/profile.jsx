@@ -16,7 +16,7 @@ const vh = height * 0.01;
 const vw = width * 0.01;
 
 // placeholder
-const user_id = "66b690a0c48abbd2f6bcadfc";
+const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
