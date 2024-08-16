@@ -106,8 +106,8 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 
 	return (
 		<View style={styles.container}>
-			<StatusBar barStyle = "dark-content"/>
-			<MapScreen origin={{lat: originLat, long: originLong}} dest={{lat: destLat, long: destLong}} />
+			<StatusBar barStyle="dark-content" />
+			<MapScreen origin={{ lat: originLat, long: originLong }} dest={{ lat: destLat, long: destLong }} />
 
 			<Modal
 				isVisible={isModalVisible}
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
 	submitButton: {
 		backgroundColor: '#2E74DD',
 		paddingHorizontal: 1 * vh,
-		paddingVertical: 1.5*vh,
+		paddingVertical: 1.5 * vh,
 		borderRadius: 6 * vw,
 		marginHorizontal: 20 * vw,
 	},

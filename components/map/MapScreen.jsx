@@ -6,8 +6,10 @@ import polyline from '@mapbox/polyline';
 import axios from 'axios';
 // Refer to docs: https://github.com/react-native-maps/react-native-maps
 
-const MapScreen = ({ origin, dest, newPolyline }) => {
+const MapScreen = ({ origin, dest }) => {
 
+  console.log("origin: ", origin);
+  console.log("dest: ", dest);
   const [polylineAvailable, setPolylineAvailable] = useState(false)
   const [decodedPolyline, setPolyline] = useState(null);
 

@@ -106,7 +106,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
                 {/* Location */}
                 <View style={styles.location}>
-                    <Text style={{ fontSize: 6 * vw, textAlign: "center", fontWeight: "bold" }}> {origin}  <FontAwesome6 name="arrow-right" size={17} /> {destination}</Text>
+                    <Text style={{ fontSize: 6 * vw, textAlign: "center", fontWeight: "bold" }}> {origin.short}  <FontAwesome6 name="arrow-right" size={17} /> {destination.short}</Text>
                 </View>
 
                 {/* Time and Date */}
@@ -117,8 +117,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
                 {/* Map Container */}
                 <View style={styles.mapContainer}>
                     <MapScreen
-                        origin={1} //Place holder Values just to render map
-                        dest={1}
+                        origin={origin} //Place holder Values just to render map
+                        dest={destination}
                     // Place holder Values just to render map
                     />
                 </View>

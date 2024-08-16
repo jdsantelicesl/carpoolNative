@@ -260,8 +260,8 @@ const ride = () => {
             
             {renderRideGroup &&
                 <RideGroup
-                    origin={rideData.origins.short}
-                    destination={rideData.destination.short}
+                    origin={rideData.origins}
+                    destination={rideData.destination}
                     day={rideData.day}
                     arrival={rideData.arrival}
                     memberGroup={rideData.members}
