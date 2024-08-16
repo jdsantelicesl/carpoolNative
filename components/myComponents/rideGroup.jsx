@@ -75,7 +75,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
     handleUserClick = (userData) => {
         setUser(userData);
         setRenderProfile(true);
-        };
+    };
 
     // Called when click on close on popUp
     handleUserClose = () => {
@@ -124,13 +124,27 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
                 </View>
 
                 {/* User FlatList */}
-                <FlatList
-                    scrollEnabled={false}
-                    data={memberGroup}
-                    renderItem={renderMember}
-                    keyExtractor={(item, index) => index.toString()}
-                    style={styles.list}
-                />
+                <View style={styles.list}>
+                    <FlatList
+                        scrollEnabled={false}
+                        data={memberGroup}
+                        renderItem={renderMember}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+
+                    {/** Empty seats */}
+                    <FlatList
+                        scrollEnabled={false}
+                        data={Array.from({ length: (5 - memberGroup.length) }, (_, index) => index)}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity style={styles.memberContainer}>
+                                <FontAwesome6 name="user" size={24} style={styles.icon} />
+                                <Text style={styles.memberName}>Empty</Text>
+                            </TouchableOpacity>)
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                </View>
 
                 {/* Text Input */}
                 <TextInput
@@ -148,9 +162,9 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
             {/* User Profile Pop Up,
                 Grab data from user db and convert. */}
-            { renderProfile && <UserProfilePopUp 
-                userData={user} 
-                visible={renderProfile} 
+            {renderProfile && <UserProfilePopUp
+                userData={user}
+                visible={renderProfile}
                 onClose={() => handleUserClose()}
             />}
 
@@ -208,7 +222,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     list: {
-        marginVertical: 1.15 * vh,
+        marginVertical: 1.2 * vh,
         marginHorizontal: 5 * vw,
         height: 21.5 * vh,
     },
