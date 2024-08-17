@@ -10,6 +10,15 @@ const vw = width * 0.01;
 
 const messages = () => {
     const [listMessages, setMessages] = useState(null);
+    const [chatVisible, setChatVisible] = useState(false);
+    
+    const exitChat = () => {
+        setChatVisible(false);
+    }
+
+    const openChat = () => {
+        setChatVisible(true);
+    }
 
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
@@ -31,7 +40,8 @@ const messages = () => {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <>
+        {!chatVisible && <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" />
             <ScrollView>
                 <Text style={styles.title}> Messages </Text>
@@ -44,24 +54,30 @@ const messages = () => {
                     data={listMessages}
                     renderItem={({ item }) => (
                         <Message
-                            origin={item.origins.short}
-                            destination={item.destination.short}
-                            day={item.day}
-                            arrival={item.arrival}
-                            prevText={item.messages[item.messages.length-1].content}
-                            rideData={item}
+                        origin={item.origins.short}
+                        destination={item.destination.short}
+                        day={item.day}
+                        arrival={item.arrival}
+                        prevText={item.messages[item.messages.length-1].content}
+                        rideData={item}
+                        onPress={() => alert("yo")}
                         />)
                     }
                     keyExtractor={item => item._id}
-                />
+                    />
 
                 <Message
                     origin={"Message from Developers :)"}
                     prevText={"Remember to rate others after carpooling"}
-                />
+                    onPress={() => alert("yo")}
+                    />
 
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView>}
+
+        {/* Conditionally render chat */}
+        {chatVisible}
+        </>
     )
 }
 

@@ -14,7 +14,7 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const Message = ({ style, origin, destination, day, arrival, prevText, rideData }) => {
+const Message = ({ style, origin, destination, day, arrival, prevText, rideData, onPress }) => {
     const dayOfWeek = convertDay(day);
     // sets hour, minute, amPm from 24h to 12h clock
     const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
@@ -27,7 +27,7 @@ const Message = ({ style, origin, destination, day, arrival, prevText, rideData 
     const [read, setRead] = useState(false);
 
     return (
-        <View style={styles.componentCont}>
+        <TouchableOpacity style={styles.componentCont} onPress={onPress}>
             <View style={[style, styles.container]}>
                 {/* This is the grey circle, currently place holder for user profile */}
                 <FontAwesome style={styles.profile} name="user-circle" size={10 * vh} color="#D9D9D9" />
@@ -72,13 +72,11 @@ const Message = ({ style, origin, destination, day, arrival, prevText, rideData 
 
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={() => alert("yo")}>
-                    <FontAwesome6 style={styles.arrow} name="chevron-right" size={20} color="black" />
-                </TouchableOpacity>
-
+                <FontAwesome6 style={styles.arrow} name="chevron-right" size={20} color="black" />
+                
             </View>
             <Hr style={styles.hr} />
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -112,13 +110,10 @@ const styles = StyleSheet.create({
     profile: {
 
     },
-    button: {
-        // backgroundColor: "red",
-        marginLeft: -2 * vh,
-    },
     arrow: {
         flex: 1,
         marginTop: 2 * vh,
+        marginLeft: -2 * vh,
 
     },
     bottom: {

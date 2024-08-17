@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView, RefreshControl, FlatList
+    Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView, RefreshControl, FlatList, StatusBar
 } from 'react-native';
 import axios from 'axios';
 
@@ -68,6 +68,7 @@ const profile = () => {
 
     return (
         <>
+        <StatusBar barStyle={"dark-content"}/>
         <SafeAreaView style={styles.container}>
             <ScrollView
                 refreshControl={
@@ -160,7 +161,7 @@ const profile = () => {
         {popUpVisible &&
             <RidePopUp 
                 visible={popUpVisible}
-                onClose={() => {setPopUpVisible(false); onRefresh();}}
+                onClose={() => {setPopUpVisible(false); onRefresh();}} // Make this refresh again without animation
                 rideData={selectedRide} // Pass the selected ride data to the popup
             />}
         </>
