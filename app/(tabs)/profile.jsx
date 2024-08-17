@@ -10,6 +10,7 @@ import Hr from '../../components/myComponents/hr';
 import RideObject from '../../components/myComponents/rideObject';
 import RideGroup from '../../components/myComponents/rideGroup';
 import RidePopUp from '../../components/myComponents/ridePopUp';
+import ReviewsObject from '../../components/myComponents/reviewsObject';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -23,7 +24,7 @@ const profile = () => {
     // for either rides or reviews
     const [page, setPage] = useState('rides');
     const [displayRides, setDisplayRides] = useState(null);
-
+    const [displayRatings, setDisplayRatings] = useState(null);
     // Conditionally rendering popUp
     const [popUpVisible, setPopUpVisible] = useState(false);
     // Passing in selected ride's data to RidePopUp
@@ -35,6 +36,7 @@ const profile = () => {
         setPage(value);
     }
 
+    // Get Rides Data
     useEffect(() => {
         console.log('refreshing');
 
@@ -51,6 +53,24 @@ const profile = () => {
                 console.log("error fetching rides: ", error);
             })
     }, [refreshing]);
+
+    // Get User's Ratings
+    useEffect(() => {
+        if (page === "reviews") {
+            console.log("Opened Page Reviews")
+            const send_id = encodeURIComponent(user_id)
+            send_url = url + `/user/getUser?client_id=${send_id}`
+            axios.get(send_url)
+                .then(response => {
+                    setDisplayRatings(response.data.ratings);
+                })
+                .catch(error => {
+                    console.log("error fetching ratings: ", error);
+                })
+
+        }
+
+    }, [page==="reviews"]);
 
     const onRefresh = async () => {
         // display refreshing animation
@@ -98,7 +118,7 @@ const profile = () => {
                     <Text style={userStyle.bioText}>Have you ever watched Rick and Morty?</Text>
                 </View>
 
-                {/** Rides and Raitings, will call components for this */}
+                {/** Rides and Ratings, will call components for this */}
                 <View style={styles.contentBar}>
                     <View style={styles.selector}>
                         <TouchableWithoutFeedback onPress={() => pagePress('rides')}>
@@ -146,7 +166,31 @@ const profile = () => {
 
                     {/** Reviews here, to do...  */}
                     {(page === "reviews") && <View>
-                        <Text>Reviews</Text>
+                        {displayRatings && <FlatList
+                            scrollEnabled={false}
+                            data={displayRatings}
+                            renderItem={({ item }) => (
+                                <ReviewsObject
+                                    name={item.name}
+                                    stars={item.stars}
+                                    content={item.content}
+                                    date={"August 17, 2024"}            // Hard Coded for now, need to add param in db
+                                    origin="Oakland, Ca"                // Hard Coded for now, need to add param in db
+                                    destination="Stanford University"   // Hard Coded for now, need to add param in db
+                                    
+                                />
+                            )}
+                        
+                        
+                            />}
+                        <ReviewsObject
+                            name="Sample"
+                            date="January 21, 1980"
+                            stars={4}
+                            content="Great ride, very punctual and friendly!"
+                            origin="Downtown"
+                            destination="Airport"
+                        />
 
                     </View>}
 
