@@ -7,10 +7,10 @@ const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-const ReviewsObject = ({name, date, stars, content, origin, destination, }) => {
+const ReviewsObject = ({style, name, date, stars, content, origin, destination, }) => {
     
     return (
-        <View style={styles.container}>
+        <View style={[style, styles.container]}>
             <View style={styles.infoContainer}>
 
 				{/* User */}
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         marginVertical: .6 * vh,
-        marginHorizontal: 5 * vw,
         backgroundColor: '#fff',
         borderRadius: 2 * vh,
         shadowColor: '#000',

@@ -171,6 +171,7 @@ const profile = () => {
                             data={displayRatings}
                             renderItem={({ item }) => (
                                 <ReviewsObject
+                                    style={styles.reviewsObject}
                                     name={item.name}
                                     stars={item.stars}
                                     content={item.content}
@@ -184,6 +185,7 @@ const profile = () => {
                         
                             />}
                         <ReviewsObject
+                            style={styles.reviewsObject}
                             name="Sample"
                             date="January 21, 1980"
                             stars={4}
@@ -244,7 +246,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         fontSize: 2 * vh
-    }
+    },
+    reviewsObject: {
+        marginHorizontal: 5 * vw,
+    },
 });
 
 // styles for profile pic, name, rating, and bio

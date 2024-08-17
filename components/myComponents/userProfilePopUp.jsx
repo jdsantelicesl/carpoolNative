@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Hr from './hr';
 import Rating from './rating'
 import axios from 'axios';
+import ReviewsObject from './reviewsObject';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -39,10 +40,9 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
       .catch(error => {
         console.log("error getUser: ", error);
       })
-
-
   }, []);
-
+  
+  console.log(reviews)
 
   return (
     <Modal
@@ -51,53 +51,62 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={styles.topContainer}>
-            {/* Profile section */}
-            <View style={styles.profile}>
-              <FontAwesome name="user-circle" size={80} color="grey" />
-            </View>
+		<View style={styles.centeredView}>
+			<View style={styles.modalView}>
+				<View style={styles.topContainer}>
+					{/* Profile section */}
+					<View style={styles.profile}>
+						<FontAwesome name="user-circle" size={80} color="grey" />
+					</View>
 
-            {/* Name and Ratings section */}
-            <View style={styles.userInformation}>
-              <Text style={styles.userName}>{userData.name}</Text>
-              <View style={styles.ratingsContainer}>
-                {rating ?
-                  <Rating style={styles.rating} size={3 * vh} rating={rating} total={numRatings} /> :
-                  <Text> No rating yet </Text>}
-              </View>
-            </View>
-          </View>
+					{/* Name and Ratings section */}
+					<View style={styles.userInformation}>
+						<Text style={styles.userName}>{userData.name}</Text>
+						<View style={styles.ratingsContainer}>
+						{rating ?
+							<Rating style={styles.rating} size={3 * vh} rating={rating} total={numRatings} /> :
+							<Text> No rating yet </Text>}
+						</View>
+					</View>
+				</View>
 
-          {/* Separator */}
-          <Hr style={styles.separator} />
+				{/* Separator */}
+				<Hr style={styles.hr} />
 
-          {/* Reviews section */}
-          <Text style={styles.reviewsText}>Reviews:</Text>
+				{/* Reviews section */}  
+					
+				<FlatList
+					scrollEnabled={true}
+					data={reviews}
+					// renderItem={({ item }) => (
+					// 	<View style={{paddingVertical: .5*vh}}>
+					// 	<Text> {item.name}, rating:{item.stars}</Text>
+					// 	<Text> Content: {item.content} </Text>
+					// 	</View>
+					// )}
+					renderItem={({ item }) => (
+						<ReviewsObject 
+							name={item.name}
+							stars={item.stars}
+							content={item.content}
+							style={styles.reviewsObject}
+						
+						/>
+  					)}
+					keyExtractor={(item, index) => index.toString()}
+					style={styles.reviewList}
+				/>
+					
 
-          <FlatList
-            scrollEnabled={true}
-            data={reviews}
-            renderItem={({ item }) => (
-              <View style={{paddingVertical: .5*vh}}>
-                <Text> {item.name}, rating:{item.stars}</Text>
-                <Text> Content: {item.content} </Text>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            style={styles.list}
-          />
-
-          {/* Close button */}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-          >
-            <Text style={styles.closeText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+				{/* Close button */}
+				<TouchableOpacity
+					style={styles.closeButton}
+					onPress={onClose}
+				>
+					<Text style={styles.closeText}>Close</Text>
+				</TouchableOpacity>
+			</View>
+		</View>
     </Modal>
   );
 };
@@ -112,8 +121,9 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 2 * vh,
-    padding: 4 * vh,
+    padding: 3 * vh,
     width: 90 * vw,
+    height: 80 * vh,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -126,6 +136,7 @@ const styles = StyleSheet.create({
   topContainer: {
     flexDirection: 'row',
     marginBottom: 2 * vh,
+    marginTop: 2 * vh,
   },
   profile: {
     flex: 1,
@@ -150,12 +161,21 @@ const styles = StyleSheet.create({
     fontSize: 4 * vw,
     marginLeft: 1 * vw,
   },
-  separator: {
-    marginVertical: 1 * vh,
+  hr: {
+    marginTop: -1 * vh,
+    marginBottom: 1 * vh,
+    height: 0.2 * vh,
+    width: 77 * vw,
+    backgroundColor: "black",
   },
   reviewsText: {
     fontSize: 4 * vw,
     marginBottom: 2 * vh,
+  },
+  reviewList: {
+	flex: 1,
+	flexDirection: "column",
+	// backgroundColor: "blue"
   },
   closeButton: {
     backgroundColor: 'red',
@@ -166,6 +186,9 @@ const styles = StyleSheet.create({
   closeText: {
     color: 'white',
     fontSize: 3 * vw,
+  },
+  reviewsObject: {
+	marginHorizontal: 1 * vw,
   },
 });
 
