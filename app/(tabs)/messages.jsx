@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList, RefreshControl } from 'react-native'
 import axios from 'axios'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
@@ -11,7 +11,9 @@ const vw = width * 0.01;
 const messages = () => {
     const [listMessages, setMessages] = useState(null);
     const [chatVisible, setChatVisible] = useState(false);
-    
+
+    const [refreshing, setRefreshing] = useState(false);
+
     const exitChat = () => {
         setChatVisible(false);
     }
@@ -36,47 +38,63 @@ const messages = () => {
             .catch(error => {
                 console.log("error getting chats: ", error);
             });
-    }, []);
+    }, [refreshing]);
+
+    const onRefresh = async () => {
+        // display refreshing animation
+        setRefreshing(true);
+        // Simulate a delay to ensure that refreshing state is properly updated
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setRefreshing(false);
+    }
 
 
     return (
         <>
-        {!chatVisible && <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" />
-            <ScrollView>
-                <Text style={styles.title}> Messages </Text>
-                <Hr style={styles.hr} />
-
-                {/** Example only. Should fetch data and use component to display data retrieved. */}
-                <FlatList
-                    style={{marginTop: 0.5*vh}}
-                    scrollEnabled={false}
-                    data={listMessages}
-                    renderItem={({ item }) => (
-                        <Message
-                        origin={item.origins.short}
-                        destination={item.destination.short}
-                        day={item.day}
-                        arrival={item.arrival}
-                        prevText={item.messages[item.messages.length-1].content}
-                        rideData={item}
-                        onPress={() => alert("yo")}
-                        />)
+            {!chatVisible && <SafeAreaView style={styles.container}>
+                <StatusBar barStyle="dark-content" />
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={['#2E74DD']}
+                        />
                     }
-                    keyExtractor={item => item._id}
+                >
+                    <Text style={styles.title}> Messages </Text>
+                    <Hr style={styles.hr} />
+
+                    {/** Example only. Should fetch data and use component to display data retrieved. */}
+                    <FlatList
+                        style={{ marginTop: 0.5 * vh }}
+                        scrollEnabled={false}
+                        data={listMessages}
+                        renderItem={({ item }) => (
+                            <Message
+                                origin={item.origins.short}
+                                destination={item.destination.short}
+                                day={item.day}
+                                arrival={item.arrival}
+                                prevText={item.messages[item.messages.length - 1].content}
+                                rideData={item}
+                                onPress={() => alert("yo")}
+                            />)
+                        }
+                        keyExtractor={item => item._id}
                     />
 
-                <Message
-                    origin={"Message from Developers :)"}
-                    prevText={"Remember to rate others after carpooling"}
-                    onPress={() => alert("yo")}
+                    <Message
+                        origin={"Message from Developers :)"}
+                        prevText={"Remember to rate others after carpooling"}
+                        onPress={() => alert("yo")}
                     />
 
-            </ScrollView>
-        </SafeAreaView>}
+                </ScrollView>
+            </SafeAreaView>}
 
-        {/* Conditionally render chat */}
-        {chatVisible}
+            {/* Conditionally render chat */}
+            {chatVisible}
         </>
     )
 }
