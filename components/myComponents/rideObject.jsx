@@ -25,11 +25,14 @@ const RideObject = ({ origin, destination, day, arrival, members, rideData, onRi
     return ( 
         <View style={styles.container}>
             <View style={styles.infoContainer}>
+
+                {/* Displaying User */}
                 <View style={styles.userContainer}>
                     <FontAwesome6 name="user" size={25}/> 
                     <Text style={styles.members}> {members[0].name} </Text>
                 </View>
 
+                {/* Location */}
                 <View style={styles.locationContainer}>
                     <Text style={styles.locationContent}> 
                         {origin.short}
@@ -38,10 +41,13 @@ const RideObject = ({ origin, destination, day, arrival, members, rideData, onRi
                     </Text>
                 </View>
 
+                {/* Time */}
                 <View style={styles.timeContainer}>
                     <Text>Arrive {dayOfWeek} by {formattedTime} </Text>
                 </View>
             </View>
+
+            {/* Button */}
             <TouchableOpacity style={styles.button} onPress={() => onRideClick(rideData)}>
                 <FontAwesome6 name="arrow-right" size={4 * vh} color="#fff" />
             </TouchableOpacity>
