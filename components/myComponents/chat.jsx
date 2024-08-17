@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { FontAwesome6 } from '@expo/vector-icons';
+import axios from 'axios';
 // Refer to: https://github.com/FaridSafi/react-native-gifted-chat
 // _id: 2 is self, _id: 1 is other
 const { width, height } = Dimensions.get('window');
@@ -14,7 +15,7 @@ const convertDay = (day) => {
 	return days[adjustedDay];
 };
 
-const Chat = ({ exitChat, chatData, origin, destination, arrival, day }) => { // Destructure the onClose and chatData props
+const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId }) => { // Destructure the onClose and chatData props
 
 	const dayOfWeek = convertDay(day);
 
@@ -23,6 +24,9 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day }) => { //
 	const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
 	const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
 	const formattedTime = `${hour}:${minute}${amPm}`;
+
+	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
+	const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
 	const CustomBubble = (props) => {
 		return (
@@ -48,27 +52,27 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day }) => { //
 		);
 	};
 
-    // Convert chatData to GiftedChat format
-    const formatChatData = (data) => {
-        return data.map((item) => ({
-            _id: item._id || Math.random().toString(), // Use unique ID from data or generate one
-            text: item.content,
-            createdAt: new Date(item.date), // Convert date string to Date object
-            user: {
-                _id: item.clientId,
-                name: item.name,
-                avatar: 'https://picsum.photos/140/140',
-            },
-        }));
-    };
+	// Convert chatData to GiftedChat format
+	const formatChatData = (data) => {
+		return data.map((item) => ({
+			_id: item._id || Math.random().toString(), // Use unique ID from data or generate one
+			text: item.content,
+			createdAt: new Date(item.date), // Convert date string to Date object
+			user: {
+				_id: item.clientId,
+				name: item.name,
+				avatar: 'https://picsum.photos/140/140',
+			},
+		}));
+	};
 
-    const [messages, setMessages] = useState([]);
+	const [messages, setMessages] = useState([]);
 
-    useEffect(() => {
-        // Format and set messages when chatData changes
-        if (Array.isArray(chatData)) {
-            setMessages(formatChatData(chatData));
-        }
+	useEffect(() => {
+		// Format and set messages when chatData changes
+		if (Array.isArray(chatData)) {
+			setMessages(formatChatData(chatData));
+		}
 		// Hack: display developer text
 		else {
 			setMessages([
@@ -112,73 +116,92 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day }) => { //
 						avatar: 'https://picsum.photos/140/140',
 					},
 				},
-			]);			
+			]);
 		}
-    }, [chatData]);
+	}, [chatData]);
 
 	// This appends the new message 
-    const onSend = useCallback((newMessages = []) => {
-        // Append new messages with correct user ID
+	const onSend = useCallback((newMessages) => {
+		// Append new messages with correct user ID
 		// This does render new user messages when sent but it is server sided
 		// chatData is passed in as prop to be stored in messages
 		// Therefore we need to update chatData itself, passed by parent "messages.jsx"
-        setMessages(previousMessages =>
-            GiftedChat.append(previousMessages, newMessages.map(message => ({
-                ...message,
-                user: {
-                    ...message.user,
-                    _id: 2, // 2 is User ID, it renders as Self
-                }
-            }))),
-        );
+		setMessages(previousMessages =>
+			GiftedChat.append(previousMessages, {
+				...newMessages[0],
+				user: {
+					...newMessages[0].user,
+					_id: 2, // 2 is User ID, it renders as Self
+				}
+			}),
+		);
+
+		const sendUrl = url + "/message/send";
+		const sendData = {
+			messageType: "message",
+			content: newMessages[0].text,
+			rideId: rideId,
+			clientId: user_id
+		}
+
+		console.log(sendData);
+
+		axios.post(sendUrl, sendData)
+			.then(response => {
+				alert("message sent");
+			})
+			.catch(error => {
+				alert("error sending message");
+				console.log("error sending message: ", error);
+			})
 
 		// Need to implement post request to append new messages
-    }, [messages]);
+	}, [messages]);
 
-    return (
-        <>
-            <StatusBar barStyle={"dark-content"} />
-            <View style={{ flex: 1 }}>
-                {/* Back Button */}
-                <TouchableOpacity onPress={exitChat} style={styles.exitChat}>
-					<FontAwesome6 name="arrow-left" size={3 * vh}/>
-                </TouchableOpacity>
+	return (
+		<>
+			<StatusBar barStyle={"dark-content"} />
+			<View style={{ flex: 1 }}>
+				{/* Back Button */}
+				<TouchableOpacity onPress={exitChat} style={styles.exitChat}>
+					<FontAwesome6 name="arrow-left" size={3 * vh} />
+				</TouchableOpacity>
 
-                {/* Ride Information on Top */}
-                <View style={styles.location}> 
-                    <Text style={{fontSize: 3 * vh}}> 
-						{origin} <Text></Text>
-						<FontAwesome6 name="arrow-right" size={2*vh}/> <Text></Text> 
-						{destination} 
-					</Text>
-                </View>
+				{/* Ride Information on Top */}
 				<View style={styles.location}>
-					<Text style={{fontSize: 2 * vh}}>Arrive {dayOfWeek} by {formattedTime}</Text>
+					<Text style={{ fontSize: 3 * vh }}>
+						{origin} <Text></Text>
+						<FontAwesome6 name="arrow-right" size={2 * vh} /> <Text></Text>
+						{destination}
+					</Text>
+				</View>
+				<View style={styles.location}>
+					<Text style={{ fontSize: 2 * vh }}>Arrive {dayOfWeek} by {formattedTime}</Text>
 				</View>
 
-                {/* Chat Interface */}
-                <GiftedChat
+				{/* Chat Interface */}
+				<GiftedChat
 					renderBubble={props => <CustomBubble {...props} />}
 					renderUsernameOnMessage={true}
 					showuserAvatar={true}
 					alwaysShowSend={true}
-                    messages={messages}
-                    onSend={messages => onSend(messages)}
-                    user={{
-                        _id: 2, // Set the current user ID
-                    }}
-                />
-            </View>
-        </>
-    );
+					messages={messages}
+					onSend={messages => onSend(messages)}
+					user={{
+						_id: user_id, // Set the current user ID
+					}}
+				/>
+			</View>
+		</>
+	);
 };
 
 const styles = StyleSheet.create({
-    exitChat: {
-        marginTop: 5 * vh,
-        padding: 10,
-        borderRadius: 5,
-    },
+	exitChat: {
+		marginTop: 5 * vh,
+		padding: 10,
+		borderRadius: 5,
+	},
 	location: {
 		flexDirection: "row",
 		justifyContent: "center",

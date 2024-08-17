@@ -17,16 +17,19 @@ const messages = () => {
     const [arrival, setArrival] = useState(null);
     const [day, setDay] = useState(null);
     const [destination, setDestination] = useState("");
+    const [passRideId, setRideId] = useState(null);
 
     const [refreshing, setRefreshing] = useState(false);
 
     const exitChat = () => {
         setChatVisible(false);
+        onRefresh();
     };
     
     // @param: items -- from item.messages
     const openChat = (items) => {
-        setChatData(items)
+        setChatData(items);
+        console.log(items);
         setChatVisible(true);
     };
 
@@ -85,11 +88,12 @@ const messages = () => {
                                 destination={item.destination.short}
                                 day={item.day}
                                 arrival={item.arrival}
-                                prevText={item.messages[item.messages.length - 1].content}
+                                prevText={item.messages[0].content}
                                 rideData={item}
                                 onPress={()=> 
                                     {
                                         openChat(item.messages); 
+                                        setRideId(item._id);
                                         setOrigin(item.origins.short); 
                                         setDestination(item.destination.short); 
                                         setArrival(item.arrival); 
@@ -119,6 +123,7 @@ const messages = () => {
             destination={destination}
             arrival={arrival}
             day={day}
+            rideId={passRideId}
 
         />}
 
