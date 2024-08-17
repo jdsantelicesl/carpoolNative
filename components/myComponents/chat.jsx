@@ -62,7 +62,7 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 				) :
 
 					(
-						<View style={reqStyles.bubble}>
+						<View style={[reqStyles.bubble, (usrId == user_id) && ({ backgroundColor: '#2E74DD'})]}>
 							<View style={reqStyles.userCard}>
 								<FontAwesome6 name="user-graduate" size={4 * vh} color="black" />
 								<View style={reqStyles.userDetails}>
