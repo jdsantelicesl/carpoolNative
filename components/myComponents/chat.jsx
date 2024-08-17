@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { FontAwesome6 } from '@expo/vector-icons';
+import Rating from './rating';
 import axios from 'axios';
 // Refer to: https://github.com/FaridSafi/react-native-gifted-chat
 // _id: 2 is self, _id: 1 is other
@@ -29,26 +30,66 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 	const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
 	const CustomBubble = (props) => {
+		const mssgType = props.currentMessage.type;
+		const mssgStatus = props.currentMessage.status;
+		const usrId = props.currentMessage.user._id;
+		// all we need to do to convert request custom message to user's is change background to the blue color. 
+		// Message is moved to the right by default. 
+
 		return (
-			<Bubble
-				{...props}
-				wrapperStyle={{
-					right: {
-						backgroundColor: '#367CE5', // Grey background for the user's messages
-					},
-					left: {
-						backgroundColor: '#ECECEC', // Light grey background for received messages
-					},
-				}}
-				textStyle={{
-					right: {
-						color: 'white', // Text color for the user's messages
-					},
-					left: {
-						color: '#000', // Text color for received messages
-					},
-				}}
-			/>
+			<>
+				{/** Conditionally either render bubble for messages or a custom message for requests */}
+				{!(mssgType === "request") ? (
+					<Bubble
+						{...props}
+						wrapperStyle={{
+							right: {
+								backgroundColor: '#367CE5', // Grey background for the user's messages
+							},
+							left: {
+								backgroundColor: '#ECECEC', // Light grey background for received messages
+							},
+						}}
+						textStyle={{
+							right: {
+								color: 'white', // Text color for the user's messages
+							},
+							left: {
+								color: '#000', // Text color for received messages
+							},
+						}}
+					/>
+				) :
+
+					(
+						<View style={reqStyles.bubble}>
+							<View style={reqStyles.userCard}>
+								<FontAwesome6 name="user-graduate" size={4 * vh} color="black" />
+								<View style={reqStyles.userDetails}>
+									<Text style={reqStyles.name}> {props.currentMessage.user.name} </Text>
+									<Rating style={reqStyles.rating} size={2 * vh} rating={4.5} total={10} />
+								</View>
+							</View>
+							<Text style={reqStyles.text}> {props.currentMessage.text} </Text>
+							{(mssgStatus === "open") ? (<View style={reqStyles.buttonCont}>
+
+								<TouchableOpacity style={[reqStyles.buttons, { backgroundColor: '#2E74DD' }]}>
+									<Text style={reqStyles.buttonText}>Accept</Text>
+								</TouchableOpacity>
+								<TouchableOpacity style={[reqStyles.buttons, { backgroundColor: '#ED0800' }]}>
+									<Text style={reqStyles.buttonText}>Reject</Text>
+								</TouchableOpacity>
+							</View>) :
+								(<View style={reqStyles.buttonCont}>
+									<View style={[reqStyles.buttons, { backgroundColor: "#6d6d6d", width: 40 * vw, borderRadius: 1*vh }]}>
+										<Text style={reqStyles.buttonText}>{mssgStatus}</Text>
+									</View>
+								</View>)
+							}
+						</View>
+					)
+				}
+			</>
 		);
 	};
 
@@ -56,6 +97,8 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 	const formatChatData = (data) => {
 		return data.map((item) => ({
 			_id: item._id || Math.random().toString(), // Use unique ID from data or generate one
+			type: item.type,
+			status: item.status,
 			text: item.content,
 			createdAt: new Date(item.date), // Convert date string to Date object
 			user: {
@@ -131,7 +174,7 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 				...newMessages[0],
 				user: {
 					...newMessages[0].user,
-					_id: 2, // 2 is User ID, it renders as Self
+					_id: user_id, // 2 is User ID, it renders as Self
 				}
 			}),
 		);
@@ -143,8 +186,6 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 			rideId: rideId,
 			clientId: user_id
 		}
-
-		console.log(sendData);
 
 		axios.post(sendUrl, sendData)
 			.then(response => {
@@ -207,6 +248,61 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignContent: "center",
 	}
+});
+
+const reqStyles = StyleSheet.create({
+	bubble: {
+		width: 64 * vw,
+		paddingVertical: 1.2 * vh,
+		paddingHorizontal: 3 * vw,
+		backgroundColor: "#D9D9D9",
+		borderRadius: 2 * vh,
+	},
+	userCard: {
+		flexDirection: 'row',
+		marginHorizontal: 1 * vw,
+		marginVertical: 0.5 * vh,
+	},
+	userDetails: {
+		marginLeft: 2 * vw
+	},
+	rating: {
+		marginLeft: 1.6 * vw
+	},
+	name: {
+		fontWeight: 'bold',
+		fontSize: 2 * vh,
+		textAlign: 'center'
+
+	},
+	text: {
+		marginTop: 0.5 * vh,
+		fontSize: 2 * vh,
+
+	},
+	buttonCont: {
+		flexDirection: "row",
+		justifyContent: 'center',
+		alignItems: 'center'
+
+	},
+	buttons: {
+		justifyContent: 'center',
+		alignItems: 'center',
+
+		width: 26 * vw,
+		height: 4 * vh,
+		borderRadius: 2 * vh,
+		marginVertical: 0.5 * vh,
+		marginHorizontal: 1.5 * vw,
+		marginTop: 1.2 * vh,
+		backgroundColor: 'red',
+	},
+	buttonText: {
+		color: 'white',
+		textAlign: "center",
+		fontWeight: 'bold'
+	},
 });
 
 export default Chat;
