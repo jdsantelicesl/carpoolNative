@@ -1,78 +1,189 @@
-import { View, Text } from 'react-native'
-import React, {useState, useCallback, useEffect} from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar } from 'react-native';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { FontAwesome6 } from '@expo/vector-icons';
+// Refer to: https://github.com/FaridSafi/react-native-gifted-chat
+// _id: 2 is self, _id: 1 is other
+const { width, height } = Dimensions.get('window');
+const vh = height * 0.01;
+const vw = width * 0.01;
 
-// For other users in user._id: 1
-// For self is user._id: 2
+const convertDay = (day) => {
+	const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	const adjustedDay = (day - 1 + 7) % 7;
+	return days[adjustedDay];
+};
 
-// for _id: has to be unique for different chat bubbles
+const Chat = ({ exitChat, chatData, origin, destination, arrival, day }) => { // Destructure the onClose and chatData props
 
-// Data structure seems to render bottom to top, stack (LIFO- Last in, First Out)
-// Each new message seems to append towards the top of the list in the messages object
-const Chat = (onPress) => {
+	const dayOfWeek = convertDay(day);
 
-	const [messages, setMessages] = useState([])
+	const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
+	const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
+	const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
+	const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
+	const formattedTime = `${hour}:${minute}${amPm}`;
 
-	useEffect(() => {
-        setMessages([
-          {
-            _id: 1,
-            text: 'We leaving at 4pm, catch you at the lot',
-            createdAt: new Date(),
+	const CustomBubble = (props) => {
+		return (
+			<Bubble
+				{...props}
+				wrapperStyle={{
+					right: {
+						backgroundColor: '#367CE5', // Grey background for the user's messages
+					},
+					left: {
+						backgroundColor: '#ECECEC', // Light grey background for received messages
+					},
+				}}
+				textStyle={{
+					right: {
+						color: 'white', // Text color for the user's messages
+					},
+					left: {
+						color: '#000', // Text color for received messages
+					},
+				}}
+			/>
+		);
+	};
+
+    // Convert chatData to GiftedChat format
+    const formatChatData = (data) => {
+        return data.map((item) => ({
+            _id: item._id || Math.random().toString(), // Use unique ID from data or generate one
+            text: item.content,
+            createdAt: new Date(item.date), // Convert date string to Date object
             user: {
-              _id: 2,
-              name: 'React Native',
-              avatar: 'https://picsum.photos/140/140',
+                _id: item.clientId,
+                name: item.name,
+                avatar: 'https://picsum.photos/140/140',
             },
-          },
-          {
-            _id: 2,
-            text: 'Whats going on',
-            createdAt: new Date(),
-            user: {
-              _id: 2,
-              name: 'React Native',
-              avatar: 'https://picsum.photos/140/140',
-            },
-          },
-          {
-            _id: 3,
-            text: "I'm doing great, thanks for asking!",
-            createdAt: new Date(),
-            user: {
-              _id: 1,
-              name: 'You',
-              avatar: 'https://picsum.photos/140/140',
-            },
-          },
-          {
-            _id: 4,
-            text: 'What are you working on today?',
-            createdAt: new Date(),
-            user: {
-              _id: 2,
-              name: 'React Native',
-              avatar: 'https://picsum.photos/140/140',
-            },
-          },
-        ])
-      }, [])
-  
-	const onSend = useCallback((messages = []) => {
-	  setMessages(previousMessages =>
-		GiftedChat.append(previousMessages, messages),
-	  )
-	}, [])
+        }));
+    };
 
-	return (
-        <GiftedChat
-            messages={messages}
-            onSend={messages => onSend(messages)}
-            user={{
-                _id: 1,
-            }}
-            />
-	)
-}
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        // Format and set messages when chatData changes
+        if (Array.isArray(chatData)) {
+            setMessages(formatChatData(chatData));
+        }
+		// Hack: display developer text
+		else {
+			setMessages([
+				{
+					_id: 1,
+					text: "Drive smart, stay sharp, and let's turn every ride into an A+ experience!",
+					createdAt: new Date(),
+					user: {
+						_id: 1,
+						name: 'Cracked Developers',
+						avatar: 'https://picsum.photos/140/140',
+					},
+				},
+				{
+					_id: 2,
+					text: "Remember, we're not just here to get you to class; we're here to ensure you make the grade in safe travels.",
+					createdAt: new Date(),
+					user: {
+						_id: 1,
+						name: 'Cracked Developers',
+						avatar: 'https://picsum.photos/140/140',
+					},
+				},
+				{
+					_id: 3,
+					text: "Buckle up and get ready to embark on a journey where safety is our top priority—think of us as your academic road safety patrol.",
+					createdAt: new Date(),
+					user: {
+						_id: 1,
+						name: 'Cracked Developers',
+						avatar: 'https://picsum.photos/140/140',
+					},
+				},
+				{
+					_id: 4,
+					text: "Welcome aboard our .edu exclusive carpool ride-sharing app!",
+					createdAt: new Date(),
+					user: {
+						_id: 1,
+						name: 'Cracked Developers',
+						avatar: 'https://picsum.photos/140/140',
+					},
+				},
+			]);			
+		}
+    }, [chatData]);
+
+	// This appends the new message 
+    const onSend = useCallback((newMessages = []) => {
+        // Append new messages with correct user ID
+		// This does render new user messages when sent but it is server sided
+		// chatData is passed in as prop to be stored in messages
+		// Therefore we need to update chatData itself, passed by parent "messages.jsx"
+        setMessages(previousMessages =>
+            GiftedChat.append(previousMessages, newMessages.map(message => ({
+                ...message,
+                user: {
+                    ...message.user,
+                    _id: 2, // 2 is User ID, it renders as Self
+                }
+            }))),
+        );
+
+		// Need to implement post request to append new messages
+    }, [messages]);
+
+    return (
+        <>
+            <StatusBar barStyle={"dark-content"} />
+            <View style={{ flex: 1 }}>
+                {/* Back Button */}
+                <TouchableOpacity onPress={exitChat} style={styles.exitChat}>
+					<FontAwesome6 name="arrow-left" size={3 * vh}/>
+                </TouchableOpacity>
+
+                {/* Ride Information on Top */}
+                <View style={styles.location}> 
+                    <Text style={{fontSize: 3 * vh}}> 
+						{origin} <Text></Text>
+						<FontAwesome6 name="arrow-right" size={2*vh}/> <Text></Text> 
+						{destination} 
+					</Text>
+                </View>
+				<View style={styles.location}>
+					<Text style={{fontSize: 2 * vh}}>Arrive {dayOfWeek} by {formattedTime}</Text>
+				</View>
+
+                {/* Chat Interface */}
+                <GiftedChat
+					renderBubble={props => <CustomBubble {...props} />}
+					renderUsernameOnMessage={true}
+					showuserAvatar={true}
+					alwaysShowSend={true}
+                    messages={messages}
+                    onSend={messages => onSend(messages)}
+                    user={{
+                        _id: 2, // Set the current user ID
+                    }}
+                />
+            </View>
+        </>
+    );
+};
+
+const styles = StyleSheet.create({
+    exitChat: {
+        marginTop: 5 * vh,
+        padding: 10,
+        borderRadius: 5,
+    },
+	location: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignContent: "center",
+	}
+});
 
 export default Chat;

@@ -3,6 +3,7 @@ import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar
 import axios from 'axios'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
+import Chat from '../../components/myComponents/chat';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -11,14 +12,22 @@ const vw = width * 0.01;
 const messages = () => {
     const [listMessages, setMessages] = useState(null);
     const [chatVisible, setChatVisible] = useState(false);
+    const [chatData, setChatData] = useState([]);
+    const [origin, setOrigin] = useState("");
+    const [arrival, setArrival] = useState(null);
+    const [day, setDay] = useState(null);
+    const [destination, setDestination] = useState("");
     
     const exitChat = () => {
         setChatVisible(false);
-    }
-
-    const openChat = () => {
+    };
+    
+    // @param: items -- from item.messages
+    const openChat = (items) => {
+        setChatData(items)
         setChatVisible(true);
-    }
+    };
+
 
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
@@ -60,7 +69,15 @@ const messages = () => {
                         arrival={item.arrival}
                         prevText={item.messages[item.messages.length-1].content}
                         rideData={item}
-                        onPress={() => alert("yo")}
+                        onPress={()=> 
+                                    {
+                                        openChat(item.messages); 
+                                        setOrigin(item.origins.short); 
+                                        setDestination(item.destination.short); 
+                                        setArrival(item.arrival); 
+                                        setDay(item.day)
+                                    }
+                                }
                         />)
                     }
                     keyExtractor={item => item._id}
@@ -69,14 +86,24 @@ const messages = () => {
                 <Message
                     origin={"Message from Developers :)"}
                     prevText={"Remember to rate others after carpooling"}
-                    onPress={() => alert("yo")}
+                    onPress={() => {openChat(); setOrigin("Messages from"); setDestination("developers")}}
                     />
 
             </ScrollView>
         </SafeAreaView>}
 
         {/* Conditionally render chat */}
-        {chatVisible}
+        {chatVisible && 
+        <Chat 
+            exitChat={() => exitChat()}
+            chatData={chatData}
+            origin={origin} 
+            destination={destination}
+            arrival={arrival}
+            day={day}
+
+        />}
+
         </>
     )
 }
