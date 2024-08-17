@@ -39,6 +39,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
     const sendRequest = () => {
         const sendUrl = url + "/message/send";
 
+        console.log(message);
+
         const sendData = {
             messageType: "request",
             content: message,
@@ -46,11 +48,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
             clientId: clientId
         }
 
-        console.log(sendData);
-
         axios.post(sendUrl, sendData)
             .then(response => {
-                console.log("response: ", response.data)
                 if (response.data == "Ok") {
                     alert("Request sent");
                 }
@@ -150,7 +149,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
                 <TextInput
                     style={styles.textInput}
                     value={message}
-                    onChange={setMessage}
+                    onChangeText={setMessage}
                     multiline
                 />
                 {/* Submit Button */}
