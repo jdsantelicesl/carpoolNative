@@ -56,14 +56,6 @@ const messages = () => {
                 />
 
                 <Message
-                    origin={"Sacramento"}
-                    destination={"East Davis"}
-                    day={2}
-                    arrival={18.5}
-                    prevText={"Headng back, anyone still up for Joe's Sandwiches"}
-                />
-
-                <Message
                     origin={"Message from Developers :)"}
                     prevText={"Remember to rate others after carpooling"}
                 />
