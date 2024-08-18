@@ -76,7 +76,7 @@ const messages = () => {
                         />
                     }
                 >
-                    <Text style={styles.title}> Messages </Text>
+                    <Text style={styles.title}>Messages</Text>
                     <Hr style={styles.hr} />
 
                     {/** Example only. Should fetch data and use component to display data retrieved. */}

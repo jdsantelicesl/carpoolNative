@@ -104,7 +104,6 @@ const profile = () => {
                     />
                 }
             >
-
                 {/** User profile, name and rating */}
                 <View style={userStyle.userContainer}>
                     <View>
@@ -228,6 +227,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
+    title: {
+        marginTop: 1 * vh,
+        marginLeft: 6 * vw,
+        color: "black",
+        textAlign: "left",
+        fontWeight: "bold",
+        fontSize: 4 * vh,
+        marginBottom: 2 * vh,
+    },
     contentBar: {
         flexDirection: 'row',
         marginHorizontal: 4 * vw,
@@ -265,11 +273,11 @@ const userStyle = StyleSheet.create({
         alignItems: 'center',
         marginTop: 4 * vh,
         marginBottom: 2 * vh,
-        marginHorizontal: 12 * vw,
+        marginHorizontal: 10 * vw,
     },
     profile: {
-        width: 14 * vh, 
-        height: 14 * vh, 
+        width: 10 * vh, 
+        height: 10 * vh, 
         borderRadius: 7 * vh,
         borderColor: "black",
         borderWidth: 0.2 * vw
