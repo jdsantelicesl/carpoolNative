@@ -21,6 +21,11 @@ const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
+
+    // user profile data
+    const [userName, setName] = useState("loading...");
+    const [rating, setRating] = useState(null);
+
     // for either rides or reviews
     const [page, setPage] = useState('rides');
     const [displayRides, setDisplayRides] = useState(null);
@@ -39,11 +44,28 @@ const profile = () => {
     // Get Rides Data
     useEffect(() => {
         console.log('refreshing');
+        const send_id = encodeURIComponent(user_id)
 
-        // reset all values
+        urlGetUser = url + `/user/getUser?client_id=${send_id}`
+        axios.get(urlGetUser)
+            .then(response => {
+                setName(response.data.name);
+                setDisplayRatings(response.data.ratings);
+
+                // add up all ratings scores of each review
+                const sumStars = response.data.ratings.reduce((accumulator, currentValue) => {
+                    return accumulator + (currentValue.stars || 0);
+                }, 0);
+
+                const averageStars = sumStars / response.data.ratings.length;
+                setRating(averageStars);
+            })
+            .catch(error => {
+                console.log("error fetching user: ", error);
+            })
+
 
         // fetch new rides
-        const send_id = encodeURIComponent(user_id)
         send_url = url + `/ride/getUserRides?client_id=${send_id}`
         axios.get(send_url)
             .then(response => {
@@ -53,24 +75,6 @@ const profile = () => {
                 console.log("error fetching rides: ", error);
             })
     }, [refreshing]);
-
-    // Get User's Ratings
-    useEffect(() => {
-        if (page === "reviews") {
-            console.log("Opened Page Reviews")
-            const send_id = encodeURIComponent(user_id)
-            send_url = url + `/user/getUser?client_id=${send_id}`
-            axios.get(send_url)
-                .then(response => {
-                    setDisplayRatings(response.data.ratings);
-                })
-                .catch(error => {
-                    console.log("error fetching ratings: ", error);
-                })
-
-        }
-
-    }, [page==="reviews"]);
 
     const onRefresh = async () => {
         // display refreshing animation
@@ -106,9 +110,9 @@ const profile = () => {
                         <FontAwesome6 name="user-graduate" size={10 * vh} color="black" />
                     </View>
                     <View style={userStyle.info}>
-                        <Text style={userStyle.name}> Jerry Smith </Text>
+                        <Text style={userStyle.name}> {userName}</Text>
 
-                        <Rating style={userStyle.rating} size={3 * vh} rating={2.5} total={10} />
+                        <Rating style={userStyle.rating} size={3 * vh} rating={rating} total={10} />
                     </View>
                 </View>
 
