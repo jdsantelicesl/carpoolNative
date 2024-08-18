@@ -4,10 +4,33 @@ import axios from 'axios'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
 import Chat from '../../components/myComponents/chat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
+
+// Cache -- save user data
+const saveUserData = async (key, value) => {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error("Error saving data", error);
+    }
+};
+
+// Cache -- get user data
+const getUserData = async (key) => {
+    try{
+        const value = await AsyncStorage.getItem(key);
+        if (value !== null) {
+            return JSON.parse(value);
+        } 
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+    return null;
+};
 
 const messages = () => {
 
@@ -35,31 +58,58 @@ const messages = () => {
         setChatVisible(true);
     };
 
-
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
+    // useEffect(() => {
+    //     const sendId = encodeURIComponent(user_id);
+    //     const sendUrl = url + `/message/getChats?client_id=${sendId}`;
+
+    //     axios.get(sendUrl)
+    //         .then(response => {
+    //             // response.data contains all rides with messages, therefore listMessages really contains rides.
+    //             // Having the whole ride object might be usefull for future features
+    //             setMessages(response.data);
+    //         })
+    //         .catch(error => {
+    //             console.log("error getting chats: ", error);
+    //         });
+    // }, [refreshing]);
+
     useEffect(() => {
-        const sendId = encodeURIComponent(user_id);
-        const sendUrl = url + `/message/getChats?client_id=${sendId}`;
+        const fetchUserData = async () => {
+            const cachedMessages = await getUserData('messagesData');
 
-        axios.get(sendUrl)
-            .then(response => {
-                // response.data contains all rides with messages, therefore listMessages really contains rides.
-                // Having the whole ride object might be usefull for future features
-                setMessages(response.data);
-            })
-            .catch(error => {
-                console.log("error getting chats: ", error);
-            });
+            if (cachedMessages) { 
+                setMessages(cachedMessages)
+                console.log("Cached Messages")
+            } else {
+                const sendId = encodeURIComponent(user_id);
+                try {
+                    const messagesResponse = await axios.get(url + `/message/getChats?client_id=${sendId}`);
+                    const messagesData = messagesResponse.data;
+                    console.log("Fetched Messages")
+
+                    await saveUserData('messagesData', messagesData);
+                    setMessages(messagesData)
+
+                } catch (error) {
+                    console.error("Failed to fetch messages", error)
+                }
+            }
+            setRefreshing(false);
+        }
+        fetchUserData();
     }, [refreshing]);
-
+    
     const onRefresh = async () => {
+        console.log("----refreshing")
+        await AsyncStorage.removeItem('messagesData')
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setRefreshing(false);
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+        
     }
 
 

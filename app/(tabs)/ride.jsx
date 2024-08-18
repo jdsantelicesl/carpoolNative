@@ -80,7 +80,6 @@ const ride = () => {
     
     // Get Rides Data (Check Cache first and then Fetch from DB if not cached)
     useEffect(() => {
-        console.log('--refreshing--');
         
         const fetchUserData = async () => {
             const cachedRidesData = await getUserData('ridesData');
@@ -89,12 +88,12 @@ const ride = () => {
                 setDisplayRides(cachedRidesData);
                 console.log("Cached Data");
             } else {
-                console.log("Fetching Data");
-
+                
                 const send_id = encodeURIComponent(user_id);
                 try {
                     const ridesResponse = await axios.get(url + `/ride/getRides?client_id=${send_id}`);
                     const ridesData = ridesResponse.data;
+                    console.log("Fetched rides data");
 
                     await saveUserData('ridesData', ridesData)                    
                     setDisplayRides(ridesData)
@@ -109,6 +108,7 @@ const ride = () => {
     },[refreshing]);
 
     const onRefresh = async () => {
+        console.log('----refreshing');
         // Clear cache data
         await AsyncStorage.removeItem('ridesData');
         // display refreshing animation

@@ -67,8 +67,6 @@ const profile = () => {
 
     // Get Rides Data (Checking Cache)
     useEffect(() => {
-        console.log('--refreshing--');
-
         // Function to fetch user data first from AsyncStorage
         const fetchUserData = async () => {
             const cachedUserData = await getUserData('userData');
@@ -82,14 +80,14 @@ const profile = () => {
                 
                 console.log("Cached Data")
             } else {
-                console.log("Fetching data")
                 // Fetch from db and store data synchronously
                 const send_id = encodeURIComponent(user_id) 
                 
                 try {
                     const userResponse = await axios.get(url + `/user/getUser?client_id=${send_id}`);
                     const ridesResponse = await axios.get(url + `/ride/getUserRides?client_id=${send_id}`);
-
+                    console.log("Fetched user & rides data")
+                    
                     const userData = {
                         name : userResponse.data.name,
                         ratings: userResponse.data.ratings,
@@ -121,6 +119,7 @@ const profile = () => {
     }, [refreshing]);
 
     const onRefresh = async () => {
+        console.log('----refreshing');
         // Clear cache data to retrieve new data (battles against stale data)
         // Removes the data first before refreshing, this prevents racing condition between setItem && removeItem
         await AsyncStorage.removeItem('userData');
