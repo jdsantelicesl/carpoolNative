@@ -67,9 +67,9 @@ const profile = () => {
 
     // Get Rides Data (Checking Cache)
     useEffect(() => {
-        console.log('refreshing');
+        console.log('--refreshing--');
 
-        // Fetch user data first from AsyncStorage
+        // Function to fetch user data first from AsyncStorage
         const fetchUserData = async () => {
             const cachedUserData = await getUserData('userData');
             const cachedRidesData = await getUserData('ridesData');
@@ -125,10 +125,8 @@ const profile = () => {
         // Removes the data first before refreshing, this prevents racing condition between setItem && removeItem
         await AsyncStorage.removeItem('userData');
         await AsyncStorage.removeItem('ridesData');
-        
         // display refreshing animation
         setRefreshing(true);
-
         // Simulate a delay to ensure that refreshing state is properly updated
         // await new Promise(resolve => setTimeout(resolve, 1000));
     };

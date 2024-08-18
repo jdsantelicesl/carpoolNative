@@ -32,6 +32,28 @@ const DayButton = ({ title, onPress, isSelected }) => (
     </TouchableOpacity>
 );
 
+// Cache -- save user data
+const saveUserData = async (key, value) => {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error("Error saving data", error);
+    }
+};
+
+// Cache -- get user data
+const getUserData = async (key) => {
+    try{
+        const value = await AsyncStorage.getItem(key);
+        if (value !== null) {
+            return JSON.parse(value);
+        } 
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+    return null;
+};
+
 const ride = () => {
 
     const [displayRides, setDisplayRides] = useState(null)
@@ -56,35 +78,51 @@ const ride = () => {
     // Use these for rendering rideGroup
     const [rideData, setRideData] = useState(null);
     
-
+    // Get Rides Data (Check Cache first and then Fetch from DB if not cached)
     useEffect(() => {
-        console.log('refreshing');
+        console.log('--refreshing--');
+        
+        const fetchUserData = async () => {
+            const cachedRidesData = await getUserData('ridesData');
 
-        // reset all values
+            if (cachedRidesData) {
+                setDisplayRides(cachedRidesData);
+                console.log("Cached Data");
+            } else {
+                console.log("Fetching Data");
+
+                const send_id = encodeURIComponent(user_id);
+                try {
+                    const ridesResponse = await axios.get(url + `/ride/getRides?client_id=${send_id}`);
+                    const ridesData = ridesResponse.data;
+
+                    await saveUserData('ridesData', ridesData)                    
+                    setDisplayRides(ridesData)
+                } catch (error) {
+                    console.error("Failed to fetch data", error);
+                }
+            }
+            setRefreshing(false);
+        };
+
+        fetchUserData();
+    },[refreshing]);
+
+    const onRefresh = async () => {
+        // Clear cache data
+        await AsyncStorage.removeItem('ridesData');
+        // display refreshing animation
+        setRefreshing(true);
+        // Simulate a delay to ensure that refreshing state is properly updated
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    const onClearInput = () => {
         setDest(null);
         setFrom(null);
         setDay(null);
         setDate(new Date);
-
-        // fetch new rides
-        const send_id = encodeURIComponent(user_id)
-        send_url = url + `/ride/getRides?client_id=${send_id}`
-        axios.get(send_url)
-            .then(response => {
-                setDisplayRides(response.data);
-            })
-            .catch(error => {
-                console.log("error fetching rides: ", error);
-            })
-    }, [refreshing])
-
-    const onRefresh = async () => {
-        // display refreshing animation
-        setRefreshing(true);
-        // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setRefreshing(false);
     }
+
 
     // renders rideGroup and passes props
     const clickedRide = (rideData) => {
@@ -178,7 +216,7 @@ const ride = () => {
                                 <Text style={[styles.locInput, (destination && { color: "black" })]}>
                                     {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
-                                <TouchableOpacity style={{ marginRight: 7 * vw }} onPress={() => onRefresh()} >
+                                <TouchableOpacity style={{ marginRight: 7 * vw }} onPress={() => onClearInput()} >
                                     <FontAwesome6 name="xmark" size={24} style={[styles.icon, (destination && { color: "black" })]} />
                                 </TouchableOpacity>
                             </TouchableOpacity>
