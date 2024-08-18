@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Modal, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import { View, Text, Modal, StyleSheet, TouchableOpacity, Dimensions, FlatList, Image, } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Hr from './hr';
 import Rating from './rating'
@@ -55,8 +55,9 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
 			<View style={styles.modalView}>
 				<View style={styles.topContainer}>
 					{/* Profile section */}
-					<View style={styles.profile}>
+					<View style={styles.profileContainer}>
 						<FontAwesome name="user-circle" size={80} color="grey" />
+            <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
 					</View>
 
 					{/* Name and Ratings section */}
@@ -138,10 +139,19 @@ const styles = StyleSheet.create({
     marginBottom: 2 * vh,
     marginTop: 2 * vh,
   },
-  profile: {
+  profileContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
+  },
+  profile: {
+    width: 10 * vh, 
+    height: 10 * vh, 
+    borderRadius: 5 * vh,
+    position: 'absolute',
+    borderColor: "black",
+    borderWidth: 0.5 * vw
   },
   userInformation: {
     flex: 2,

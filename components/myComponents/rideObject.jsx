@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native'
+import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Image } from 'react-native'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const { width, height } = Dimensions.get('window');
@@ -28,7 +28,8 @@ const RideObject = ({ origin, destination, day, arrival, members, rideData, onRi
 
                 {/* Displaying User */}
                 <View style={styles.userContainer}>
-                    <FontAwesome6 name="user" size={25}/> 
+                    {/* <FontAwesome6 name="user" size={25}/>  */}
+                    <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
                     <Text style={styles.members}> {members[0].name} </Text>
                 </View>
 
@@ -67,6 +68,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+    },
+    profile: {
+        width: 3 * vh, 
+        height: 3 * vh, 
+        borderRadius: 1.5 * vh,
+        borderColor: "black",
+        borderWidth: 0.1 * vw
     },
     infoContainer: {
         flex: 3,

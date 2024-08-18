@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native'
 import { FontAwesome6 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Hr from './hr';
@@ -30,8 +30,8 @@ const Message = ({ style, origin, destination, day, arrival, prevText, rideData,
         <TouchableOpacity style={styles.componentCont} onPress={onPress}>
             <View style={[style, styles.container]}>
                 {/* This is the grey circle, currently place holder for user profile */}
-                <FontAwesome style={styles.profile} name="user-circle" size={10 * vh} color="#D9D9D9" />
-
+                {/* <FontAwesome style={styles.profile} name="user-circle" size={10 * vh} color="#D9D9D9" /> */}
+                <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
                 <View style={styles.content}>
 
                     {/* Display Ride Information Origin -> Destination */}
@@ -108,7 +108,11 @@ const styles = StyleSheet.create({
         width: 60 * vw,
     },
     profile: {
-
+        width: 10 * vh, 
+        height: 10 * vh, 
+        borderRadius: 5 * vh,
+        borderColor: "black",
+        borderWidth: 0.2 * vw
     },
     arrow: {
         flex: 1,

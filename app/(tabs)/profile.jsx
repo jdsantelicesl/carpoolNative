@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, ScrollView, RefreshControl, FlatList, StatusBar
+    Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, 
+    ScrollView, RefreshControl, FlatList, StatusBar, Image,
 } from 'react-native';
 import axios from 'axios';
 
@@ -104,13 +105,13 @@ const profile = () => {
                 }
             >
 
-                {/** User pfp, name and rating */}
+                {/** User profile, name and rating */}
                 <View style={userStyle.userContainer}>
                     <View>
-                        <FontAwesome6 name="user-graduate" size={10 * vh} color="black" />
+                        <Image style={userStyle.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
                     </View>
                     <View style={userStyle.info}>
-                        <Text style={userStyle.name}> {userName}</Text>
+                        <Text style={userStyle.name}>{userName}</Text>
 
                         <Rating style={userStyle.rating} size={3 * vh} rating={rating} total={10} />
                     </View>
@@ -266,12 +267,18 @@ const userStyle = StyleSheet.create({
         marginBottom: 2 * vh,
         marginHorizontal: 12 * vw,
     },
-    pfp: {
-
+    profile: {
+        width: 14 * vh, 
+        height: 14 * vh, 
+        borderRadius: 7 * vh,
+        borderColor: "black",
+        borderWidth: 0.2 * vw
     },
     info: {
         marginLeft: 4 * vw,
         flex: 1,
+        alignItems: "flex-start",
+        justifyContent: "flex-start"
     },
     name: {
         color: 'black',
@@ -281,7 +288,7 @@ const userStyle = StyleSheet.create({
         flexWrap: 'wrap',
     },
     rating: {
-        marginLeft: 1.5 * vw,
+        marginLeft: 0 * vw,
     },
     bio: {
         marginHorizontal: 10 * vw,

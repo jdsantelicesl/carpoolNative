@@ -3,7 +3,7 @@
 // Refer to './rideObject' and '../../app/(tabs)/profile.jsx' on how it is implemented
 
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Image } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import axios from 'axios';
 
@@ -57,7 +57,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	const renderUser = ({ item }) => (
 		<View style={styles.userItem}>
-		<FontAwesome6 name="user" size={20} color="black" />
+		<Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
 		<Text style={styles.userName}>{item.name}</Text>
 		</View>
 	);
@@ -186,6 +186,13 @@ const styles = StyleSheet.create({
 	flexDirection: 'row',
 	alignItems: 'center',
 	marginBottom: 1 * vh,
+  },
+  profile: {
+	width: 3 * vh, 
+	height: 3 * vh, 
+	borderRadius: 1.5 * vh,
+	borderColor: "black",
+	borderWidth: 0.1 * vw
   },
   userName: {
 	fontSize: 4 * vw,

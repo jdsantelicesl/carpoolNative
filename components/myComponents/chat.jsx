@@ -104,7 +104,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			user: {
 				_id: item.clientId,
 				name: item.name,
-				avatar: 'https://picsum.photos/140/140',
+				avatar: `https://picsum.photos/140/140?random=${Math.random()}`,
 			},
 		}));
 	};

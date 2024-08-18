@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesome6 } from '@expo/vector-icons';
-import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, TextInput, StatusBar } from 'react-native';
+import { FontAwesome6, FontAwesome } from '@expo/vector-icons';
+import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, TextInput, StatusBar, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import MapScreen from '../map/MapScreen';
 import axios from 'axios';
@@ -83,7 +83,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
     const renderMember = ({ item }) => (
         <TouchableOpacity style={styles.memberContainer} onPress={() => handleUserClick(item)}>
-            <FontAwesome6 name="user" size={24} style={styles.icon} />
+            <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
             <Text style={styles.memberName}>{item.name}</Text>
         </TouchableOpacity>
     );
@@ -137,7 +137,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
                         data={Array.from({ length: (5 - memberGroup.length) }, (_, index) => index)}
                         renderItem={({ item }) => (
                             <TouchableOpacity style={styles.memberContainer}>
-                                <FontAwesome6 name="user" size={24} style={styles.icon} />
+                                <FontAwesome name="user-circle" size={24} style={styles.icon} />
                                 <Text style={styles.memberName}>Empty</Text>
                             </TouchableOpacity>)
                         }
@@ -177,7 +177,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        marginTop: 5 * vh,
+        marginTop: 7 * vh,
+    },
+    profile: {
+        width: 3 * vh, 
+        height: 3 * vh, 
+        borderRadius: 1.5 * vh,
+        borderColor: "black",
+        borderWidth: 0.1 * vw,
+        marginRight: 1 *vw,
     },
     leftArrow: {
         marginLeft: 4 * vw,
@@ -211,7 +219,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 0.65 * vh,
-        paddingHorizontal: 4 * vw
+        paddingHorizontal: 3 * vw
     },
     icon: {
         marginRight: 2 * vw,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, Dimensions, Image } from 'react-native'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Rating from './rating'
 
@@ -16,12 +16,12 @@ const ReviewsObject = ({style, name, date, stars, content, origin, destination, 
 				{/* User */}
                 <View style={styles.userContainer}>
 					<View styles={styles.profile}>
-                    	<FontAwesome6 name="user" size={30} />
+                        <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
 					</View>
 						
 					<View styles={styles.nameAndDateContainer}>
 						<Text style={styles.name}>{name}</Text>
-						<Text style={styles.date}>{date}</Text>
+						<Text style={styles.date}> {date}</Text>
 					</View>
 
 					<View style={styles.ratingContainer}>
@@ -74,7 +74,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 	},
 	profile:{
-		
+        marginBottom: 0.5 * vh,
+        marginRight: 2 * vw,
+		width: 4 * vh, 
+        height: 4 * vh, 
+        borderRadius: 2 * vh,
+        borderColor: "black",
+        borderWidth: 0.1 * vw
 	},
     name: {
         fontWeight: 'bold',
