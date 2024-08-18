@@ -5,12 +5,14 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 - [X] maps
 - [X] routes
-- [ ] rides
+- [X] rides
 - [ ] messages
-- [ ] notifications and cache
-- [ ] profile
 - [ ] ratings
+- [ ] profile
+- [ ] notifications and cache
 - [ ] auth
+- [ ] color pallete
+- [ ] design details, graphics, icons, animations
 - [ ] deploy
 
 

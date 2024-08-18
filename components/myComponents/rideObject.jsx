@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native'
+import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Image } from 'react-native'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const { width, height } = Dimensions.get('window');
@@ -12,35 +12,44 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const RideObject = ({ origin, destination, day, depart, arrival, members }) => {
+const RideObject = ({ origin, destination, day, arrival, members, rideData, onRideClick}) => {
     const dayOfWeek = convertDay(day);
 
-    const handleButtonPress = () => {
-        Alert.alert('Requested to join ride');
-    };
+    // sets hour, minute, amPm from 24h to 12h clock
+    const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
+    const roundMin = Math.round((arrival - Math.floor(arrival))*60);
+    const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
+    const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
+    const formattedTime = `${hour}:${minute}${amPm}`;
 
     return ( 
         <View style={styles.container}>
             <View style={styles.infoContainer}>
+
+                {/* Displaying User */}
                 <View style={styles.userContainer}>
-                    <FontAwesome6 name="user" size={25}/> 
-                    <Text style={styles.members}> {members} </Text>
+                    {/* <FontAwesome6 name="user" size={25}/>  */}
+                    <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
+                    <Text style={styles.members}> {members[0].name} </Text>
                 </View>
 
+                {/* Location */}
                 <View style={styles.locationContainer}>
                     <Text style={styles.locationContent}> 
-                        {origin} <Text> </Text>
-                        <FontAwesome6 name="arrow-right" size={12}/> <Text> </Text>
-                        {destination}
+                        {origin.short}
+                        <Text> </Text> <FontAwesome6 name="arrow-right" size={12}/> <Text> </Text>
+                        {destination.short}
                     </Text>
                 </View>
 
+                {/* Time */}
                 <View style={styles.timeContainer}>
-                    <Text> Depart {dayOfWeek} by {depart} </Text>
-                    <Text> Arrive {dayOfWeek} by {arrival} </Text>
+                    <Text>Arrive {dayOfWeek} by {formattedTime} </Text>
                 </View>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+
+            {/* Button */}
+            <TouchableOpacity style={styles.button} onPress={() => onRideClick(rideData)}>
                 <FontAwesome6 name="arrow-right" size={4 * vh} color="#fff" />
             </TouchableOpacity>
         </View>
@@ -59,6 +68,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+    },
+    profile: {
+        width: 3 * vh, 
+        height: 3 * vh, 
+        borderRadius: 1.5 * vh,
+        borderColor: "black",
+        borderWidth: 0.1 * vw
     },
     infoContainer: {
         flex: 3,

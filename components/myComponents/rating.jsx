@@ -38,7 +38,7 @@ const Rating = ({ style, size, rating, total }) => {
             {Array.from({ length: empty }).map((_, index) => (
                 <FontAwesome name="star-o" size={size} color="black" />
             ))}
-            <Text>({total})</Text>
+            {total && <Text>({total})</Text>}
         </View>
     )
 }

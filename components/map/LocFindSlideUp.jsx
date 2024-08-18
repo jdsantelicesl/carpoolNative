@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert, Touchable } from 'react-native';
+import { View, Button, StyleSheet, TouchableOpacity, Text, Dimensions, Animated, TextInput, Alert, StatusBar, } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import MapScreen from './MapScreen'
@@ -37,13 +37,13 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 			name: destinationText,
 			lat: destLat,
 			long: destLong,
-			shortName: originShort
+			shortName: destShort
 		});
 		setFrom({
 			name: originText,
 			lat: originLat,
 			long: originLong,
-			shortName: destShort
+			shortName: originShort
 		});
 		setModalVisible(true);
 		setConfVisible(false);
@@ -106,7 +106,8 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 
 	return (
 		<View style={styles.container}>
-			<MapScreen origin={{lat: originLat, long: originLong}} dest={{lat: destLat, long: destLong}} />
+			<StatusBar barStyle="dark-content" />
+			<MapScreen origin={{ lat: originLat, long: originLong }} dest={{ lat: destLat, long: destLong }} />
 
 			<Modal
 				isVisible={isModalVisible}
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
 	submitButton: {
 		backgroundColor: '#2E74DD',
 		paddingHorizontal: 1 * vh,
-		paddingVertical: 1.5*vh,
+		paddingVertical: 1.5 * vh,
 		borderRadius: 6 * vw,
 		marginHorizontal: 20 * vw,
 	},
