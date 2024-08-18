@@ -216,8 +216,8 @@ const ride = () => {
                                 <Text style={[styles.locInput, (destination && { color: "black" })]}>
                                     {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
-                                <TouchableOpacity style={{ marginRight: 7 * vw }} onPress={() => onClearInput()} >
-                                    <FontAwesome6 name="xmark" size={24} style={[styles.icon, (destination && { color: "black" })]} />
+                                <TouchableOpacity style={{paddingRight: 4 * vh,padding: 1.5 * vh, marginRight: -2 * vw }} onPress={() => onClearInput()} >
+                                    <FontAwesome6 name="xmark" size={24} style={[{color: "#6E6B6B"}, (destination && { color: "black" })]} />
                                 </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
