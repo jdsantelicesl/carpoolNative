@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList, RefreshControl } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList, RefreshControl, AppState } from 'react-native'
 import axios from 'axios'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
@@ -61,50 +61,51 @@ const messages = () => {
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
-    // useEffect(() => {
-    //     const sendId = encodeURIComponent(user_id);
-    //     const sendUrl = url + `/message/getChats?client_id=${sendId}`;
+    const fetchUserData = async () => {
+        const cachedMessages = await getUserData('messagesData');
 
-    //     axios.get(sendUrl)
-    //         .then(response => {
-    //             // response.data contains all rides with messages, therefore listMessages really contains rides.
-    //             // Having the whole ride object might be usefull for future features
-    //             setMessages(response.data);
-    //         })
-    //         .catch(error => {
-    //             console.log("error getting chats: ", error);
-    //         });
-    // }, [refreshing]);
+        if (cachedMessages) { 
+            setMessages(cachedMessages)
+            console.log("Cached Messages")
+        } else {
+            const sendId = encodeURIComponent(user_id);
+            try {
+                const messagesResponse = await axios.get(url + `/message/getChats?client_id=${sendId}`);
+                const messagesData = messagesResponse.data;
+                console.log("Fetched Messages")
+
+                await saveUserData('messagesData', messagesData);
+                setMessages(messagesData)
+
+            } catch (error) {
+                console.error("Failed to fetch messages", error)
+            }
+        }
+        setRefreshing(false);
+    }
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const cachedMessages = await getUserData('messagesData');
-
-            if (cachedMessages) { 
-                setMessages(cachedMessages)
-                console.log("Cached Messages")
-            } else {
-                const sendId = encodeURIComponent(user_id);
-                try {
-                    const messagesResponse = await axios.get(url + `/message/getChats?client_id=${sendId}`);
-                    const messagesData = messagesResponse.data;
-                    console.log("Fetched Messages")
-
-                    await saveUserData('messagesData', messagesData);
-                    setMessages(messagesData)
-
-                } catch (error) {
-                    console.error("Failed to fetch messages", error)
-                }
-            }
-            setRefreshing(false);
-        }
         fetchUserData();
+         // Handle AppState
+         const handleAppStateChange = (nextAppState) => {
+            if (nextAppState === 'active') {
+                console.log("App Active")
+                onRefresh();
+            }
+        }
+        // Listen to app state changes
+        const currentAppState = AppState.addEventListener('change', handleAppStateChange)
+
+        // Clean listener component when app is unmounted
+        return () => {
+            currentAppState.remove();
+        }
     }, [refreshing]);
     
     const onRefresh = async () => {
-        console.log("----refreshing")
+        console.log("----refreshing | Messages Page")
         await AsyncStorage.removeItem('messagesData')
+        console.log("Cleared Cache")
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
