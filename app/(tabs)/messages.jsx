@@ -31,7 +31,6 @@ const messages = () => {
     // @param: items -- from item.messages
     const openChat = (items) => {
         setChatData(items);
-        console.log(items);
         setChatVisible(true);
     };
 
