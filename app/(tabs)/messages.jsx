@@ -10,6 +10,8 @@ const vh = height * 0.01;
 const vw = width * 0.01;
 
 const messages = () => {
+
+    const [disableComposer, setDisableComposer] = useState(false); // Disable send chat
     const [listMessages, setMessages] = useState(null);
     const [chatVisible, setChatVisible] = useState(false);
     const [chatData, setChatData] = useState([]);
@@ -97,7 +99,8 @@ const messages = () => {
                                         setOrigin(item.origins.short); 
                                         setDestination(item.destination.short); 
                                         setArrival(item.arrival); 
-                                        setDay(item.day)
+                                        setDay(item.day);
+                                        setDisableComposer(false);
                                     }
                                 }
                             />)
@@ -108,7 +111,7 @@ const messages = () => {
                 <Message
                     origin={"Message from Developers :)"}
                     prevText={"Remember to rate others after carpooling"}
-                    onPress={() => {openChat(); setOrigin("Messages from"); setDestination("developers")}}
+                    onPress={() => {openChat(); setOrigin("Messages from"); setDestination("developers"); setDisableComposer(true);}}
                     />
 
                 </ScrollView>
@@ -117,6 +120,7 @@ const messages = () => {
         {/* Conditionally render chat */}
         {chatVisible && 
         <Chat 
+            disableComposer={disableComposer}
             exitChat={() => exitChat()}
             chatData={chatData}
             origin={origin} 

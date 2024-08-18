@@ -16,7 +16,7 @@ const convertDay = (day) => {
 	return days[adjustedDay];
 };
 
-const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId }) => { // Destructure the onClose and chatData props
+const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arrival, day, rideId }) => { // Destructure the onClose and chatData props
 
 	const dayOfWeek = convertDay(day);
 
@@ -44,7 +44,7 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 						{...props}
 						wrapperStyle={{
 							right: {
-								backgroundColor: '#367CE5', // Grey background for the user's messages
+								backgroundColor: '#367CE5', // Blue background for the user's messages
 							},
 							left: {
 								backgroundColor: '#ECECEC', // Light grey background for received messages
@@ -222,10 +222,11 @@ const Chat = ({ exitChat, chatData, origin, destination, arrival, day, rideId })
 
 				{/* Chat Interface */}
 				<GiftedChat
+					disableComposer={disableComposer}
 					renderBubble={props => <CustomBubble {...props} />}
 					renderUsernameOnMessage={true}
 					showuserAvatar={true}
-					alwaysShowSend={true}
+					alwaysShowSend={!disableComposer}
 					messages={messages}
 					onSend={messages => onSend(messages)}
 					user={{
