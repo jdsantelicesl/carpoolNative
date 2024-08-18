@@ -18,15 +18,17 @@ const ReviewsObject = ({style, name, date, stars, content, origin, destination, 
 					<View styles={styles.profile}>
                         <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
 					</View>
-						
+
+                    {/* Style differently if it is inside userProfilePopUp or in Profile */}
 					<View styles={styles.nameAndDateContainer}>
 						<Text style={styles.name}>{name}</Text>
 						<Text style={styles.date}> {date}</Text>
 					</View>
-
+                
 					<View style={styles.ratingContainer}>
 						<Rating size={2.5 * vh} rating={stars}/>
 					</View>
+
                 </View>
 
 

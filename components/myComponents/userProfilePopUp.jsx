@@ -54,6 +54,7 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
 		<View style={styles.centeredView}>
 			<View style={styles.modalView}>
 				<View style={styles.topContainer}>
+
 					{/* Profile section */}
 					<View style={styles.profileContainer}>
 						<FontAwesome name="user-circle" size={80} color="grey" />
@@ -79,12 +80,6 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
 				<FlatList
 					scrollEnabled={true}
 					data={reviews}
-					// renderItem={({ item }) => (
-					// 	<View style={{paddingVertical: .5*vh}}>
-					// 	<Text> {item.name}, rating:{item.stars}</Text>
-					// 	<Text> Content: {item.content} </Text>
-					// 	</View>
-					// )}
 					renderItem={({ item }) => (
 						<ReviewsObject 
 							name={item.name}
@@ -198,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 3 * vw,
   },
   reviewsObject: {
-	marginHorizontal: 1 * vw,
+	  marginHorizontal: 1 * vw,
   },
 });
 

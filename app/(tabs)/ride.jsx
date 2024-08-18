@@ -3,6 +3,7 @@ import {
     Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert,
     TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl, FlatList, StatusBar,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
