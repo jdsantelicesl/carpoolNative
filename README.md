@@ -11,7 +11,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] profile
 - [ ] notifications and cache
 - [ ] add on-demand messages with push notifications
-- [ ] auth
+- [X] auth
 - [ ] color pallete
 - [ ] add profile bio
 - [ ] fix rating obj styles on rideGroup
