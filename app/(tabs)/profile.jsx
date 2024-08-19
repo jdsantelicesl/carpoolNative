@@ -108,7 +108,6 @@ const profile = () => {
                 console.error("Error fetching data", error);
             }
         }
-
         setRefreshing(false)
     };
 
