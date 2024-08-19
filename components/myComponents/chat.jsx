@@ -29,6 +29,23 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 	const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
+	const reqStatus = (state, ownerId) => {
+		sendUrl = url + "/message/joinReq";
+		sendData = {
+			rideId: rideId,
+			clientId: ownerId,
+			status: state
+		};
+		axios.post(sendUrl, sendData)
+			.then(response => {
+				alert("user accepted/rejected");
+			})
+			.catch(error => {
+				alert("error");
+				console.log("error with ride request: ", error);
+			});
+	}
+
 	const CustomBubble = (props) => {
 		const mssgType = props.currentMessage.type;
 		const mssgStatus = props.currentMessage.status;
@@ -73,10 +90,10 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 							<Text style={reqStyles.text}> {props.currentMessage.text} </Text>
 							{(mssgStatus === "open") ? (<View style={reqStyles.buttonCont}>
 
-								<TouchableOpacity style={[reqStyles.buttons, { backgroundColor: '#2E74DD' }]}>
+								<TouchableOpacity style={[reqStyles.buttons, { backgroundColor: '#2E74DD' }]} onPress={() => reqStatus(true, usrId)}>
 									<Text style={reqStyles.buttonText}>Accept</Text>
 								</TouchableOpacity>
-								<TouchableOpacity style={[reqStyles.buttons, { backgroundColor: '#ED0800' }]}>
+								<TouchableOpacity style={[reqStyles.buttons, { backgroundColor: '#ED0800' }]} onPress={() => reqStatus(false, usrId)}>
 									<Text style={reqStyles.buttonText}>Reject</Text>
 								</TouchableOpacity>
 							</View>) :
