@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 2 * vh,
     padding: 3 * vh,
-    width: 90 * vw,
+    width: 92 * vw,
     height: 80 * vh,
     shadowColor: '#000',
     shadowOffset: {
@@ -176,14 +176,12 @@ const styles = StyleSheet.create({
     width: 77 * vw,
     backgroundColor: "black",
   },
-  reviewsText: {
-    fontSize: 4 * vw,
-    marginBottom: 2 * vh,
-  },
   reviewList: {
-	flex: 1,
-	flexDirection: "column",
-	// backgroundColor: "blue"
+    flex: 1,
+    flexDirection: "column",
+    elevation: 10, // Increase elevation to ensure shadow visibility
+    zIndex: 10, // Ensure this view stays on top of others on iOS
+    overflow: 'visible', // Ensure the shadow is not clipped
   },
   closeButton: {
     backgroundColor: 'red',
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 3 * vw,
   },
   reviewsObject: {
-	  marginHorizontal: 1 * vw,
+    width: "100%"
   },
 });
 

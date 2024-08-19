@@ -22,7 +22,7 @@ const ReviewsObject = ({style, name, date, stars, content, origin, destination, 
                     {/* Style differently if it is inside userProfilePopUp or in Profile */}
 					<View styles={styles.nameAndDateContainer}>
 						<Text style={styles.name}>{name}</Text>
-						<Text style={styles.date}> {date}</Text>
+						{date && <Text style={styles.date}> {date}</Text>}
 					</View>
                 
 					<View style={styles.ratingContainer}>
@@ -55,7 +55,7 @@ const ReviewsObject = ({style, name, date, stars, content, origin, destination, 
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        marginVertical: .6 * vh,
+        marginVertical: .7 * vh,
         backgroundColor: '#fff',
         borderRadius: 2 * vh,
         shadowColor: '#000',
@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
 		flex: 1,
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
-        marginTop: -1 * vh,
     },
     date: {
         fontSize: 3.5 * vw,

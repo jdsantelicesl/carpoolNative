@@ -16,7 +16,6 @@ const Login = ({ onSendCode }) => {
 	const [email, setEmail] = useState('');
 
 	const handleSendCode = () => {
-		console.log(`Email: ${email}`);
 		if (onSendCode) {
 			onSendCode(email); // Call the onSendCode function with email
 		}
@@ -41,7 +40,7 @@ const Login = ({ onSendCode }) => {
 					keyboardType="email-address"
 				/>
 
-				<TouchableOpacity style={styles.button} onPress={handleSendCode}>
+				<TouchableOpacity style={styles.button} onPress={handleSendCode} disabled={!email}>
 					<Text style={styles.buttonText}>SEND CODE</Text>
 				</TouchableOpacity>
 		</View>

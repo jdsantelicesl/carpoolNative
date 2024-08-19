@@ -1,8 +1,11 @@
-// Page 2
-// Users enter access token and stores it in cache
+// Page 3
+// This file is for posting user's credentials and caching them
+// 1. userFullName
+// 2. userSchool
+// 3. userBio
+// For profile picture, let them edit in profile page
 
-// Todo: Create logic to prevent user from spamming resquest and prevent brute force attacks on access tokens
-import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -12,57 +15,65 @@ const vw = width * 0.01;
 
 // @params
 // onBackPress: func
-// onResendCode: func
-// onAccessTokenChange : func
-const Verification = ({onBackPress, onResendCode, onAccessTokenChange}) => {
+// setUserCredentials : func 
+const Credentials = ({onBackPress, setUserCredentials}) => {
 
-    const [localAccessToken, setLocalAccessToken] = useState(null);
-
-    const handleLogin = (localAccessToken) =>{
-        console.log(`Clicked Login, Access Token : ${localAccessToken}`)
-        onAccessTokenChange(localAccessToken);
+    // Passes user creds as object 
+    const handleCarpool = () => {
+        const localUserCredentials = {
+            name: localName,
+            school: localSchool,
+            bio : localBio
+        }
+        setUserCredentials(localUserCredentials)
     }
+
+    const [localName, setLocalName] = useState(null);
+    const [localSchool, setLocalSchool] = useState(null);
+    const [localBio, setLocalBio] = useState(null);
 
     return (
         <View style={styles.container}>
+            {/* Just adding spacing */}
+            <View style={{marginTop: 10 * vh}}></View>
 
             {/* Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
                 <AntDesign name="arrowleft" size={24} color="black" />
             </TouchableOpacity>
 
-            {/* App Logo */}
-            <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require("../../assets/images/applogo-removebg.png")} />
-            </View>
-
             {/* Title */}
-            <Text style={styles.title}>One Last Step</Text>
+            <Text style={styles.title}>Get Started</Text>
             
             {/* Text Input */}
             <TextInput 
                 style={styles.input} 
-                placeholder="XXXX" 
-                onChangeText={setLocalAccessToken}
+                placeholder="Full Name" 
+                onChangeText={setLocalName}
                 placeholderTextColor="#888" />
             
-            {/* Login Button */}
-            <TouchableOpacity style={styles.button} onPress={() => {handleLogin(localAccessToken)}}>
-                <Text style={styles.buttonText}>LOGIN</Text>
-            </TouchableOpacity>
+            <TextInput 
+                style={styles.input} 
+                placeholder="School" 
+                onChangeText={setLocalSchool}
+                placeholderTextColor="#888" />
 
-            {/* Resend Button */}
-            <View style={styles.resendButtonContainer}>
-                <TouchableOpacity onPress={onResendCode} disabled={!localAccessToken} style={styles.resendButton}> 
-                    <Text style={[{color: "#367CE5"}, !localAccessToken && {color: "#888"}]}> Resend Code</Text>
-                </TouchableOpacity>
-            </View>
+            <TextInput 
+                style={styles.input} 
+                placeholder="Bio" 
+                onChangeText={setLocalBio}
+                placeholderTextColor="#888" />    
+
+            {/* Carpool Button */}
+            <TouchableOpacity style={styles.button} onPress={() => {handleCarpool();}}>
+                <Text style={styles.buttonText}>CARPOOL</Text>
+            </TouchableOpacity>
 
         </View>
     )
 }
 
-export default Verification
+export default Credentials
 
 const styles = StyleSheet.create({
   container: {
@@ -90,7 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 4 * vh,
     fontWeight: "bold",
     color: "#6E6B6B",
-    marginBottom: 1.5 * vh,
+    marginBottom: 5 * vh,
   },
   input: {
     width: "80%",
@@ -99,7 +110,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 2 * vw,
-    marginBottom: 1.5 * vh,
+    marginBottom: 2 * vh,
     fontSize: 1.8 * vh,
     color: "#333",
   },
