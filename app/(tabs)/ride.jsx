@@ -6,12 +6,10 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome6 } from '@expo/vector-icons';
-import * as Localization from 'expo-localization';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
 import axios from 'axios'; // Use this when we create a Flask server for data endpoints
-import LocFind from '../../components/map/locFind';
 import { render } from 'react-native-web';
 import LocFindSlideUp from '../../components/map/LocFindSlideUp';
 import RideObject from '../../components/myComponents/rideObject';
@@ -43,10 +41,6 @@ const ride = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [renderMap, setRenderMap] = useState(false);
 
-    /** Need all of these conversions in order for date form submission to run smooth, trust.
-     * Will need to implement for android later.
-     * .timzone is deprecated but works very well
-     */
     const dateObj = new Date(); // Your date object
     const [date, setDate] = useState(dateObj)
     const [sendDate, setSendDate] = useState(getHours(Date()) + (getMinutes(Date()) / 60)) // need to use Date() directly!
@@ -55,58 +49,57 @@ const ride = () => {
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
-    
+
     // Use these for rendering rideGroup
     const [rideData, setRideData] = useState(null);
-    
+
     // Get Rides Data (Check Cache first and then Fetch from DB if not cached) &
     // Check AppState if in background/foreground, user gets fresh data every app open
     useEffect(() => {
-            // Fetch when Component mounts
-            fetchUserData();
-
-            // Handle AppState
-            const handleAppStateChange = (nextAppState) => {
-                if (nextAppState === 'active') {
-                    console.log("App Active")
-                    onRefresh();
-                }
-            }
-            // Listen to app state changes
-            const currentAppState = AppState.addEventListener('change', handleAppStateChange)
-
-            // Clean listener component when app is unmounted
-            return () => {
-                currentAppState.remove();
-            }
+        // Use cache data until new data is fetched. Useful when dealing with bad signal
+        const fetchUserData = async () => {
+            const cachedRidesData = await getUserData('ridesData');
 
 
-    },[refreshing]);
-
-    // Handle Cache Data
-    const fetchUserData = async () => {
-        const cachedRidesData = await getUserData('ridesData');
-
-        if (cachedRidesData) {
             setDisplayRides(cachedRidesData);
             console.log("Cached Data");
-        } else {
-            
+
+
             const send_id = encodeURIComponent(user_id);
             try {
                 const ridesResponse = await axios.get(url + `/ride/getRides?client_id=${send_id}`);
                 const ridesData = ridesResponse.data;
                 console.log("Fetched rides data");
 
-                await saveUserData('ridesData', ridesData)                    
+                await saveUserData('ridesData', ridesData)
                 setDisplayRides(ridesData)
             } catch (error) {
                 console.error("Failed to fetch data", error);
             }
-        }
-        setRefreshing(false);
-    };
+        };
 
+        // Fetch when Component mounts and when refreshing.
+        // conditonal check because useEffect will be called twice onRefresh
+        if (!refreshing) {
+            fetchUserData();
+        }
+
+        // Handle AppState
+        const handleAppStateChange = (nextAppState) => {
+            if (nextAppState === 'active') {
+                console.log("App Active")
+                onRefresh();
+            }
+        }
+        // Listen to app state changes
+        const currentAppState = AppState.addEventListener('change', handleAppStateChange)
+
+        // Clean listener component when app is unmounted
+        return () => {
+            currentAppState.remove();
+        }
+
+    }, [refreshing]);
 
     const onRefresh = async () => {
         console.log('----refreshing | Ride Page');
@@ -116,8 +109,10 @@ const ride = () => {
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
-        // await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setRefreshing(false);
     }
+
     const onClearInput = () => {
         setDest(null);
         setFrom(null);
@@ -206,7 +201,7 @@ const ride = () => {
                         }
                     >
                         {/* Just makes top statusbar dark mode */}
-                        <StatusBar barStyle = "dark-content"/>
+                        <StatusBar barStyle="dark-content" />
 
                         {/* Location Selection Component */}
 
@@ -218,8 +213,8 @@ const ride = () => {
                                 <Text style={[styles.locInput, (destination && { color: "black" })]}>
                                     {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
-                                <TouchableOpacity style={{paddingRight: 4 * vh,padding: 1.5 * vh, marginRight: -2 * vw }} onPress={() => onClearInput()} >
-                                    <FontAwesome6 name="xmark" size={24} style={[{color: "#6E6B6B"}, (destination && { color: "black" })]} />
+                                <TouchableOpacity style={{ paddingRight: 4 * vh, padding: 1.5 * vh, marginRight: -2 * vw }} onPress={() => onClearInput()} >
+                                    <FontAwesome6 name="xmark" size={24} style={[{ color: "#6E6B6B" }, (destination && { color: "black" })]} />
                                 </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
@@ -298,7 +293,7 @@ const ride = () => {
                 </SafeAreaView>}
 
             {renderMap && !renderRideGroup && <LocFindSlideUp setRenderMap={setRenderMap} setDest={setDest} setFrom={setFrom} />}
-            
+
             {renderRideGroup &&
                 <RideGroup
                     origin={rideData.origins}
