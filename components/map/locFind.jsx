@@ -4,6 +4,8 @@ import axios from 'axios';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const url = process.env.EXPO_PUBLIC_API_URL + "/ride/locFind";
+const user_id = process.env.EXPO_PUBLIC_USER_ID;
+const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -18,8 +20,12 @@ const LocFind = ({ style, query, handleLocClick }) => {
     useEffect(() => {
         const queryParam = encodeURIComponent(query);
         const reqUrl = `${url}?query=${queryParam}&lat=${lat}&long=${long}`;
+        const headers = {
+            "token": accessToken,
+            "clientId": user_id
+        }
 
-        axios.get(reqUrl)
+        axios.get(reqUrl, { headers: headers })
             .then(response => {
                 setLocations(response.data.suggestions)
             })

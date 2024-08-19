@@ -31,6 +31,8 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 	const [destLong, setDestLong] = useState(null);
 
 	const url = process.env.EXPO_PUBLIC_API_URL + "/ride/getCoordinates";
+	const user_id = process.env.EXPO_PUBLIC_USER_ID;
+	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 	const confirmRoute = () => {
 		setDest({
@@ -70,9 +72,11 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 
 		encode_id = encodeURIComponent(loc_id)
 		fetch_url = `${url}?placeId=${encode_id}`
-
-
-		axios.get(fetch_url)
+		const headers = {
+			"token": accessToken,
+			"clientId": user_id
+		}
+		axios.get(fetch_url, { headers: headers })
 			.then(response => {
 				const get_lat = response.data.location.latitude;
 				const get_long = response.data.location.longitude;

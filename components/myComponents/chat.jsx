@@ -28,6 +28,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 	const user_id = process.env.EXPO_PUBLIC_USER_ID;
+	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 	const reqStatus = (state, ownerId) => {
 		sendUrl = url + "/message/joinReq";
@@ -36,7 +37,12 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			clientId: ownerId,
 			status: state
 		};
-		axios.post(sendUrl, sendData)
+		const headers = {
+			'Content-Type': 'application/json',
+			"token": accessToken,
+			"clientId": user_id
+		}
+		axios.post(sendUrl, sendData, { headers: headers })
 			.then(response => {
 				alert("user accepted/rejected");
 			})
@@ -203,8 +209,12 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			rideId: rideId,
 			clientId: user_id
 		}
-
-		axios.post(sendUrl, sendData)
+		const headers = {
+			'Content-Type': 'application/json',
+			"token": accessToken,
+			"clientId": user_id
+		}
+		axios.post(sendUrl, sendData, { headers: headers })
 			.then(response => {
 				alert("message sent");
 			})

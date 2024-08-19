@@ -16,13 +16,19 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
   const [reviews, setReviews] = useState(null);
 
   const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
+  const user_id = process.env.EXPO_PUBLIC_USER_ID;
+  const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
   useEffect(() => {
     const sendId = encodeURIComponent(userData.id);
 
     const sendUrl = url + `/user/getUser?client_id=${sendId}`
+    const headers = {
+      "token": accessToken,
+      "clientId": user_id
+    }
 
-    axios.get(sendUrl)
+    axios.get(sendUrl, { headers: headers })
       .then(response => {
         if (response.data.ratings) {
           setReviews(response.data.ratings);
