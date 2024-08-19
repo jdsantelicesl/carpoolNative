@@ -42,7 +42,7 @@ const profile = () => {
     const pagePress = (value) => {
         setPage(value);
     }
-
+    
     // Fetch user data & listens to app state
     useEffect(() => {
         // Get Rides Data (Checking Cache)
