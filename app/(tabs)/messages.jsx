@@ -6,31 +6,11 @@ import Message from '../../components/myComponents/message';
 import Chat from '../../components/myComponents/chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { saveUserData, getUserData } from '../../components/utilities/cache';
+
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
-
-// Cache -- save user data
-const saveUserData = async (key, value) => {
-    try {
-        await AsyncStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error("Error saving data", error);
-    }
-};
-
-// Cache -- get user data
-const getUserData = async (key) => {
-    try{
-        const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return JSON.parse(value);
-        } 
-    } catch (error) {
-        console.error("Error fetching data", error);
-    }
-    return null;
-};
 
 const messages = () => {
 

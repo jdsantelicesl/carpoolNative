@@ -17,6 +17,8 @@ import LocFindSlideUp from '../../components/map/LocFindSlideUp';
 import RideObject from '../../components/myComponents/rideObject';
 import RideGroup from '../../components/myComponents/rideGroup';
 
+import { saveUserData, getUserData } from '../../components/utilities/cache';
+
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = process.env.EXPO_PUBLIC_USER_ID;
@@ -32,28 +34,6 @@ const DayButton = ({ title, onPress, isSelected }) => (
         <Text style={[styles.dayButtonText, isSelected && styles.selectedDayButtonText]}>{title}</Text>
     </TouchableOpacity>
 );
-
-// Cache -- save user data
-const saveUserData = async (key, value) => {
-    try {
-        await AsyncStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error("Error saving data", error);
-    }
-};
-
-// Cache -- get user data
-const getUserData = async (key) => {
-    try{
-        const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return JSON.parse(value);
-        } 
-    } catch (error) {
-        console.error("Error fetching data", error);
-    }
-    return null;
-};
 
 const ride = () => {
 
