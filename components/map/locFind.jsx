@@ -4,6 +4,8 @@ import axios from 'axios';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const url = process.env.EXPO_PUBLIC_API_URL + "/ride/locFind";
+const user_id = process.env.EXPO_PUBLIC_USER_ID;
+const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;

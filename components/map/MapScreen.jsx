@@ -46,6 +46,8 @@ const MapScreen = ({ origin, dest }) => {
       }
 
       const polyline_url = process.env.EXPO_PUBLIC_API_URL + "/ride/getRoute" // placeholder
+      const user_id = process.env.EXPO_PUBLIC_USER_ID;
+      const accessToken = process.env.EXPO_PUBLIC_TOKEN;
       const headers = {
         'Content-Type': 'application/json',
         "token": accessToken,

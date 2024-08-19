@@ -28,6 +28,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 	const user_id = process.env.EXPO_PUBLIC_USER_ID;
+	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 	const reqStatus = (state, ownerId) => {
 		sendUrl = url + "/message/joinReq";

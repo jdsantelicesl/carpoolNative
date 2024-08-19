@@ -21,7 +21,8 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const clientId = process.env.EXPO_PUBLIC_USER_ID //placeholder
+const user_id = process.env.EXPO_PUBLIC_USER_ID //placeholder
+const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, setRenderRideGroup }) => {
 
@@ -45,7 +46,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
             messageType: "request",
             content: message,
             rideId: rideId,
-            clientId: clientId
+            clientId: user_id
         }
         const headers = {
             'Content-Type': 'application/json',

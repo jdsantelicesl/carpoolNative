@@ -16,6 +16,8 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
   const [reviews, setReviews] = useState(null);
 
   const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
+  const user_id = process.env.EXPO_PUBLIC_USER_ID;
+  const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
   useEffect(() => {
     const sendId = encodeURIComponent(userData.id);

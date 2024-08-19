@@ -20,6 +20,7 @@ import { saveUserData, getUserData } from '../../components/utilities/cache';
 
 // User id placeHolder. Replace after auth. The id is for test user
 const user_id = process.env.EXPO_PUBLIC_USER_ID;
+const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;

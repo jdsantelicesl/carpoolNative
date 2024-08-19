@@ -21,6 +21,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 	const user_id = "66b690a0c48abbd2f6bcadfc";
+	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 	if (!rideData) return null;
 

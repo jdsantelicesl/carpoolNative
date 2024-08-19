@@ -20,6 +20,7 @@ const vw = width * 0.01;
 
 // placeholder
 const user_id = process.env.EXPO_PUBLIC_USER_ID;
+const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
