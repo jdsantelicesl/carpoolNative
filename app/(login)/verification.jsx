@@ -14,12 +14,12 @@ const vw = width * 0.01;
 // onBackPress: func
 // onResendCode: func
 // onAccessTokenChange : func
-const Verification = ({onBackPress, onResendCode, onAccessTokenChange}) => {
+const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
     const [localAccessToken, setLocalAccessToken] = useState(null);
 
     const handleLogin = (localAccessToken) =>{
-        onAccessTokenChange(localAccessToken);
+        onSubmitCode(localAccessToken);
     }
 
     return (

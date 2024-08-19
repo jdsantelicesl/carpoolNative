@@ -8,10 +8,6 @@ const apiClient = axios.create();
 
 apiClient.interceptors.request.use(
     async (config) => {
-        
-        // placeholder for testing, need to cache at login
-        await saveUserData("clientId", "66c183bb3cc3bdc99d4b5966");
-        await saveUserData("refresh", "PDdSkkJvxscM8qTUAqsKztm0YOxrlhCS");
 
         // Token refresh logic
         const clientId = await getUserData("clientId")

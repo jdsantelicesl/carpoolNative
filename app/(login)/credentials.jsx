@@ -16,10 +16,10 @@ const vw = width * 0.01;
 // @params
 // onBackPress: func
 // setUserCredentials : func 
-const Credentials = ({onBackPress, setUserCredentials}) => {
+const Credentials = ({lastCreds, onBackPress, setUserCredentials}) => {
 
     // Passes user creds as object 
-    const handleCarpool = () => {
+    const handleSubmit = () => {
         const localUserCredentials = {
             name: localName,
             school: localSchool,
@@ -28,9 +28,9 @@ const Credentials = ({onBackPress, setUserCredentials}) => {
         setUserCredentials(localUserCredentials)
     }
 
-    const [localName, setLocalName] = useState(null);
-    const [localSchool, setLocalSchool] = useState(null);
-    const [localBio, setLocalBio] = useState(null);
+    const [localName, setLocalName] = lastCreds ? useState(lastCreds.name) : useState(null);
+    const [localSchool, setLocalSchool] = lastCreds ? useState(lastCreds.school) : useState(null);
+    const [localBio, setLocalBio] = lastCreds ? useState(lastCreds.bio) : useState(null);
 
     return (
         <View style={styles.container}>
@@ -65,8 +65,8 @@ const Credentials = ({onBackPress, setUserCredentials}) => {
                 placeholderTextColor="#888" />    
 
             {/* Carpool Button */}
-            <TouchableOpacity style={styles.button} onPress={() => {handleCarpool();}}>
-                <Text style={styles.buttonText}>CARPOOL</Text>
+            <TouchableOpacity style={styles.button} onPress={() => {handleSubmit();}}>
+                <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
 
         </View>

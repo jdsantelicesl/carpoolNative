@@ -12,13 +12,11 @@ const vw = width * 0.01;
 
 // @params
 // onSendCode : func
-const Login = ({ onSendCode }) => {
-	const [email, setEmail] = useState('');
+const Login = ({ lastEmail, passEmail }) => {
+	const [email, setEmail] = lastEmail ? useState(lastEmail) : useState('');
 
-	const handleSendCode = () => {
-		if (onSendCode) {
-			onSendCode(email); // Call the onSendCode function with email
-		}
+	const handleSetEmail = () => {
+			passEmail(email); // Call the onSendCode function with email
 	};
 
   	return (
@@ -33,15 +31,15 @@ const Login = ({ onSendCode }) => {
 
 				<TextInput
 					style={styles.input}
-					placeholder="Email@school.edu"
+					placeholder="Email@apps.losrios.edu"
 					value={email} // Controlled component
 					onChangeText={setEmail}
 					placeholderTextColor="#888"
 					keyboardType="email-address"
 				/>
 
-				<TouchableOpacity style={styles.button} onPress={handleSendCode} disabled={!email}>
-					<Text style={styles.buttonText}>SEND CODE</Text>
+				<TouchableOpacity style={styles.button} onPress={handleSetEmail} disabled={!email}>
+					<Text style={styles.buttonText}>Continue</Text>
 				</TouchableOpacity>
 		</View>
 		);
