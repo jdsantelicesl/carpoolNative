@@ -21,8 +21,12 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
     const sendId = encodeURIComponent(userData.id);
 
     const sendUrl = url + `/user/getUser?client_id=${sendId}`
+    const headers = {
+      "token": accessToken,
+      "clientId": user_id
+    }
 
-    axios.get(sendUrl)
+    axios.get(sendUrl, { headers: headers })
       .then(response => {
         if (response.data.ratings) {
           setReviews(response.data.ratings);

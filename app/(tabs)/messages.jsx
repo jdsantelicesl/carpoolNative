@@ -48,8 +48,12 @@ const messages = () => {
             console.log("Cached Messages")
 
             const sendId = encodeURIComponent(user_id);
+            const headers = {
+                "token": accessToken,
+                "clientId": user_id
+            }
             try {
-                const messagesResponse = await axios.get(url + `/message/getChats?client_id=${sendId}`);
+                const messagesResponse = await axios.get((url + `/message/getChats?client_id=${sendId}`), { headers: headers });
                 const messagesData = messagesResponse.data;
                 console.log("Fetched Messages")
 

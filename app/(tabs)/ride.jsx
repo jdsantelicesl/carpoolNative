@@ -66,8 +66,12 @@ const ride = () => {
 
 
             const send_id = encodeURIComponent(user_id);
+            const headers = {
+                "token": accessToken,
+                "clientId": user_id
+            }
             try {
-                const ridesResponse = await axios.get(url + `/ride/getRides?client_id=${send_id}`);
+                const ridesResponse = await axios.get((url + `/ride/getRides?client_id=${send_id}`), {headers: headers});
                 const ridesData = ridesResponse.data;
                 console.log("Fetched rides data");
 
@@ -145,8 +149,8 @@ const ride = () => {
         const send_id = encodeURIComponent(user_id);
         const detailsUrl = url + `/user/getUser?client_id=${send_id}`;
         const headers = {
-            token: accessToken,
-            clientId: user_id
+            "token": accessToken,
+            "clientId": user_id
         }
         axios.get(detailsUrl, {headers: headers})
             .then(response => {
@@ -173,7 +177,12 @@ const ride = () => {
                     }
                 };
                 send_url = url + "/ride/post"
-                axios.post(send_url, data)
+                const headers = {
+                    'Content-Type': 'application/json',
+                    "token": accessToken,
+                    "clientId": user_id
+                }
+                axios.post(send_url, data, { headers: headers })
                     .then(response => {
                         alert('Data sent to /data');
                         onRefresh();

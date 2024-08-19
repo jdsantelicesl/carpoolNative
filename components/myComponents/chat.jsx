@@ -36,7 +36,12 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			clientId: ownerId,
 			status: state
 		};
-		axios.post(sendUrl, sendData)
+		const headers = {
+			'Content-Type': 'application/json',
+			"token": accessToken,
+			"clientId": user_id
+		}
+		axios.post(sendUrl, sendData, { headers: headers })
 			.then(response => {
 				alert("user accepted/rejected");
 			})
@@ -203,8 +208,12 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			rideId: rideId,
 			clientId: user_id
 		}
-
-		axios.post(sendUrl, sendData)
+		const headers = {
+			'Content-Type': 'application/json',
+			"token": accessToken,
+			"clientId": user_id
+		}
+		axios.post(sendUrl, sendData, { headers: headers })
 			.then(response => {
 				alert("message sent");
 			})

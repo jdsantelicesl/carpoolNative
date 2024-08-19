@@ -47,8 +47,12 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
             rideId: rideId,
             clientId: clientId
         }
-
-        axios.post(sendUrl, sendData)
+        const headers = {
+            'Content-Type': 'application/json',
+            "token": accessToken,
+            "clientId": user_id
+        }
+        axios.post(sendUrl, sendData, { headers: headers })
             .then(response => {
                 if (response.data == "Ok") {
                     alert("Request sent");

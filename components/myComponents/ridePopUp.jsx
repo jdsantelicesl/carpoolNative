@@ -42,7 +42,11 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 		send_rideId = encodeURIComponent(rideData._id)
 		send_url = url + `/ride/delete?client_id=${send_userId}&ride_id=${send_rideId}`;
 
-		axios.get(send_url)
+		const headers = {
+			"token": accessToken,
+			"clientId": user_id
+		}
+		axios.get(send_url, { headers: headers })
 			.then(response => {
 				alert("Left Ride");
 				onClose();

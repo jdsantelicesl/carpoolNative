@@ -60,10 +60,13 @@ const profile = () => {
             } else {
                 // Fetch from db and store data synchronously
                 const send_id = encodeURIComponent(user_id)
-
+                const headers = {
+                    "token": accessToken,
+                    "clientId": user_id
+                }
                 try {
-                    const userResponse = await axios.get(url + `/user/getUser?client_id=${send_id}`);
-                    const ridesResponse = await axios.get(url + `/ride/getUserRides?client_id=${send_id}`);
+                    const userResponse = await axios.get((url + `/user/getUser?client_id=${send_id}`), { headers: headers });
+                    const ridesResponse = await axios.get((url + `/ride/getUserRides?client_id=${send_id}`), { headers: headers });
                     console.log("Fetched user & rides data")
 
                     const userData = {

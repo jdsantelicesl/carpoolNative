@@ -18,8 +18,12 @@ const LocFind = ({ style, query, handleLocClick }) => {
     useEffect(() => {
         const queryParam = encodeURIComponent(query);
         const reqUrl = `${url}?query=${queryParam}&lat=${lat}&long=${long}`;
+        const headers = {
+            "token": accessToken,
+            "clientId": user_id
+        }
 
-        axios.get(reqUrl)
+        axios.get(reqUrl, { headers: headers })
             .then(response => {
                 setLocations(response.data.suggestions)
             })
