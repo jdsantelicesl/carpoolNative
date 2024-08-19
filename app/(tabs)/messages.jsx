@@ -42,36 +42,8 @@ const messages = () => {
     const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const cachedMessages = await getUserData('messagesData');
 
-            setMessages(cachedMessages)
-            console.log("Cached Messages")
-
-            const sendId = encodeURIComponent(user_id);
-            const headers = {
-                "token": accessToken,
-                "clientId": user_id
-            }
-            try {
-                const messagesResponse = await axios.get((url + `/message/getChats?client_id=${sendId}`), { headers: headers });
-                const messagesData = messagesResponse.data;
-                console.log("Fetched Messages")
-
-                await saveUserData('messagesData', messagesData);
-                setMessages(messagesData)
-
-            } catch (error) {
-                console.error("Failed to fetch messages", error)
-            }
-
-            setRefreshing(false);
-        }
-
-        // only fetch if refresh cycle executed to avoid double fetch
-        if(!refreshing){
-            fetchUserData();
-        }
+        onRefresh();
 
         // Handle AppState
         const handleAppStateChange = (nextAppState) => {
@@ -87,15 +59,35 @@ const messages = () => {
         return () => {
             currentAppState.remove();
         }
-        
-    }, [refreshing]);
+
+    }, []);
 
     const onRefresh = async () => {
         console.log("----refreshing | Messages Page")
         // display refreshing animation
         setRefreshing(true);
-        // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const cachedMessages = await getUserData('messagesData');
+
+        setMessages(cachedMessages)
+        console.log("Cached Messages")
+
+        const sendId = encodeURIComponent(user_id);
+        const headers = {
+            "token": accessToken,
+            "clientId": user_id
+        }
+        try {
+            const messagesResponse = await axios.get((url + `/message/getChats?client_id=${sendId}`), { headers: headers });
+            const messagesData = messagesResponse.data;
+            console.log("Fetched Messages")
+
+            await saveUserData('messagesData', messagesData);
+            setMessages(messagesData)
+
+        } catch (error) {
+            console.error("Failed to fetch messages", error)
+        }
+
         setRefreshing(false);
 
     }

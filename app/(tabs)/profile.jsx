@@ -47,56 +47,8 @@ const profile = () => {
     // Fetch user data & listens to app state
     useEffect(() => {
         // Get Rides Data (Checking Cache)
-        // Function to fetch user data first from AsyncStorage
-        const fetchUserData = async () => {
-            const cachedUserData = await getUserData('userData');
-            const cachedRidesData = await getUserData('ridesData');
 
-            if (cachedRidesData && cachedUserData) {
-                setName(cachedUserData.name);
-                setDisplayRatings(cachedUserData.ratings)
-                setRating(cachedUserData.averageStars);
-                setDisplayRides(cachedRidesData);
-                console.log("Cached Data")
-            } else {
-                // Fetch from db and store data synchronously
-                const send_id = encodeURIComponent(user_id)
-                const headers = {
-                    "token": accessToken,
-                    "clientId": user_id
-                }
-                try {
-                    const userResponse = await axios.get((url + `/user/getUser?client_id=${send_id}`), { headers: headers });
-                    const ridesResponse = await axios.get((url + `/ride/getUserRides?client_id=${send_id}`), { headers: headers });
-                    console.log("Fetched user & rides data")
-
-                    const userData = {
-                        name: userResponse.data.name,
-                        ratings: userResponse.data.ratings,
-                        averageStars: userResponse.data.ratings.reduce((accumulator, currentValue) => {
-                            return accumulator + (currentValue.stars || 0);
-                        }, 0) / userResponse.data.ratings.length,
-                    };
-
-                    const ridesData = ridesResponse.data;
-
-                    // Save data to Async Storage
-                    await saveUserData('userData', userData);
-                    await saveUserData('ridesData', ridesData);
-                    // Set states
-                    setName(userData.name);
-                    setDisplayRatings(userData.ratings)
-                    setRating(userData.averageStars);
-                    setDisplayRides(ridesData);
-                } catch (error) {
-                    console.error("Error fetching data", error);
-                }
-            }
-        };
-
-        if (!refreshing) {
-            fetchUserData();
-        }
+        onRefresh();
 
         // Handle AppState
         const handleAppStateChange = (nextAppState) => {
@@ -113,19 +65,55 @@ const profile = () => {
             currentAppState.remove();
         }
 
-    }, [refreshing]);
+    }, []);
 
     const onRefresh = async () => {
         console.log('----refreshing | Profile Page');
-        // Clear cache data to retrieve new data (battles against stale data)
-        // Removes the data first before refreshing, this prevents racing condition between setItem && removeItem
-        await AsyncStorage.removeItem('userData');
-        await AsyncStorage.removeItem('ridesData');
-        console.log("Cleared Cache")
-        // display refreshing animation
         setRefreshing(true);
-        // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const cachedUserData = await getUserData('userData');
+        const cachedRidesData = await getUserData('ridesData');
+
+        if (cachedUserData && cachedRidesData) {
+            setName(cachedUserData.name);
+            setDisplayRatings(cachedUserData.ratings)
+            setRating(cachedUserData.averageStars);
+            setDisplayRides(cachedRidesData);
+        }
+        
+        // Fetch from db and store data synchronously
+        const send_id = encodeURIComponent(user_id)
+        const headers = {
+            "token": accessToken,
+            "clientId": user_id
+        }
+        try {
+            const userResponse = await axios.get((url + `/user/getUser?client_id=${send_id}`), { headers: headers });
+            const ridesResponse = await axios.get((url + `/ride/getUserRides?client_id=${send_id}`), { headers: headers });
+            console.log("Fetched user & rides data")
+
+            const userData = {
+                name: userResponse.data.name,
+                ratings: userResponse.data.ratings,
+                averageStars: userResponse.data.ratings.reduce((accumulator, currentValue) => {
+                    return accumulator + (currentValue.stars || 0);
+                }, 0) / userResponse.data.ratings.length,
+            };
+
+            const ridesData = ridesResponse.data;
+
+            // Save data to Async Storage
+            await saveUserData('userData', userData);
+            await saveUserData('ridesData', ridesData);
+            // Set states
+            setName(userData.name);
+            setDisplayRatings(userData.ratings)
+            setRating(userData.averageStars);
+            setDisplayRides(ridesData);
+        } catch (error) {
+            console.error("Error fetching data", error);
+        }
+
         setRefreshing(false);
     };
 

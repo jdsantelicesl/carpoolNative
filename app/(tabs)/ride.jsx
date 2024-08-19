@@ -57,37 +57,8 @@ const ride = () => {
     // Get Rides Data (Check Cache first and then Fetch from DB if not cached) &
     // Check AppState if in background/foreground, user gets fresh data every app open
     useEffect(() => {
-        // Use cache data until new data is fetched. Useful when dealing with bad signal
-        const fetchUserData = async () => {
-            const cachedRidesData = await getUserData('ridesData');
-
-
-            setDisplayRides(cachedRidesData);
-            console.log("Cached Data");
-
-
-            const send_id = encodeURIComponent(user_id);
-            const headers = {
-                "token": accessToken,
-                "clientId": user_id
-            }
-            try {
-                const ridesResponse = await axios.get((url + `/ride/getRides?client_id=${send_id}`), {headers: headers});
-                const ridesData = ridesResponse.data;
-                console.log("Fetched rides data");
-
-                await saveUserData('ridesData', ridesData)
-                setDisplayRides(ridesData)
-            } catch (error) {
-                console.error("Failed to fetch data", error);
-            }
-        };
-
-        // Fetch when Component mounts and when refreshing.
-        // conditonal check because useEffect will be called twice onRefresh
-        if (!refreshing) {
-            fetchUserData();
-        }
+        // Refresh when component mounts
+        onRefresh();
 
         // Handle AppState
         const handleAppStateChange = (nextAppState) => {
@@ -104,16 +75,35 @@ const ride = () => {
             currentAppState.remove();
         }
 
-    }, [refreshing]);
+    }, []);
 
     const onRefresh = async () => {
         console.log('----refreshing | Ride Page');
-        // display refreshing animation
         setRefreshing(true);
-        // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const cachedRidesData = await getUserData('ridesData');
+
+        setDisplayRides(cachedRidesData);
+        console.log("Cached Data");
+
+
+        const send_id = encodeURIComponent(user_id);
+        const headers = {
+            "token": accessToken,
+            "clientId": user_id
+        }
+        try {
+            const ridesResponse = await axios.get((url + `/ride/getRides?client_id=${send_id}`), { headers: headers });
+            const ridesData = ridesResponse.data;
+            console.log("Fetched rides data");
+
+            await saveUserData('ridesData', ridesData)
+            setDisplayRides(ridesData)
+        } catch (error) {
+            console.error("Failed to fetch data", error);
+        }
         setRefreshing(false);
-    }
+    };
 
     const onClearInput = () => {
         setDest(null);
@@ -153,7 +143,7 @@ const ride = () => {
             "token": accessToken,
             "clientId": user_id
         }
-        axios.get(detailsUrl, {headers: headers})
+        axios.get(detailsUrl, { headers: headers })
             .then(response => {
                 const user_name = response.data.name;
 
