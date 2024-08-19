@@ -6,12 +6,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] maps
 - [X] routes
 - [X] rides
-- [ ] messages
-- [ ] ratings
-- [ ] profile
+- [X] messages
+- [X] ratings
+- [X] profile
 - [ ] notifications and cache
+- [ ] add on-demand messages with push notifications
 - [ ] auth
 - [ ] color pallete
+- [ ] add profile bio
+- [ ] fix rating obj styles on rideGroup
 - [ ] design details, graphics, icons, animations
 - [ ] deploy
 

@@ -6,31 +6,11 @@ import Message from '../../components/myComponents/message';
 import Chat from '../../components/myComponents/chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { saveUserData, getUserData } from '../../components/utilities/cache';
+
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
-
-// Cache -- save user data
-const saveUserData = async (key, value) => {
-    try {
-        await AsyncStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error("Error saving data", error);
-    }
-};
-
-// Cache -- get user data
-const getUserData = async (key) => {
-    try{
-        const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return JSON.parse(value);
-        } 
-    } catch (error) {
-        console.error("Error fetching data", error);
-    }
-    return null;
-};
 
 const messages = () => {
 
@@ -50,7 +30,7 @@ const messages = () => {
         setChatVisible(false);
         onRefresh();
     };
-    
+
     // @param: items -- from item.messages
     const openChat = (items) => {
         setChatData(items);
@@ -60,13 +40,13 @@ const messages = () => {
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
-    const fetchUserData = async () => {
-        const cachedMessages = await getUserData('messagesData');
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const cachedMessages = await getUserData('messagesData');
 
-        if (cachedMessages) { 
             setMessages(cachedMessages)
             console.log("Cached Messages")
-        } else {
+
             const sendId = encodeURIComponent(user_id);
             try {
                 const messagesResponse = await axios.get(url + `/message/getChats?client_id=${sendId}`);
@@ -79,14 +59,17 @@ const messages = () => {
             } catch (error) {
                 console.error("Failed to fetch messages", error)
             }
-        }
-        setRefreshing(false);
-    }
 
-    useEffect(() => {
-        fetchUserData();
-         // Handle AppState
-         const handleAppStateChange = (nextAppState) => {
+            setRefreshing(false);
+        }
+
+        // only fetch if refresh cycle executed to avoid double fetch
+        if(!refreshing){
+            fetchUserData();
+        }
+
+        // Handle AppState
+        const handleAppStateChange = (nextAppState) => {
             if (nextAppState === 'active') {
                 console.log("App Active")
                 onRefresh();
@@ -99,8 +82,9 @@ const messages = () => {
         return () => {
             currentAppState.remove();
         }
+        
     }, [refreshing]);
-    
+
     const onRefresh = async () => {
         console.log("----refreshing | Messages Page")
         await AsyncStorage.removeItem('messagesData')
@@ -108,8 +92,9 @@ const messages = () => {
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
-        // await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setRefreshing(false);
+
     }
 
 
@@ -142,44 +127,43 @@ const messages = () => {
                                 arrival={item.arrival}
                                 prevText={item.messages[0].content}
                                 rideData={item}
-                                onPress={()=> 
-                                    {
-                                        openChat(item.messages); 
-                                        setRideId(item._id);
-                                        setOrigin(item.origins.short); 
-                                        setDestination(item.destination.short); 
-                                        setArrival(item.arrival); 
-                                        setDay(item.day);
-                                        setDisableComposer(false);
-                                    }
+                                onPress={() => {
+                                    openChat(item.messages);
+                                    setRideId(item._id);
+                                    setOrigin(item.origins.short);
+                                    setDestination(item.destination.short);
+                                    setArrival(item.arrival);
+                                    setDay(item.day);
+                                    setDisableComposer(false);
+                                }
                                 }
                             />)
                         }
                         keyExtractor={item => item._id}
                     />
 
-                <Message
-                    origin={"Message from Developers :)"}
-                    prevText={"Remember to rate others after carpooling"}
-                    onPress={() => {openChat(); setOrigin("Messages from"); setDestination("developers"); setDisableComposer(true);}}
+                    <Message
+                        origin={"Message from Developers :)"}
+                        prevText={"Remember to rate others after carpooling"}
+                        onPress={() => { openChat(); setOrigin("Messages from"); setDestination("developers"); setDisableComposer(true); }}
                     />
 
                 </ScrollView>
             </SafeAreaView>}
 
-        {/* Conditionally render chat */}
-        {chatVisible && 
-        <Chat 
-            disableComposer={disableComposer}
-            exitChat={() => exitChat()}
-            chatData={chatData}
-            origin={origin} 
-            destination={destination}
-            arrival={arrival}
-            day={day}
-            rideId={passRideId}
+            {/* Conditionally render chat */}
+            {chatVisible &&
+                <Chat
+                    disableComposer={disableComposer}
+                    exitChat={() => exitChat()}
+                    chatData={chatData}
+                    origin={origin}
+                    destination={destination}
+                    arrival={arrival}
+                    day={day}
+                    rideId={passRideId}
 
-        />}
+                />}
 
         </>
     )

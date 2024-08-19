@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, 
+    Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback,
     ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState,
 } from 'react-native';
 import axios from 'axios';
 
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
 import RideObject from '../../components/myComponents/rideObject';
-import RideGroup from '../../components/myComponents/rideGroup';
 import RidePopUp from '../../components/myComponents/ridePopUp';
 import ReviewsObject from '../../components/myComponents/reviewsObject';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { saveUserData, getUserData } from '../../components/utilities/cache';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -20,28 +20,6 @@ const vw = width * 0.01;
 
 // placeholder
 const user_id = process.env.EXPO_PUBLIC_USER_ID;
-
-// Cache -- save user data
-const saveUserData = async (key, value) => {
-    try {
-        await AsyncStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error("Error saving data", error);
-    }
-};
-
-// Cache -- get user data
-const getUserData = async (key) => {
-    try{
-        const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return JSON.parse(value);
-        } 
-    } catch (error) {
-        console.error("Error fetching data", error);
-    }
-    return null;
-};
 
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
@@ -57,63 +35,64 @@ const profile = () => {
     // Conditionally rendering popUp
     const [popUpVisible, setPopUpVisible] = useState(false);
     // Passing in selected ride's data to RidePopUp
-    const [selectedRide, setSelectedRide] = useState(null); 
-    
+    const [selectedRide, setSelectedRide] = useState(null);
+
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
     const pagePress = (value) => {
         setPage(value);
     }
-
-    // Get Rides Data (Checking Cache)
-    // Function to fetch user data first from AsyncStorage
-    const fetchUserData = async () => {
-        const cachedUserData = await getUserData('userData');
-        const cachedRidesData = await getUserData('ridesData');
-
-        if (cachedRidesData && cachedUserData) {
-            setName(cachedUserData.name);
-            setDisplayRatings(cachedUserData.ratings)
-            setRating(cachedUserData.averageStars);
-            setDisplayRides(cachedRidesData);
-            console.log("Cached Data")
-        } else {
-            // Fetch from db and store data synchronously
-            const send_id = encodeURIComponent(user_id) 
-            
-            try {
-                const userResponse = await axios.get(url + `/user/getUser?client_id=${send_id}`);
-                const ridesResponse = await axios.get(url + `/ride/getUserRides?client_id=${send_id}`);
-                console.log("Fetched user & rides data")
-                
-                const userData = {
-                    name : userResponse.data.name,
-                    ratings: userResponse.data.ratings,
-                    averageStars: userResponse.data.ratings.reduce((accumulator, currentValue) => {
-                        return accumulator + (currentValue.stars || 0);
-                    }, 0) / userResponse.data.ratings.length,
-                };
-
-                const ridesData = ridesResponse.data;
-
-                // Save data to Async Storage
-                await saveUserData('userData', userData);
-                await saveUserData('ridesData', ridesData);
-                // Set states
-                setName(userData.name);
-                setDisplayRatings(userData.ratings)
-                setRating(userData.averageStars);
-                setDisplayRides(ridesData);
-            } catch (error) {
-                console.error("Error fetching data", error);
-            }
-        }
-        setRefreshing(false)
-    };
-
+    
     // Fetch user data & listens to app state
     useEffect(() => {
-        fetchUserData();
+        // Get Rides Data (Checking Cache)
+        // Function to fetch user data first from AsyncStorage
+        const fetchUserData = async () => {
+            const cachedUserData = await getUserData('userData');
+            const cachedRidesData = await getUserData('ridesData');
+
+            if (cachedRidesData && cachedUserData) {
+                setName(cachedUserData.name);
+                setDisplayRatings(cachedUserData.ratings)
+                setRating(cachedUserData.averageStars);
+                setDisplayRides(cachedRidesData);
+                console.log("Cached Data")
+            } else {
+                // Fetch from db and store data synchronously
+                const send_id = encodeURIComponent(user_id)
+
+                try {
+                    const userResponse = await axios.get(url + `/user/getUser?client_id=${send_id}`);
+                    const ridesResponse = await axios.get(url + `/ride/getUserRides?client_id=${send_id}`);
+                    console.log("Fetched user & rides data")
+
+                    const userData = {
+                        name: userResponse.data.name,
+                        ratings: userResponse.data.ratings,
+                        averageStars: userResponse.data.ratings.reduce((accumulator, currentValue) => {
+                            return accumulator + (currentValue.stars || 0);
+                        }, 0) / userResponse.data.ratings.length,
+                    };
+
+                    const ridesData = ridesResponse.data;
+
+                    // Save data to Async Storage
+                    await saveUserData('userData', userData);
+                    await saveUserData('ridesData', ridesData);
+                    // Set states
+                    setName(userData.name);
+                    setDisplayRatings(userData.ratings)
+                    setRating(userData.averageStars);
+                    setDisplayRides(ridesData);
+                } catch (error) {
+                    console.error("Error fetching data", error);
+                }
+            }
+        };
+
+        if (!refreshing) {
+            fetchUserData();
+        }
 
         // Handle AppState
         const handleAppStateChange = (nextAppState) => {
@@ -129,7 +108,7 @@ const profile = () => {
         return () => {
             currentAppState.remove();
         }
-        
+
     }, [refreshing]);
 
     const onRefresh = async () => {
@@ -142,138 +121,139 @@ const profile = () => {
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
-        // await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setRefreshing(false);
     };
 
     const handleRideClick = (ride) => {
         // Set the selected ride data
-        setSelectedRide(ride); 
-        setPopUpVisible(true); 
+        setSelectedRide(ride);
+        setPopUpVisible(true);
     };
 
     return (
         <>
-        <StatusBar barStyle={"dark-content"}/>
-        <SafeAreaView style={styles.container}>
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        colors={['#2E74DD']}
-                    />
-                }
-            >
-                {/** User profile, name and rating */}
-                <View style={userStyle.userContainer}>
-                    <View>
-                        <Image style={userStyle.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
-                    </View>
-                    <View style={userStyle.info}>
-                        <Text style={userStyle.name}>{userName}</Text>
-
-                        <Rating style={userStyle.rating} size={3 * vh} rating={rating} total={10} />
-                    </View>
-                </View>
-
-                {/** User bio. We probably want to force users to list their school. To ensure security? */}
-                <View style={userStyle.bio}>
-                    <Text style={userStyle.bioText}>Student at Sacramento City College</Text>
-                    <Text style={userStyle.bioText}>Have you ever watched Rick and Morty?</Text>
-                </View>
-
-                {/** Rides and Ratings, will call components for this */}
-                <View style={styles.contentBar}>
-                    <View style={styles.selector}>
-                        <TouchableWithoutFeedback onPress={() => pagePress('rides')}>
-                            <View style={{ backgroundColor: "transparent" }}>
-                                <Text style={[styles.heading, (page == 'rides') && { color: '#2E74DD' }]}> Rides </Text>
-                                <Hr style={[styles.bar, (page == 'rides') && styles.barPressed]} />
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                    <View style={styles.selector}>
-                        <TouchableWithoutFeedback onPress={() => pagePress('reviews')}>
-                            <View style={{ backgroundColor: "transparent" }}>
-                                <Text style={[styles.heading, (page == 'reviews') && { color: '#2E74DD' }]}> Reviews </Text>
-                                <Hr style={[styles.bar, (page == 'reviews') && styles.barPressed]} />
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </View>
-
-                {/** Content: User Rides or Ratings. Use conditional rendering based on state. */}
-                <View style={contentStyles.container}>
-
-                    {/** Rides */}
-                    {(page === "rides") && <View>
-                        {(displayRides != "empty") && displayRides && <FlatList
-                            scrollEnabled={false}
-                            // data is going to taken in an object which fetches DB to get all rides
-                            data={displayRides}
-                            renderItem={({ item }) => (
-                                <RideObject
-                                    origin={item.origins}
-                                    destination={item.destination}
-                                    day={item.day}
-                                    arrival={item.arrival}
-                                    members={item.members}
-                                    onRideClick={() => handleRideClick(item)} // Pass the ride data to handleRideClick
-                                />
-                            )}
-                            keyExtractor={item => item.id}
-                        />}
-
-                        {(displayRides === "empty") && <Text>Post a ride to see recommendations! :) </Text>}
-                        {!displayRides && <Text>Loading...</Text>}
-                    </View>}
-
-                    {/** Reviews here, to do...  */}
-                    {(page === "reviews") && <View>
-                        {displayRatings && <FlatList
-                            scrollEnabled={false}
-                            data={displayRatings}
-                            renderItem={({ item }) => (
-                                <ReviewsObject
-                                    style={styles.reviewsObject}
-                                    name={item.name}
-                                    stars={item.stars}
-                                    content={item.content}
-                                    date={"August 17, 2024"}            // Hard Coded for now, need to add param in db
-                                    origin="Oakland, Ca"                // Hard Coded for now, need to add param in db
-                                    destination="Stanford University"   // Hard Coded for now, need to add param in db
-                                    
-                                />
-                            )}
-                        
-                        
-                            />}
-                        <ReviewsObject
-                            style={styles.reviewsObject}
-                            name="Sample"
-                            date="January 21, 1980"
-                            stars={4}
-                            content="Great ride, very punctual and friendly!"
-                            origin="Downtown"
-                            destination="Airport"
+            <StatusBar barStyle={"dark-content"} />
+            <SafeAreaView style={styles.container}>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={['#2E74DD']}
                         />
+                    }
+                >
+                    {/** User profile, name and rating */}
+                    <View style={userStyle.userContainer}>
+                        <View>
+                            <Image style={userStyle.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />
+                        </View>
+                        <View style={userStyle.info}>
+                            <Text style={userStyle.name}>{userName}</Text>
 
-                    </View>}
+                            <Rating style={userStyle.rating} size={3 * vh} rating={rating} total={10} />
+                        </View>
+                    </View>
+
+                    {/** User bio. We probably want to force users to list their school. To ensure security? */}
+                    <View style={userStyle.bio}>
+                        <Text style={userStyle.bioText}>Student at Sacramento City College</Text>
+                        <Text style={userStyle.bioText}>Have you ever watched Rick and Morty?</Text>
+                    </View>
+
+                    {/** Rides and Ratings, will call components for this */}
+                    <View style={styles.contentBar}>
+                        <View style={styles.selector}>
+                            <TouchableWithoutFeedback onPress={() => pagePress('rides')}>
+                                <View style={{ backgroundColor: "transparent" }}>
+                                    <Text style={[styles.heading, (page == 'rides') && { color: '#2E74DD' }]}> Rides </Text>
+                                    <Hr style={[styles.bar, (page == 'rides') && styles.barPressed]} />
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                        <View style={styles.selector}>
+                            <TouchableWithoutFeedback onPress={() => pagePress('reviews')}>
+                                <View style={{ backgroundColor: "transparent" }}>
+                                    <Text style={[styles.heading, (page == 'reviews') && { color: '#2E74DD' }]}> Reviews </Text>
+                                    <Hr style={[styles.bar, (page == 'reviews') && styles.barPressed]} />
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </View>
+
+                    {/** Content: User Rides or Ratings. Use conditional rendering based on state. */}
+                    <View style={contentStyles.container}>
+
+                        {/** Rides */}
+                        {(page === "rides") && <View>
+                            {(displayRides != "empty") && displayRides && <FlatList
+                                scrollEnabled={false}
+                                // data is going to taken in an object which fetches DB to get all rides
+                                data={displayRides}
+                                renderItem={({ item }) => (
+                                    <RideObject
+                                        origin={item.origins}
+                                        destination={item.destination}
+                                        day={item.day}
+                                        arrival={item.arrival}
+                                        members={item.members}
+                                        onRideClick={() => handleRideClick(item)} // Pass the ride data to handleRideClick
+                                    />
+                                )}
+                                keyExtractor={item => item.id}
+                            />}
+
+                            {(displayRides === "empty") && <Text>Post a ride to see recommendations! :) </Text>}
+                            {!displayRides && <Text>Loading...</Text>}
+                        </View>}
+
+                        {/** Reviews here, to do...  */}
+                        {(page === "reviews") && <View>
+                            {displayRatings && <FlatList
+                                scrollEnabled={false}
+                                data={displayRatings}
+                                renderItem={({ item }) => (
+                                    <ReviewsObject
+                                        style={styles.reviewsObject}
+                                        name={item.name}
+                                        stars={item.stars}
+                                        content={item.content}
+                                        date={"August 17, 2024"}            // Hard Coded for now, need to add param in db
+                                        origin="Oakland, Ca"                // Hard Coded for now, need to add param in db
+                                        destination="Stanford University"   // Hard Coded for now, need to add param in db
+
+                                    />
+                                )}
 
 
-                    {/** Ratings */}
-                </View>
+                            />}
+                            <ReviewsObject
+                                style={styles.reviewsObject}
+                                name="Sample"
+                                date="January 21, 1980"
+                                stars={4}
+                                content="Great ride, very punctual and friendly!"
+                                origin="Downtown"
+                                destination="Airport"
+                            />
 
-            </ScrollView>
-        </SafeAreaView>
-        
-        {/** Render ride options. Delete and details probably? Something similar to rideGroup but diff component */}
-        {popUpVisible &&
-            <RidePopUp 
-                visible={popUpVisible}
-                onClose={() => {setPopUpVisible(false); onRefresh();}} // Make this refresh again without animation
-                rideData={selectedRide} // Pass the selected ride data to the popup
-            />}
+                        </View>}
+
+
+                        {/** Ratings */}
+                    </View>
+
+                </ScrollView>
+            </SafeAreaView>
+
+            {/** Render ride options. Delete and details probably? Something similar to rideGroup but diff component */}
+            {popUpVisible &&
+                <RidePopUp
+                    visible={popUpVisible}
+                    onClose={() => { setPopUpVisible(false); onRefresh(); }} // Make this refresh again without animation
+                    rideData={selectedRide} // Pass the selected ride data to the popup
+                />}
         </>
     )
 }
@@ -336,8 +316,8 @@ const userStyle = StyleSheet.create({
         marginHorizontal: 10 * vw,
     },
     profile: {
-        width: 10 * vh, 
-        height: 10 * vh, 
+        width: 10 * vh,
+        height: 10 * vh,
         borderRadius: 7 * vh,
         borderColor: "black",
         borderWidth: 0.2 * vw
