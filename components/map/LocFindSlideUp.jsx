@@ -4,7 +4,9 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import MapScreen from './MapScreen'
 import LocFind from './locFind';
-import axios from 'axios';
+
+import apiClient from '../../components/utilities/apiClient';
+
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
 const { height, width } = Dimensions.get('window');
@@ -72,11 +74,8 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 
 		encode_id = encodeURIComponent(loc_id)
 		fetch_url = `${url}?placeId=${encode_id}`
-		const headers = {
-			"token": accessToken,
-			"clientId": user_id
-		}
-		axios.get(fetch_url, { headers: headers })
+		
+		apiClient.get(fetch_url)
 			.then(response => {
 				const get_lat = response.data.location.latitude;
 				const get_long = response.data.location.longitude;

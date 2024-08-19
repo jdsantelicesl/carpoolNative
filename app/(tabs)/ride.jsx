@@ -9,13 +9,14 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { getHours, getMinutes } from 'date-fns';
 import Hr from '../../components/myComponents/hr';
-import axios from 'axios'; // Use this when we create a Flask server for data endpoints
 import { render } from 'react-native-web';
 import LocFindSlideUp from '../../components/map/LocFindSlideUp';
 import RideObject from '../../components/myComponents/rideObject';
 import RideGroup from '../../components/myComponents/rideGroup';
 
 import { saveUserData, getUserData } from '../../components/utilities/cache';
+
+import apiClient from '../../components/utilities/apiClient';
 
 
 // User id placeHolder. Replace after auth. The id is for test user
@@ -88,12 +89,8 @@ const ride = () => {
 
 
         const send_id = encodeURIComponent(user_id);
-        const headers = {
-            "token": accessToken,
-            "clientId": user_id
-        }
         try {
-            const ridesResponse = await axios.get((url + `/ride/getRides?client_id=${send_id}`), { headers: headers });
+            const ridesResponse = await apiClient.get((url + `/ride/getRides?client_id=${send_id}`));
             const ridesData = ridesResponse.data;
             console.log("Fetched rides data");
 
@@ -139,11 +136,7 @@ const ride = () => {
         //first get users name, then post
         const send_id = encodeURIComponent(user_id);
         const detailsUrl = url + `/user/getUser?client_id=${send_id}`;
-        const headers = {
-            "token": accessToken,
-            "clientId": user_id
-        }
-        axios.get(detailsUrl, { headers: headers })
+        apiClient.get(detailsUrl)
             .then(response => {
                 const user_name = response.data.name;
 
@@ -168,12 +161,7 @@ const ride = () => {
                     }
                 };
                 send_url = url + "/ride/post"
-                const headers = {
-                    'Content-Type': 'application/json',
-                    "token": accessToken,
-                    "clientId": user_id
-                }
-                axios.post(send_url, data, { headers: headers })
+                apiClient.post(send_url, data)
                     .then(response => {
                         alert('Data sent to /data');
                         onRefresh();

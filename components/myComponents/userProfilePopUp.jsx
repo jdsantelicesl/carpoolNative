@@ -3,8 +3,9 @@ import { View, Text, Modal, StyleSheet, TouchableOpacity, Dimensions, FlatList, 
 import { FontAwesome } from '@expo/vector-icons';
 import Hr from './hr';
 import Rating from './rating'
-import axios from 'axios';
 import ReviewsObject from './reviewsObject';
+
+import apiClient from '../../components/utilities/apiClient';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -23,12 +24,8 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
     const sendId = encodeURIComponent(userData.id);
 
     const sendUrl = url + `/user/getUser?client_id=${sendId}`
-    const headers = {
-      "token": accessToken,
-      "clientId": user_id
-    }
 
-    axios.get(sendUrl, { headers: headers })
+    apiClient.get(sendUrl)
       .then(response => {
         if (response.data.ratings) {
           setReviews(response.data.ratings);

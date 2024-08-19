@@ -5,7 +5,8 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Image } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import axios from 'axios';
+
+import apiClient from '../../components/utilities/apiClient';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -43,11 +44,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 		send_rideId = encodeURIComponent(rideData._id)
 		send_url = url + `/ride/delete?client_id=${send_userId}&ride_id=${send_rideId}`;
 
-		const headers = {
-			"token": accessToken,
-			"clientId": user_id
-		}
-		axios.get(send_url, { headers: headers })
+		apiClient.get(send_url)
 			.then(response => {
 				alert("Left Ride");
 				onClose();
