@@ -22,7 +22,6 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 	const user_id = process.env.EXPO_PUBLIC_USER_ID;
-	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
 	if (!rideData) return null;
 
@@ -41,7 +40,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	const leaveRide = () => {
 		send_userId = encodeURIComponent(user_id);
-		send_rideId = encodeURIComponent(rideData._id)
+		send_rideId = encodeURIComponent(rideData._id);
 		send_url = url + `/ride/delete?client_id=${send_userId}&ride_id=${send_rideId}`;
 
 		apiClient.get(send_url)
