@@ -3,7 +3,6 @@ import {
     Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback,
     ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState,
 } from 'react-native';
-import axios from 'axios';
 
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
@@ -13,6 +12,7 @@ import ReviewsObject from '../../components/myComponents/reviewsObject';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { saveUserData, getUserData } from '../../components/utilities/cache';
+import apiClient from '../../components/utilities/apiClient';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -80,16 +80,12 @@ const profile = () => {
             setRating(cachedUserData.averageStars);
             setDisplayRides(cachedRidesData);
         }
-        
+
         // Fetch from db and store data synchronously
         const send_id = encodeURIComponent(user_id)
-        const headers = {
-            "token": accessToken,
-            "clientId": user_id
-        }
         try {
-            const userResponse = await axios.get((url + `/user/getUser?client_id=${send_id}`), { headers: headers });
-            const ridesResponse = await axios.get((url + `/ride/getUserRides?client_id=${send_id}`), { headers: headers });
+            const userResponse = await apiClient.get((url + `/user/getUser?client_id=${send_id}`));
+            const ridesResponse = await apiClient.get((url + `/ride/getUserRides?client_id=${send_id}`));
             console.log("Fetched user & rides data")
 
             const userData = {

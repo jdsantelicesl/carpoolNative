@@ -3,7 +3,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome6 } from '@expo/vector-icons';
 import polyline from '@mapbox/polyline';
-import axios from 'axios';
+
+import apiClient from '../../components/utilities/apiClient';
 // Refer to docs: https://github.com/react-native-maps/react-native-maps
 
 const MapScreen = ({ origin, dest }) => {
@@ -48,13 +49,8 @@ const MapScreen = ({ origin, dest }) => {
       const polyline_url = process.env.EXPO_PUBLIC_API_URL + "/ride/getRoute" // placeholder
       const user_id = process.env.EXPO_PUBLIC_USER_ID;
       const accessToken = process.env.EXPO_PUBLIC_TOKEN;
-      const headers = {
-        'Content-Type': 'application/json',
-        "token": accessToken,
-        "clientId": user_id
-      }
 
-      axios.post(polyline_url, send_data, { headers: headers })
+      apiClient.post(polyline_url, send_data)
         .then(response => {
           const encodedPolyline = response.data.routes[0].polyline.encodedPolyline
 

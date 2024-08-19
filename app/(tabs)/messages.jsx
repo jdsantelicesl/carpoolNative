@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList, RefreshControl, AppState } from 'react-native'
-import axios from 'axios'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
 import Chat from '../../components/myComponents/chat';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { saveUserData, getUserData } from '../../components/utilities/cache';
+import { saveUserData, getUserData } from '../../components/utilities/cache'
+import apiClient from '../../components/utilities/apiClient';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -39,7 +38,6 @@ const messages = () => {
 
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
-    const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
     useEffect(() => {
 
@@ -72,12 +70,8 @@ const messages = () => {
         console.log("Cached Messages")
 
         const sendId = encodeURIComponent(user_id);
-        const headers = {
-            "token": accessToken,
-            "clientId": user_id
-        }
         try {
-            const messagesResponse = await axios.get((url + `/message/getChats?client_id=${sendId}`), { headers: headers });
+            const messagesResponse = await apiClient.get((url + `/message/getChats?client_id=${sendId}`));
             const messagesData = messagesResponse.data;
             console.log("Fetched Messages")
 

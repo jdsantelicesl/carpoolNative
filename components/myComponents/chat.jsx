@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar } from 
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Rating from './rating';
-import axios from 'axios';
+
+import apiClient from '../../components/utilities/apiClient';
 // Refer to: https://github.com/FaridSafi/react-native-gifted-chat
 // _id: 2 is self, _id: 1 is other
 const { width, height } = Dimensions.get('window');
@@ -37,12 +38,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			clientId: ownerId,
 			status: state
 		};
-		const headers = {
-			'Content-Type': 'application/json',
-			"token": accessToken,
-			"clientId": user_id
-		}
-		axios.post(sendUrl, sendData, { headers: headers })
+		apiClient.post(sendUrl, sendData)
 			.then(response => {
 				alert("user accepted/rejected");
 			})
@@ -208,13 +204,9 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			content: newMessages[0].text,
 			rideId: rideId,
 			clientId: user_id
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-			"token": accessToken,
-			"clientId": user_id
-		}
-		axios.post(sendUrl, sendData, { headers: headers })
+		};
+
+		apiClient.post(sendUrl, sendData)
 			.then(response => {
 				alert("message sent");
 			})

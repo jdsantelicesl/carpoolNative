@@ -3,8 +3,9 @@ import { FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import { FlatList, Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, TextInput, StatusBar, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import MapScreen from '../map/MapScreen';
-import axios from 'axios';
 import UserProfilePopUp from './userProfilePopUp';
+
+import apiClient from '../../components/utilities/apiClient';
 
 // Find a way to grab userId and pass it through userProfilePopUp
 // So when I press the user in the RideGroup pop up, I'm gonna see 
@@ -48,12 +49,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
             rideId: rideId,
             clientId: user_id
         }
-        const headers = {
-            'Content-Type': 'application/json',
-            "token": accessToken,
-            "clientId": user_id
-        }
-        axios.post(sendUrl, sendData, { headers: headers })
+        
+        apiClient.post(sendUrl, sendData)
             .then(response => {
                 if (response.data == "Ok") {
                     alert("Request sent");
