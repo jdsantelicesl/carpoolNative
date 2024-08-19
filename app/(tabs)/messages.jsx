@@ -87,8 +87,6 @@ const messages = () => {
 
     const onRefresh = async () => {
         console.log("----refreshing | Messages Page")
-        await AsyncStorage.removeItem('messagesData')
-        console.log("Cleared Cache")
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated

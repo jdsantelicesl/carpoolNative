@@ -103,9 +103,6 @@ const ride = () => {
 
     const onRefresh = async () => {
         console.log('----refreshing | Ride Page');
-        // Clear cache data
-        await AsyncStorage.removeItem('ridesData');
-        console.log("Cleared Cache")
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
@@ -147,7 +144,11 @@ const ride = () => {
         //first get users name, then post
         const send_id = encodeURIComponent(user_id);
         const detailsUrl = url + `/user/getUser?client_id=${send_id}`;
-        axios.get(detailsUrl)
+        const headers = {
+            token: accessToken,
+            clientId: user_id
+        }
+        axios.get(detailsUrl, {headers: headers})
             .then(response => {
                 const user_name = response.data.name;
 
