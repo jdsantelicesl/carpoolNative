@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
     Text, View, StyleSheet, Dimensions, SafeAreaView, TextInput, Button, Alert,
     TouchableOpacity, ScrollView, TouchableWithoutFeedback, RefreshControl, FlatList, StatusBar,
+    AppState,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
@@ -31,6 +33,28 @@ const DayButton = ({ title, onPress, isSelected }) => (
     </TouchableOpacity>
 );
 
+// Cache -- save user data
+const saveUserData = async (key, value) => {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error("Error saving data", error);
+    }
+};
+
+// Cache -- get user data
+const getUserData = async (key) => {
+    try{
+        const value = await AsyncStorage.getItem(key);
+        if (value !== null) {
+            return JSON.parse(value);
+        } 
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+    return null;
+};
+
 const ride = () => {
 
     const [displayRides, setDisplayRides] = useState(null)
@@ -51,39 +75,76 @@ const ride = () => {
     const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
-
+    
     // Use these for rendering rideGroup
     const [rideData, setRideData] = useState(null);
     
-
+    // Get Rides Data (Check Cache first and then Fetch from DB if not cached) &
+    // Check AppState if in background/foreground, user gets fresh data every app open
     useEffect(() => {
-        console.log('refreshing');
+            // Fetch when Component mounts
+            fetchUserData();
 
-        // reset all values
+            // Handle AppState
+            const handleAppStateChange = (nextAppState) => {
+                if (nextAppState === 'active') {
+                    console.log("App Active")
+                    onRefresh();
+                }
+            }
+            // Listen to app state changes
+            const currentAppState = AppState.addEventListener('change', handleAppStateChange)
+
+            // Clean listener component when app is unmounted
+            return () => {
+                currentAppState.remove();
+            }
+
+
+    },[refreshing]);
+
+    // Handle Cache Data
+    const fetchUserData = async () => {
+        const cachedRidesData = await getUserData('ridesData');
+
+        if (cachedRidesData) {
+            setDisplayRides(cachedRidesData);
+            console.log("Cached Data");
+        } else {
+            
+            const send_id = encodeURIComponent(user_id);
+            try {
+                const ridesResponse = await axios.get(url + `/ride/getRides?client_id=${send_id}`);
+                const ridesData = ridesResponse.data;
+                console.log("Fetched rides data");
+
+                await saveUserData('ridesData', ridesData)                    
+                setDisplayRides(ridesData)
+            } catch (error) {
+                console.error("Failed to fetch data", error);
+            }
+        }
+        setRefreshing(false);
+    };
+
+
+    const onRefresh = async () => {
+        console.log('----refreshing | Ride Page');
+        // Clear cache data
+        await AsyncStorage.removeItem('ridesData');
+        console.log("Cleared Cache")
+        // display refreshing animation
+        setRefreshing(true);
+        // Simulate a delay to ensure that refreshing state is properly updated
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    const onClearInput = () => {
         setDest(null);
         setFrom(null);
         setDay(null);
         setDate(new Date);
-
-        // fetch new rides
-        const send_id = encodeURIComponent(user_id)
-        send_url = url + `/ride/getRides?client_id=${send_id}`
-        axios.get(send_url)
-            .then(response => {
-                setDisplayRides(response.data);
-            })
-            .catch(error => {
-                console.log("error fetching rides: ", error);
-            })
-    }, [refreshing])
-
-    const onRefresh = async () => {
-        // display refreshing animation
-        setRefreshing(true);
-        // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setRefreshing(false);
     }
+
 
     // renders rideGroup and passes props
     const clickedRide = (rideData) => {
@@ -177,8 +238,8 @@ const ride = () => {
                                 <Text style={[styles.locInput, (destination && { color: "black" })]}>
                                     {destination ? `${from.shortName} -> ${destination.shortName}` : 'Where to?'}
                                 </Text>
-                                <TouchableOpacity style={{ marginRight: 7 * vw }} onPress={() => onRefresh()} >
-                                    <FontAwesome6 name="xmark" size={24} style={[styles.icon, (destination && { color: "black" })]} />
+                                <TouchableOpacity style={{paddingRight: 4 * vh,padding: 1.5 * vh, marginRight: -2 * vw }} onPress={() => onClearInput()} >
+                                    <FontAwesome6 name="xmark" size={24} style={[{color: "#6E6B6B"}, (destination && { color: "black" })]} />
                                 </TouchableOpacity>
                             </TouchableOpacity>
                         </View>

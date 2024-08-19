@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Alert, Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback, 
-    ScrollView, RefreshControl, FlatList, StatusBar, Image,
+    ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState,
 } from 'react-native';
 import axios from 'axios';
 
@@ -12,6 +12,7 @@ import RideObject from '../../components/myComponents/rideObject';
 import RideGroup from '../../components/myComponents/rideGroup';
 import RidePopUp from '../../components/myComponents/ridePopUp';
 import ReviewsObject from '../../components/myComponents/reviewsObject';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -19,6 +20,28 @@ const vw = width * 0.01;
 
 // placeholder
 const user_id = process.env.EXPO_PUBLIC_USER_ID;
+
+// Cache -- save user data
+const saveUserData = async (key, value) => {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error("Error saving data", error);
+    }
+};
+
+// Cache -- get user data
+const getUserData = async (key) => {
+    try{
+        const value = await AsyncStorage.getItem(key);
+        if (value !== null) {
+            return JSON.parse(value);
+        } 
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+    return null;
+};
 
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
@@ -42,47 +65,85 @@ const profile = () => {
         setPage(value);
     }
 
-    // Get Rides Data
+    // Get Rides Data (Checking Cache)
+    // Function to fetch user data first from AsyncStorage
+    const fetchUserData = async () => {
+        const cachedUserData = await getUserData('userData');
+        const cachedRidesData = await getUserData('ridesData');
+
+        if (cachedRidesData && cachedUserData) {
+            setName(cachedUserData.name);
+            setDisplayRatings(cachedUserData.ratings)
+            setRating(cachedUserData.averageStars);
+            setDisplayRides(cachedRidesData);
+            console.log("Cached Data")
+        } else {
+            // Fetch from db and store data synchronously
+            const send_id = encodeURIComponent(user_id) 
+            
+            try {
+                const userResponse = await axios.get(url + `/user/getUser?client_id=${send_id}`);
+                const ridesResponse = await axios.get(url + `/ride/getUserRides?client_id=${send_id}`);
+                console.log("Fetched user & rides data")
+                
+                const userData = {
+                    name : userResponse.data.name,
+                    ratings: userResponse.data.ratings,
+                    averageStars: userResponse.data.ratings.reduce((accumulator, currentValue) => {
+                        return accumulator + (currentValue.stars || 0);
+                    }, 0) / userResponse.data.ratings.length,
+                };
+
+                const ridesData = ridesResponse.data;
+
+                // Save data to Async Storage
+                await saveUserData('userData', userData);
+                await saveUserData('ridesData', ridesData);
+                // Set states
+                setName(userData.name);
+                setDisplayRatings(userData.ratings)
+                setRating(userData.averageStars);
+                setDisplayRides(ridesData);
+            } catch (error) {
+                console.error("Error fetching data", error);
+            }
+        }
+
+        setRefreshing(false)
+    };
+
+    // Fetch user data & listens to app state
     useEffect(() => {
-        console.log('refreshing');
-        const send_id = encodeURIComponent(user_id)
+        fetchUserData();
 
-        urlGetUser = url + `/user/getUser?client_id=${send_id}`
-        axios.get(urlGetUser)
-            .then(response => {
-                setName(response.data.name);
-                setDisplayRatings(response.data.ratings);
+        // Handle AppState
+        const handleAppStateChange = (nextAppState) => {
+            if (nextAppState === 'active') {
+                console.log("App Active")
+                onRefresh();
+            }
+        }
+        // Listen to app state changes
+        const currentAppState = AppState.addEventListener('change', handleAppStateChange)
 
-                // add up all ratings scores of each review
-                const sumStars = response.data.ratings.reduce((accumulator, currentValue) => {
-                    return accumulator + (currentValue.stars || 0);
-                }, 0);
-
-                const averageStars = sumStars / response.data.ratings.length;
-                setRating(averageStars);
-            })
-            .catch(error => {
-                console.log("error fetching user: ", error);
-            })
-
-
-        // fetch new rides
-        send_url = url + `/ride/getUserRides?client_id=${send_id}`
-        axios.get(send_url)
-            .then(response => {
-                setDisplayRides(response.data);
-            })
-            .catch(error => {
-                console.log("error fetching rides: ", error);
-            })
+        // Clean listener component when app is unmounted
+        return () => {
+            currentAppState.remove();
+        }
+        
     }, [refreshing]);
 
     const onRefresh = async () => {
+        console.log('----refreshing | Profile Page');
+        // Clear cache data to retrieve new data (battles against stale data)
+        // Removes the data first before refreshing, this prevents racing condition between setItem && removeItem
+        await AsyncStorage.removeItem('userData');
+        await AsyncStorage.removeItem('ridesData');
+        console.log("Cleared Cache")
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setRefreshing(false);
+        // await new Promise(resolve => setTimeout(resolve, 1000));
     };
 
     const handleRideClick = (ride) => {

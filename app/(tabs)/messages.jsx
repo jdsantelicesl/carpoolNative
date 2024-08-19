@@ -1,13 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList, RefreshControl } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, Dimensions, ScrollView, StatusBar, FlatList, RefreshControl, AppState } from 'react-native'
 import axios from 'axios'
 import Hr from '../../components/myComponents/hr';
 import Message from '../../components/myComponents/message';
 import Chat from '../../components/myComponents/chat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
+
+// Cache -- save user data
+const saveUserData = async (key, value) => {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error("Error saving data", error);
+    }
+};
+
+// Cache -- get user data
+const getUserData = async (key) => {
+    try{
+        const value = await AsyncStorage.getItem(key);
+        if (value !== null) {
+            return JSON.parse(value);
+        } 
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+    return null;
+};
 
 const messages = () => {
 
@@ -34,31 +57,59 @@ const messages = () => {
         setChatVisible(true);
     };
 
-
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
     const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
+    const fetchUserData = async () => {
+        const cachedMessages = await getUserData('messagesData');
+
+        if (cachedMessages) { 
+            setMessages(cachedMessages)
+            console.log("Cached Messages")
+        } else {
+            const sendId = encodeURIComponent(user_id);
+            try {
+                const messagesResponse = await axios.get(url + `/message/getChats?client_id=${sendId}`);
+                const messagesData = messagesResponse.data;
+                console.log("Fetched Messages")
+
+                await saveUserData('messagesData', messagesData);
+                setMessages(messagesData)
+
+            } catch (error) {
+                console.error("Failed to fetch messages", error)
+            }
+        }
+        setRefreshing(false);
+    }
+
     useEffect(() => {
-        const sendId = encodeURIComponent(user_id);
-        const sendUrl = url + `/message/getChats?client_id=${sendId}`;
+        fetchUserData();
+         // Handle AppState
+         const handleAppStateChange = (nextAppState) => {
+            if (nextAppState === 'active') {
+                console.log("App Active")
+                onRefresh();
+            }
+        }
+        // Listen to app state changes
+        const currentAppState = AppState.addEventListener('change', handleAppStateChange)
 
-        axios.get(sendUrl)
-            .then(response => {
-                // response.data contains all rides with messages, therefore listMessages really contains rides.
-                // Having the whole ride object might be usefull for future features
-                setMessages(response.data);
-            })
-            .catch(error => {
-                console.log("error getting chats: ", error);
-            });
+        // Clean listener component when app is unmounted
+        return () => {
+            currentAppState.remove();
+        }
     }, [refreshing]);
-
+    
     const onRefresh = async () => {
+        console.log("----refreshing | Messages Page")
+        await AsyncStorage.removeItem('messagesData')
+        console.log("Cleared Cache")
         // display refreshing animation
         setRefreshing(true);
         // Simulate a delay to ensure that refreshing state is properly updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setRefreshing(false);
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+        
     }
 
 
