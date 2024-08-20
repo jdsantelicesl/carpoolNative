@@ -40,7 +40,7 @@ const profile = () => {
     const pagePress = (value) => {
         setPage(value);
     }
-    
+
     // Fetch user data & listens to app state
     useEffect(() => {
         // Get Rides Data (Checking Cache)
@@ -105,6 +105,7 @@ const profile = () => {
             setDisplayRatings(userData.ratings)
             setRating(userData.averageStars);
             setDisplayRides(ridesData);
+            console.log("rides: ", ridesData);
         } catch (error) {
             console.error("Error fetching data", error);
         }
@@ -174,7 +175,7 @@ const profile = () => {
 
                         {/** Rides */}
                         {(page === "rides") && <View>
-                            {(displayRides != "empty") && displayRides && <FlatList
+                            {displayRides && (displayRides != "empty") && displayRides.length > 0 ? (<FlatList
                                 scrollEnabled={false}
                                 // data is going to taken in an object which fetches DB to get all rides
                                 data={displayRides}
@@ -189,15 +190,15 @@ const profile = () => {
                                     />
                                 )}
                                 keyExtractor={item => item.id}
-                            />}
+                            />) : (
+                                <Text style={{marginLeft: 6*vw}}>Post a ride to see recommendations! :) </Text>
+                            )}
 
-                            {(displayRides === "empty") && <Text>Post a ride to see recommendations! :) </Text>}
-                            {!displayRides && <Text>Loading...</Text>}
                         </View>}
 
                         {/** Reviews here, to do...  */}
                         {(page === "reviews") && <View>
-                            {displayRatings && <FlatList
+                            {displayRatings && displayRatings.length > 0 ? (<FlatList
                                 scrollEnabled={false}
                                 data={displayRatings}
                                 renderItem={({ item }) => (
@@ -206,24 +207,17 @@ const profile = () => {
                                         name={item.name}
                                         stars={item.stars}
                                         content={item.content}
-                                        date={"August 17, 2024"}            // Hard Coded for now, need to add param in db
-                                        origin="Oakland, Ca"                // Hard Coded for now, need to add param in db
-                                        destination="Stanford University"   // Hard Coded for now, need to add param in db
+                                    // date={"August 17, 2024"}            // Hard Coded for now, need to add param in db
+                                    // origin="Oakland, Ca"                // Hard Coded for now, need to add param in db
+                                    // destination="Stanford University"   // Hard Coded for now, need to add param in db
 
                                     />
                                 )}
 
 
-                            />}
-                            <ReviewsObject
-                                style={styles.reviewsObject}
-                                name="Sample"
-                                date="January 21, 1980"
-                                stars={4}
-                                content="Great ride, very punctual and friendly!"
-                                origin="Downtown"
-                                destination="Airport"
-                            />
+                            />) : (
+                                <Text style={{ marginLeft: 6 * vw }}>No ratings yet. Join some rides...</Text>
+                            )}
 
                         </View>}
 
