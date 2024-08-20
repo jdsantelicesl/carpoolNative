@@ -9,13 +9,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] messages
 - [X] ratings
 - [X] profile
-- [ ] notifications and cache
-- [ ] add on-demand messages with push notifications
+- [X] cache
 - [X] auth
-- [ ] color pallete
-- [ ] add profile bio
+- [X] add profile bio
 - [x] fix rating obj styles on rideGroup
+- [ ] cleanup before build
+- [ ] notifications
+- [ ] add on-demand messages with push notifications
 - [ ] design details, graphics, icons, animations
+- [ ] Test on all plataforms
 - [ ] deploy
 
 
