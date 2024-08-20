@@ -5,6 +5,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import polyline from '@mapbox/polyline';
 
 import apiClient from '../../components/utilities/apiClient';
+import { getUserData } from '../../components/utilities/cache';
 // Refer to docs: https://github.com/react-native-maps/react-native-maps
 
 const MapScreen = ({ origin, dest }) => {
@@ -47,8 +48,6 @@ const MapScreen = ({ origin, dest }) => {
       }
 
       const polyline_url = process.env.EXPO_PUBLIC_API_URL + "/ride/getRoute" // placeholder
-      const user_id = process.env.EXPO_PUBLIC_USER_ID;
-      const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 
       apiClient.post(polyline_url, send_data)
         .then(response => {

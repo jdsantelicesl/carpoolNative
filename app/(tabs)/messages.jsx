@@ -37,7 +37,6 @@ const messages = () => {
     };
 
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
-    const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
     useEffect(() => {
 
@@ -69,6 +68,7 @@ const messages = () => {
         setMessages(cachedMessages)
         console.log("Cached Messages")
 
+        const user_id = await getUserData("clientId");
         const sendId = encodeURIComponent(user_id);
         try {
             const messagesResponse = await apiClient.get((url + `/message/getChats?client_id=${sendId}`));

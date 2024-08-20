@@ -19,9 +19,6 @@ import { saveUserData, getUserData } from '../../components/utilities/cache';
 import apiClient from '../../components/utilities/apiClient';
 
 
-// User id placeHolder. Replace after auth. The id is for test user
-const user_id = process.env.EXPO_PUBLIC_USER_ID;
-const accessToken = process.env.EXPO_PUBLIC_TOKEN;
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
@@ -88,8 +85,10 @@ const ride = () => {
         console.log("Cached Data");
 
 
-        const send_id = encodeURIComponent(user_id);
         try {
+            const user_id = await getUserData("clientId");
+            console.log("user id", user_id);
+            const send_id = encodeURIComponent(user_id);
             const ridesResponse = await apiClient.get((url + `/ride/getRides?client_id=${send_id}`));
             const ridesData = ridesResponse.data;
             console.log("Fetched rides data");
@@ -134,46 +133,54 @@ const ride = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         //first get users name, then post
+        const user_id = await getUserData("clientId");
+        console.log(user_id);
         const send_id = encodeURIComponent(user_id);
         const detailsUrl = url + `/user/getUser?client_id=${send_id}`;
-        apiClient.get(detailsUrl)
-            .then(response => {
-                const user_name = response.data.name;
+        try {
+            response = await apiClient.get(detailsUrl)
 
-                const data = {
-                    destination: {
-                        name: destination.name,
-                        short: destination.shortName,
-                        lat: destination.lat,
-                        long: destination.long
-                    },
-                    origin: {
-                        name: from.name,
-                        short: from.shortName,
-                        lat: from.lat,
-                        long: from.long
-                    },
-                    day: day,
-                    arrival: sendDate,
-                    member: {
-                        id: user_id,
-                        name: user_name
-                    }
-                };
-                send_url = url + "/ride/post"
-                apiClient.post(send_url, data)
-                    .then(response => {
-                        alert('Data sent to /data');
-                        onRefresh();
-                    })
-                    .catch(error => {
-                        console.error('Error saving data', error);
-                        alert('Failed to send data');
-                    })
-            })
-            .catch(error => {
-                console.log("error getting user's name: ", error);
-            })
+            const user_name = response.data.name;
+            const user_id = await getUserData("clientId");
+            console.log(user_id);
+
+            const data = {
+                destination: {
+                    name: destination.name,
+                    short: destination.shortName,
+                    lat: destination.lat,
+                    long: destination.long
+                },
+                origin: {
+                    name: from.name,
+                    short: from.shortName,
+                    lat: from.lat,
+                    long: from.long
+                },
+                day: day,
+                arrival: sendDate,
+                member: {
+                    id: user_id,
+                    name: user_name
+                }
+            };
+            send_url = url + "/ride/post"
+            try {
+                await apiClient.post(send_url, data)
+                alert('Data sent to /data');
+                onRefresh();
+            }
+            catch {
+                console.error('Error saving data', error);
+                alert('Failed to send data');
+
+            }
+        }
+
+        catch {
+            console.log("error getting user's name: ", error);
+
+        }
     }
 
     return (

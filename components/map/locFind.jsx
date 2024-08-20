@@ -3,9 +3,9 @@ import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import apiClient from '../../components/utilities/apiClient';
+import { getUserData } from '../../components/utilities/cache';
 
 const url = process.env.EXPO_PUBLIC_API_URL + "/ride/locFind";
-const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;

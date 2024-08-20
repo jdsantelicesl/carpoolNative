@@ -6,7 +6,7 @@ import Verification from './verification'; // Adjust the import path if needed
 import Credentials from './credentials'; // Adjust the import path if needed
 import axios from 'axios';
 
-import { saveUserData } from '../../components/utilities/cache';
+import { saveUserData, getUserData } from '../../components/utilities/cache';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +42,19 @@ const LoginStack = () => {
 	const [page, setPage] = useState("email");
 	const [userId, setId] = useState(null);
 
+	useEffect(() => {
+		// Check if user has stored credentials
+		const checkCache = async () => {
+			storedId = await getUserData("clientId");
+			storedRefresh = await getUserData("refresh")
+			if (storedId && storedRefresh) {
+				navigation.navigate('(tabs)');
+			}
+		}
+
+		checkCache();
+	}, []);
+
 	const handleEmailSubmit = (passEmail) => {
 		setEmail(passEmail);
 		console.log(passEmail);
@@ -75,23 +88,23 @@ const LoginStack = () => {
 			});
 	}
 
-	const onSubmitCode = (code) => {
+	const onSubmitCode = async (code) => {
 		const sendId = encodeURIComponent(userId);
 		const sendUrl = process.env.EXPO_PUBLIC_API_URL + `/user/getRefresh?client_id=${sendId}&code=${code}`;
 
-		axios.get(sendUrl)
-			.then(response => {
-				saveUserData("clientId", userId);
-				saveUserData("token", response.data.accessToken);
-				saveUserData("expiry", response.data.expiry);
-				saveUserData("refresh", response.data.refreshToken);
-				console.log("cached tokens", response.data);
-				navigation.navigate('(tabs)');
-			})
-			.catch(error => {
-				alert("error getting tokens");
-				console.log("error fetching token: ", error);
-			});
+		try {
+			response = await axios.get(sendUrl)
+			await saveUserData("clientId", userId);
+			await saveUserData("token", response.data.accessToken);
+			await saveUserData("expiry", response.data.expiry);
+			await saveUserData("refresh", response.data.refreshToken);
+			console.log("cached tokens", response.data);
+			navigation.navigate('(tabs)');
+		}
+		catch {
+			console.log("error fetching token: ", error);
+		}
+
 	}
 
 	const onResendCode = () => {

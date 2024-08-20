@@ -6,6 +6,7 @@ import MapScreen from '../map/MapScreen';
 import UserProfilePopUp from './userProfilePopUp';
 
 import apiClient from '../../components/utilities/apiClient';
+import { getUserData } from '../../components/utilities/cache';
 
 // Find a way to grab userId and pass it through userProfilePopUp
 // So when I press the user in the RideGroup pop up, I'm gonna see 
@@ -22,9 +23,6 @@ const convertDay = (day) => {
     return days[adjustedDay];
 };
 
-const user_id = process.env.EXPO_PUBLIC_USER_ID //placeholder
-const accessToken = process.env.EXPO_PUBLIC_TOKEN;
-
 const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, setRenderRideGroup }) => {
 
     const dayOfWeek = convertDay(day);
@@ -38,17 +36,16 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
     const [message, setMessage] = useState("Hello! I am interested in joining your carpool. I can contribute with gas money.");
 
-    const sendRequest = () => {
+    const sendRequest = async () => {
         const sendUrl = url + "/message/send";
-
-        console.log(message);
+        const user_id = await getUserData("clientId");
 
         const sendData = {
             messageType: "request",
             content: message,
             rideId: rideId,
             clientId: user_id
-        }
+        };
         
         apiClient.post(sendUrl, sendData)
             .then(response => {

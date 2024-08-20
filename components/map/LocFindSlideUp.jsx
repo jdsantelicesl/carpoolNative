@@ -6,6 +6,7 @@ import MapScreen from './MapScreen'
 import LocFind from './locFind';
 
 import apiClient from '../../components/utilities/apiClient';
+import { getUserData } from '../../components/utilities/cache';
 
 // panResponder docs: https://reactnative.dev/docs/panresponder
 // react-native-modal docs: https://github.com/react-native-modal/react-native-modal
@@ -33,9 +34,7 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 	const [destLong, setDestLong] = useState(null);
 
 	const url = process.env.EXPO_PUBLIC_API_URL + "/ride/getCoordinates";
-	const user_id = process.env.EXPO_PUBLIC_USER_ID;
-	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
-
+	
 	const confirmRoute = () => {
 		setDest({
 			name: destinationText,

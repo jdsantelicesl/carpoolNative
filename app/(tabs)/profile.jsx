@@ -18,10 +18,6 @@ const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-// placeholder
-const user_id = process.env.EXPO_PUBLIC_USER_ID;
-const accessToken = process.env.EXPO_PUBLIC_TOKEN;
-
 const profile = () => {
     const [refreshing, setRefreshing] = useState(false);
 
@@ -82,6 +78,7 @@ const profile = () => {
         }
 
         // Fetch from db and store data synchronously
+        const user_id = await getUserData("clientId");
         const send_id = encodeURIComponent(user_id)
         try {
             const userResponse = await apiClient.get((url + `/user/getUser?client_id=${send_id}`));

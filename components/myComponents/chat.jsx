@@ -5,6 +5,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import Rating from './rating';
 
 import apiClient from '../../components/utilities/apiClient';
+import { getUserData } from '../../components/utilities/cache';
 // Refer to: https://github.com/FaridSafi/react-native-gifted-chat
 // _id: 2 is self, _id: 1 is other
 const { width, height } = Dimensions.get('window');
@@ -17,10 +18,13 @@ const convertDay = (day) => {
 	return days[adjustedDay];
 };
 
-const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arrival, day, rideId }) => { // Destructure the onClose and chatData props
+const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arrival, day, rideId }) => { 
+	// Destructure the onClose and chatData props
+
+	// Need this to render chats. Pulling from cache is async
+	const [clientId, setId] = useState(null);
 
 	const dayOfWeek = convertDay(day);
-
 	const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
 	const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
 	const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
@@ -28,8 +32,15 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	const formattedTime = `${hour}:${minute}${amPm}`;
 
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
-	const user_id = process.env.EXPO_PUBLIC_USER_ID;
-	const accessToken = process.env.EXPO_PUBLIC_TOKEN;
+
+	useEffect(() => {
+		const loadId = async () => {
+			const user_id = await getUserData("clientId");
+			setId(user_id);
+		}
+
+		loadId();
+	}, [])
 
 	const reqStatus = (state, ownerId) => {
 		sendUrl = url + "/message/joinReq";
@@ -81,7 +92,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 				) :
 
 					(
-						<View style={[reqStyles.bubble, (usrId == user_id) && ({ backgroundColor: '#2E74DD'})]}>
+						<View style={[reqStyles.bubble, (usrId == clientId) && ({ backgroundColor: '#2E74DD'})]}>
 							<View style={reqStyles.userCard}>
 								<FontAwesome6 name="user-graduate" size={4 * vh} color="black" />
 								<View style={reqStyles.userDetails}>
@@ -193,7 +204,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 				...newMessages[0],
 				user: {
 					...newMessages[0].user,
-					_id: user_id, // 2 is User ID, it renders as Self
+					_id: clientId, // 2 is User ID, it renders as Self
 				}
 			}),
 		);
@@ -203,7 +214,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			messageType: "message",
 			content: newMessages[0].text,
 			rideId: rideId,
-			clientId: user_id
+			clientId: clientId
 		};
 
 		apiClient.post(sendUrl, sendData)
@@ -249,7 +260,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					messages={messages}
 					onSend={messages => onSend(messages)}
 					user={{
-						_id: user_id, // Set the current user ID
+						_id: clientId, // Set the current user ID
 					}}
 				/>
 			</View>

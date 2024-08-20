@@ -7,6 +7,7 @@ import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import apiClient from '../../components/utilities/apiClient';
+import { getUserData } from '../../components/utilities/cache';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -21,7 +22,6 @@ const convertDay = (day) => {
 const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
-	const user_id = process.env.EXPO_PUBLIC_USER_ID;
 
 	if (!rideData) return null;
 
@@ -38,57 +38,59 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 	const amPm = (Math.floor(arrival) >= 12) ? "pm" : "am";
 	const formattedTime = `${hour}:${minute}${amPm}`;
 
-	const leaveRide = () => {
-		send_userId = encodeURIComponent(user_id);
-		send_rideId = encodeURIComponent(rideData._id);
-		send_url = url + `/ride/delete?client_id=${send_userId}&ride_id=${send_rideId}`;
+	const leaveRide = async () => {
+		try {
+			const user_id = await getUserData("clientId")
+			const send_userId = encodeURIComponent(user_id);
+			const send_rideId = encodeURIComponent(rideData._id);
+			const send_url = url + `/ride/delete?client_id=${send_userId}&ride_id=${send_rideId}`;
 
-		apiClient.get(send_url)
-			.then(response => {
-				alert("Left Ride");
-				onClose();
-			})
-			.catch(error => {
-				alert("Could not leave ride");
-				console.log("error leaving ride: ", error);
-				onClose();
-			})
+			await apiClient.get(send_url)
+
+			alert("Left Ride");
+			onClose();
+		}
+		catch {
+			alert("Could not leave ride");
+			console.log("error leaving ride: ", error);
+			onClose();
+		}
 
 	}
 
 	const renderUser = ({ item }) => (
 		<View style={styles.userItem}>
-			<Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
+			<Image style={styles.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />
 			<Text style={styles.userName}>{item.name}</Text>
 		</View>
 	);
 
 	return (
-		
+
 		<Modal
-		animationType="fade"
-		transparent={true}
-		visible={visible}
-		onRequestClose={onClose}
+			animationType="fade"
+			transparent={true}
+			visible={visible}
+			onRequestClose={onClose}
 		>
 			<View style={styles.centeredView}>
 				<View style={styles.modalView}>
-				<View style={styles.content}>
+					<View style={styles.content}>
 
-					{/* Displaying Location */}
-					<View style={styles.locationContainer}>
-						<Text style={styles.locationText}>
-							{origins.short} <Text> </Text>
-							<FontAwesome6 name="arrow-right" size={20} color="black" style={styles.arrow} /> <Text> </Text>
-							{destination.short} 
-						</Text>
-					</View>
+						{/* Displaying Location */}
+						<View style={styles.locationContainer}>
+							<Text style={styles.locationText}>
+								{origins.short} <Text> </Text>
+								<FontAwesome6 name="arrow-right" size={20} color="black" style={styles.arrow} /> <Text> </Text>
+								{destination.short}
+							</Text>
+						</View>
 
-					{/* Display Arrival & Day */}
-					<Text style={styles.timeText}>Every {dayOfWeek} at {formattedTime}</Text>
+						{/* Display Arrival & Day */}
+						<Text style={styles.timeText}>Every {dayOfWeek} at {formattedTime}</Text>
 
-					{/* Displaying Ride Members */}
-					<Text style={styles.membersTitle}>Ride Members:</Text>
+						{/* Displaying Ride Members */}
+						<Text style={styles.membersTitle}>Ride Members:</Text>
 						<FlatList
 							data={members}
 							renderItem={renderUser}
@@ -96,24 +98,24 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 							style={styles.userList}
 						/>
 
-				</View>
+					</View>
 
-				{/* Buttons */}
-				<View style={styles.buttonContainer}>
+					{/* Buttons */}
+					<View style={styles.buttonContainer}>
 
-					{/* Cancel Button */}
-					<TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose}>
-						<Text style={styles.buttonText}>Cancel</Text>
-					</TouchableOpacity>
+						{/* Cancel Button */}
+						<TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose}>
+							<Text style={styles.buttonText}>Cancel</Text>
+						</TouchableOpacity>
 
-					{/* Leave Button */}
-					<TouchableOpacity
-						style={[styles.button, styles.leaveButton]}
-						onPress={() => leaveRide()}
-					>
-						<Text style={styles.buttonText}>Leave</Text>
-					</TouchableOpacity>
-				</View>
+						{/* Leave Button */}
+						<TouchableOpacity
+							style={[styles.button, styles.leaveButton]}
+							onPress={() => leaveRide()}
+						>
+							<Text style={styles.buttonText}>Leave</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</View>
 		</Modal>
@@ -121,107 +123,107 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 };
 
 const styles = StyleSheet.create({
-  centeredView: {
-	flex: 1,
-	justifyContent: 'center',
-	alignItems: 'center',
-	backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalView: {
-	backgroundColor: 'white',
-	borderRadius: 20,
-	padding: 3 * vh,
-	width: 90 * vw,
-	shadowColor: '#000',
-	shadowOffset: {
-	  width: 0,
-	  height: 2
+	centeredView: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
-	shadowOpacity: 0.25,
-	shadowRadius: 4,
-	elevation: 5
-  },
-  header: {
-	flexDirection: 'row',
-	justifyContent: 'space-between',
-	alignItems: 'center',
-	marginBottom: 2 * vh,
-  },
-  headerText: {
-	fontSize: 6 * vw,
-	fontWeight: 'bold',
-	color: '#007AFF',
-  },
-  content: {
-	marginBottom: 2 * vh,
-  },
-  locationContainer: {
-	marginTop: 1 * vh,
-	flexDirection: 'row',
-	alignItems: 'center',
-	justifyContent: 'center',
-  },
-  locationText: {
-	fontSize: 5 * vw,
-	fontWeight: 'bold',
-	textAlign: "center",
-  },
-  arrow: {
-	marginHorizontal: 2 * vw,
-  },
-  timeText: {
-	fontSize: 4 * vw,
-	textAlign: 'center',
-	marginBottom: 2 * vh,
-	color: "#6E6B6B"
-  },
-  membersTitle: {
-	fontSize: 4.5 * vw,
-	fontWeight: 'bold',
-	marginBottom: 1 * vh,
-  },
-  userList: {
-	maxHeight: 20 * vh,
-  },
-  userItem: {
-	flexDirection: 'row',
-	alignItems: 'center',
-	marginBottom: 1 * vh,
-  },
-  profile: {
-	width: 3 * vh, 
-	height: 3 * vh, 
-	borderRadius: 1.5 * vh,
-	borderColor: "black",
-	borderWidth: 0.1 * vw
-  },
-  userName: {
-	fontSize: 4 * vw,
-	marginLeft: 2 * vw,
-  },
-  buttonContainer: {
-	flexDirection: 'row',
-	justifyContent: 'space-between',
-  },
-  button: {
-	borderRadius: 10,
-	padding: 1.5 * vh,
-	elevation: 2,
-	flex: 1,
-	marginHorizontal: 1 * vw,
-  },
-  cancelButton: {
-	backgroundColor: '#007AFF',
-  },
-  leaveButton: {
-	backgroundColor: '#FF3B30',
-  },
-  buttonText: {
-	color: 'white',
-	fontWeight: 'bold',
-	textAlign: 'center',
-	fontSize: 4 * vw,
-  },
+	modalView: {
+		backgroundColor: 'white',
+		borderRadius: 20,
+		padding: 3 * vh,
+		width: 90 * vw,
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 2
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5
+	},
+	header: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginBottom: 2 * vh,
+	},
+	headerText: {
+		fontSize: 6 * vw,
+		fontWeight: 'bold',
+		color: '#007AFF',
+	},
+	content: {
+		marginBottom: 2 * vh,
+	},
+	locationContainer: {
+		marginTop: 1 * vh,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	locationText: {
+		fontSize: 5 * vw,
+		fontWeight: 'bold',
+		textAlign: "center",
+	},
+	arrow: {
+		marginHorizontal: 2 * vw,
+	},
+	timeText: {
+		fontSize: 4 * vw,
+		textAlign: 'center',
+		marginBottom: 2 * vh,
+		color: "#6E6B6B"
+	},
+	membersTitle: {
+		fontSize: 4.5 * vw,
+		fontWeight: 'bold',
+		marginBottom: 1 * vh,
+	},
+	userList: {
+		maxHeight: 20 * vh,
+	},
+	userItem: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 1 * vh,
+	},
+	profile: {
+		width: 3 * vh,
+		height: 3 * vh,
+		borderRadius: 1.5 * vh,
+		borderColor: "black",
+		borderWidth: 0.1 * vw
+	},
+	userName: {
+		fontSize: 4 * vw,
+		marginLeft: 2 * vw,
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	button: {
+		borderRadius: 10,
+		padding: 1.5 * vh,
+		elevation: 2,
+		flex: 1,
+		marginHorizontal: 1 * vw,
+	},
+	cancelButton: {
+		backgroundColor: '#007AFF',
+	},
+	leaveButton: {
+		backgroundColor: '#FF3B30',
+	},
+	buttonText: {
+		color: 'white',
+		fontWeight: 'bold',
+		textAlign: 'center',
+		fontSize: 4 * vw,
+	},
 });
 
 export default RidePopUp;
