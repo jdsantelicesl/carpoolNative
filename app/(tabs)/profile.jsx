@@ -23,7 +23,8 @@ const profile = () => {
 
     // user profile data
     const [userName, setName] = useState("loading...");
-    const [rating, setRating] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [numRat, setNumRat] = useState(0);
 
     // for either rides or reviews
     const [page, setPage] = useState('rides');
@@ -87,10 +88,11 @@ const profile = () => {
 
             const userData = {
                 name: userResponse.data.name,
+                numRat: userResponse.data.ratings.length ? userResponse.data.ratings.length : 0,
                 ratings: userResponse.data.ratings,
-                averageStars: userResponse.data.ratings.reduce((accumulator, currentValue) => {
+                averageStars: userResponse.data.ratings.length ? userResponse.data.ratings.reduce((accumulator, currentValue) => {
                     return accumulator + (currentValue.stars || 0);
-                }, 0) / userResponse.data.ratings.length,
+                }, 0) / userResponse.data.ratings.length : 0
             };
 
             const ridesData = ridesResponse.data;
@@ -137,7 +139,7 @@ const profile = () => {
                         <View style={userStyle.info}>
                             <Text style={userStyle.name}>{userName}</Text>
 
-                            <Rating style={userStyle.rating} size={3 * vh} rating={rating} total={10} />
+                            <Rating style={userStyle.rating} size={3 * vh} rating={rating} total={numRat} />
                         </View>
                     </View>
 
