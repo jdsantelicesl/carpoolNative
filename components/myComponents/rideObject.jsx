@@ -1,10 +1,10 @@
 import React from 'react'
 import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Image } from 'react-native'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
+
 
 const convertDay = (day) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -49,7 +49,7 @@ const RideObject = ({ origin, destination, day, arrival, members, rideData, onRi
             </View>
 
             {/* Button */}
-            <TouchableOpacity style={styles.button} onPress={() => onRideClick(rideData)}>
+            <TouchableOpacity style={styles.button} onPress={() => {onRideClick(rideData); }}>
                 <FontAwesome6 name="arrow-right" size={4 * vh} color="#fff" />
             </TouchableOpacity>
         </View>

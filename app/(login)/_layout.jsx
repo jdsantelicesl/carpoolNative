@@ -37,6 +37,7 @@ const customCardStyleInterpolator = ({ current, next, layouts }) => {
 const LoginStack = () => {
 	const navigation = useNavigation();
 
+	const [exists, setExists] = useState(false);
 	const [email, setEmail] = useState(null);
 	const [userData, setUserData] = useState(null);
 	const [page, setPage] = useState("email");
@@ -55,57 +56,81 @@ const LoginStack = () => {
 		checkCache();
 	}, []);
 
-	const handleEmailSubmit = (passEmail) => {
+	const handleEmailSubmit = async (passEmail) => {
 		setEmail(passEmail);
 		console.log(passEmail);
-		setPage("credentials");
+		const sendUrl = process.env.EXPO_PUBLIC_API_URL + "/user/email";
+		// Send get request for code to verify
+		try {
+			const response = await axios.post(sendUrl, {"email" : passEmail})
+			console.log(response.data.id)
+			setId(response.data.id)
+			setExists(response.data.exists)
+			await saveUserData("clientId", response.data.id)
+		} catch (error) {
+			console.error("Failed to submit email", error)
+		}
+
+		setPage("verify");
 	}
-
-	const handleUserCredentials = (creds) => {
-		setUserData(creds);
-		console.log("creds: ", creds);
-
-		const sendData = {
-			name: creds.name,
-			email: email,
-			school: creds.school,
-			bio: creds.bio
-		};
-
-		console.log("send data: ", sendData);
-
-		const sendUrl = process.env.EXPO_PUBLIC_API_URL + "/user/createUser";
-		axios.post(sendUrl, sendData)
-			.then(response => {
-				setId(response.data.id);
-				console.log("new id: ", response.data.id);
-				setPage("verify");
-			})
-			.catch(error => {
-				alert("error creating user");
-				console.log("error creating user: ", error);
-				setPage("verify");
-			});
-	}
-
+	
 	const onSubmitCode = async (code) => {
 		const sendId = encodeURIComponent(userId);
 		const sendUrl = process.env.EXPO_PUBLIC_API_URL + `/user/getRefresh?client_id=${sendId}&code=${code}`;
+		// TODO: Check if email exists, if so send the user straight to ride's page
+		//		 Else, bring the user to credentials page
 
 		try {
-			response = await axios.get(sendUrl)
-			await saveUserData("clientId", userId);
+			const response = await axios.get(sendUrl)
 			await saveUserData("token", response.data.accessToken);
 			await saveUserData("expiry", response.data.expiry);
 			await saveUserData("refresh", response.data.refreshToken);
 			console.log("cached tokens", response.data);
-			navigation.navigate('(tabs)');
+
+			// Check if existing email
+			if (exists) {
+				console.log("Exists: " + exists)
+				navigation.navigate("(tabs)")
+				setPage("email")
+			} else {
+				setPage("credentials")
+			}
+			
 		}
-		catch {
-			console.log("error fetching token: ", error);
+		catch (error) {
+			console.error("error fetching token: ", error);
 		}
 
 	}
+	const handleUserCredentials = async (creds) => {
+		setUserData(creds);
+		console.log("creds: ", creds);
+
+		const client_id = await getUserData("clientId");
+
+		const sendData = {
+			name: creds.name,
+			school: creds.school,
+			bio: creds.bio,
+			client_id: client_id
+		};
+
+		console.log("send data: ", sendData);
+
+		const sendUrl = process.env.EXPO_PUBLIC_API_URL + "/user/editProfile";
+		axios.post(sendUrl, sendData)
+			.then(response => {
+				navigation.navigate('(tabs)');
+			})
+			.catch(error => {
+				alert("error creating user");
+				console.error("error creating user: ", error);
+			});
+		
+		// Reset page back to email just incase user wants to log out
+		setPage("email")
+	}
+
 
 	const onResendCode = () => {
 		console.log("Resend code requested");
@@ -127,26 +152,27 @@ const LoginStack = () => {
 				</Stack.Screen>
 			)}
 
+			{(page === "verify") && (
+				<Stack.Screen name="Verification">
+					{(props) => <Verification {...props}
+						onBackPress={() => setPage("email")}
+						onResendCode={onResendCode}
+						onSubmitCode={(code) => { onSubmitCode(code) }}
+					/>}
+				</Stack.Screen>
+			)}
+
 			{(page === "credentials") && (
 				<Stack.Screen name="Credentials">
 					{(props) => <Credentials {...props}
 						lastCreds={userData}
-						onBackPress={() => setPage("email")}
+						onBackPress={() => setPage("verify")}
 						setUserCredentials={(credentials) => handleUserCredentials(credentials)}
 
 					/>}
 				</Stack.Screen>
 			)}
 
-			{(page === "verify") && (
-				<Stack.Screen name="Verification">
-					{(props) => <Verification {...props}
-						onBackPress={() => setPage("credentials")}
-						onResendCode={onResendCode}
-						onSubmitCode={(code) => { onSubmitCode(code) }}
-					/>}
-				</Stack.Screen>
-			)}
 		</Stack.Navigator>
 	);
 };

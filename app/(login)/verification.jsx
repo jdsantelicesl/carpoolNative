@@ -52,8 +52,8 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
             {/* Resend Button */}
             <View style={styles.resendButtonContainer}>
-                <TouchableOpacity onPress={onResendCode} disabled={!localAccessToken} style={styles.resendButton}> 
-                    <Text style={[{color: "#367CE5"}, !localAccessToken && {color: "#888"}]}> Resend Code</Text>
+                <TouchableOpacity onPress={onResendCode} style={styles.resendButton}> 
+                    <Text style={{color: "#367CE5"}}> Resend Code</Text>
                 </TouchableOpacity>
             </View>
 

@@ -193,6 +193,28 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 		}
 	}, [chatData]);
 
+	useEffect(() => {
+		// Define the polling interval
+		const interval = 5000; // 5 seconds
+		const sendRideId = encodeURIComponent(rideId)
+
+		// Function to fetch data from the server
+		const fetchData = async () => {
+		  try {
+			const response = await apiClient.get(url + `/message/getSpecific?ride_id=${sendRideId}`);
+			setMessages(formatChatData(response.data));
+		  } catch (err) {
+			setError(err);
+		  }
+		};
+		
+		// Start polling
+		const pollingInterval = setInterval(fetchData, interval);
+	
+		// Clean up function to clear the interval
+		return () => clearInterval(pollingInterval);
+	  }, []);
+
 	// This appends the new message 
 	const onSend = useCallback((newMessages) => {
 		// Append new messages with correct user ID

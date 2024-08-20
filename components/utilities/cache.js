@@ -21,3 +21,22 @@ export const getUserData = async (key) => {
     }
     return null;
 };
+
+// Cache -- Remove item
+export const removeUserData = async (key) => {
+
+    try {
+        const value = await AsyncStorage.removeItem(key);
+    } catch (error) {
+        console.error("Error removing data", error);
+    }
+};
+
+// Cache -- Clear All 
+export const clearAllData = async () => {
+    try {
+        await AsyncStorage.clear();
+    } catch(error) {
+        console.error("Error clearing cache", error);
+    }
+}

@@ -252,7 +252,7 @@ const ride = () => {
                                 style={[styles.submitButton, (destination && from && day) && { backgroundColor: '#2E74DD' }]}
                                 disabled={!(destination && from && day)} // Disable button press functionality
                             >
-                                <Text style={[styles.submitText, (destination && from && day) && { color: 'black' }]}>Submit</Text>
+                                <Text style={[styles.submitText, (destination && from && day) && { color: 'white' }]}>Submit</Text>
                             </TouchableOpacity>
                         </View>
 

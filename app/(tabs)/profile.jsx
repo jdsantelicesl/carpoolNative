@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
     Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback,
-    ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState,
+    ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState, TouchableOpacity,
+    Alert, 
 } from 'react-native';
-
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
 import RideObject from '../../components/myComponents/rideObject';
 import RidePopUp from '../../components/myComponents/ridePopUp';
 import ReviewsObject from '../../components/myComponents/reviewsObject';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import { saveUserData, getUserData } from '../../components/utilities/cache';
+import { saveUserData, getUserData, clearAllData } from '../../components/utilities/cache';
 import apiClient from '../../components/utilities/apiClient';
+import { useNavigation } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
 const profile = () => {
+
+    // Navigating to (login) after clicked on log out
+    const navigation = useNavigation(); 
+
     const [refreshing, setRefreshing] = useState(false);
 
     // user profile data
@@ -119,6 +123,29 @@ const profile = () => {
         setPopUpVisible(true);
     };
 
+    const handleLogOut = () => {
+        // Show alert -- Make this a button
+        
+        Alert.alert("Log out", "Do you want to log out?",[
+            {
+                text: "Cancel",
+                style: "cancel"
+            },
+            {
+                text: "Log out",
+                onPress: () => {
+                    clearAllData();
+                    navigation.navigate("(login)")
+                }
+            }
+
+        ])
+    }
+
+    const handleProfileChange = () => {
+        alert("Change profile triggered")
+    }
+
     return (
         <>
             <StatusBar barStyle={"dark-content"} />
@@ -131,12 +158,17 @@ const profile = () => {
                             colors={['#2E74DD']}
                         />
                     }
-                >
+                >   
+                    {/* Log out button */}
+                    <TouchableOpacity style={styles.logOutButton} onPress={handleLogOut} >
+                        <Text style={styles.logOutText}>Log out</Text>
+                    </TouchableOpacity>
+
                     {/** User profile, name and rating */}
                     <View style={userStyle.userContainer}>
-                        <View>
+                        <TouchableOpacity onPress={() => handleProfileChange()}>
                             <Image style={userStyle.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />
-                        </View>
+                        </TouchableOpacity>
                         <View style={userStyle.info}>
                             <Text style={userStyle.name}>{userName}</Text>
 
@@ -284,6 +316,20 @@ const styles = StyleSheet.create({
     reviewsObject: {
         marginHorizontal: 5 * vw,
     },
+    logOutButton: {
+        flexDirection: "row",
+        flex: 1,
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
+        marginHorizontal: 5 * vw,
+        marginTop: 5 * vw,
+        marginBottom: -5 * vw,
+
+    },
+    logOutText : {
+        fontSize: 4  * vw,
+        color: "#367CE5",
+    },  
 });
 
 // styles for profile pic, name, rating, and bio
