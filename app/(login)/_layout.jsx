@@ -5,8 +5,10 @@ import Login from './login'; // Adjust the import path if needed
 import Verification from './verification'; // Adjust the import path if needed
 import Credentials from './credentials'; // Adjust the import path if needed
 import axios from 'axios';
-
+import { StatusBar } from 'react-native';
 import { saveUserData, getUserData } from '../../components/utilities/cache';
+import { registerForPushNotificationsAsync } from '../../components/utilities/getPushToken';
+import apiClient from '../../components/utilities/apiClient';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +36,8 @@ const customCardStyleInterpolator = ({ current, next, layouts }) => {
 	};
 };
 
+const url = process.env.EXPO_PUBLIC_API_URL;
+
 const LoginStack = () => {
 	const navigation = useNavigation();
 
@@ -42,6 +46,7 @@ const LoginStack = () => {
 	const [userData, setUserData] = useState(null);
 	const [page, setPage] = useState("email");
 	const [userId, setId] = useState(null);
+	const [expoPushToken, setExpoPushToken] = useState(null);
 
 	useEffect(() => {
 		// Check if user has stored credentials
@@ -70,7 +75,6 @@ const LoginStack = () => {
 		} catch (error) {
 			console.error("Failed to submit email", error)
 		}
-
 		setPage("verify");
 	}
 	
@@ -87,6 +91,21 @@ const LoginStack = () => {
 			await saveUserData("refresh", response.data.refreshToken);
 			console.log("cached tokens", response.data);
 
+			// Register for push token
+			const pushToken = await registerForPushNotificationsAsync();
+
+			if (pushToken) {
+				await saveUserData("pushToken", pushToken)
+				setExpoPushToken(pushToken);
+
+				// Post to save push token unique to user
+				apiClient.post(url + "/user/pushToken", {"pushToken": pushToken})
+					.then(response =>{
+
+					}).catch((error)=>{
+						console.log(error)
+					})
+			}
 			// Check if existing email
 			if (exists) {
 				console.log("Exists: " + exists)
@@ -106,19 +125,21 @@ const LoginStack = () => {
 		setUserData(creds);
 		console.log("creds: ", creds);
 
-		const client_id = await getUserData("clientId");
+		// Cache data 
+		await saveUserData("userName", creds.name)
+		await saveUserData("userSchool", creds.school)
+		await saveUserData("userBio", creds.bio)
 
 		const sendData = {
 			name: creds.name,
 			school: creds.school,
 			bio: creds.bio,
-			client_id: client_id
 		};
 
 		console.log("send data: ", sendData);
 
 		const sendUrl = process.env.EXPO_PUBLIC_API_URL + "/user/editProfile";
-		axios.post(sendUrl, sendData)
+		apiClient.post(sendUrl, sendData)
 			.then(response => {
 				navigation.navigate('(tabs)');
 			})
@@ -133,19 +154,20 @@ const LoginStack = () => {
 
 
 	const onResendCode = () => {
-		console.log("Resend code requested");
+		alert("Resend Code, Fix")
 	}
 
 
 	return (
-
+		<>
+		<StatusBar barStyle={"dark-content"} />
 		<Stack.Navigator
 			screenOptions={{
 				headerShown: false,
 				transitionSpec: customTransitionSpec,
 				cardStyleInterpolator: customCardStyleInterpolator,
 			}}
-		>
+			>
 			{(page === "email") && (
 				<Stack.Screen name="Login">
 					{(props) => <Login {...props} lastEmail={email} passEmail={(email) => handleEmailSubmit(email)} />}
@@ -158,7 +180,7 @@ const LoginStack = () => {
 						onBackPress={() => setPage("email")}
 						onResendCode={onResendCode}
 						onSubmitCode={(code) => { onSubmitCode(code) }}
-					/>}
+						/>}
 				</Stack.Screen>
 			)}
 
@@ -168,12 +190,13 @@ const LoginStack = () => {
 						lastCreds={userData}
 						onBackPress={() => setPage("verify")}
 						setUserCredentials={(credentials) => handleUserCredentials(credentials)}
-
-					/>}
+						
+						/>}
 				</Stack.Screen>
 			)}
 
 		</Stack.Navigator>
+		</>
 	);
 };
 

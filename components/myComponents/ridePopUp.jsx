@@ -58,11 +58,15 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	}
 
+	const handleGiveReviews = () => {
+		alert("Give Rating")
+	}
+
 	const renderUser = ({ item }) => (
-		<View style={styles.userItem}>
+		<TouchableOpacity style={styles.userItem} onPress={() => handleGiveReviews()}>
 			<Image style={styles.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />
 			<Text style={styles.userName}>{item.name}</Text>
-		</View>
+		</TouchableOpacity>
 	);
 
 	return (

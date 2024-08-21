@@ -5,7 +5,7 @@
 // 3. userBio
 // For profile picture, let them edit in profile page
 
-import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -33,6 +33,8 @@ const Credentials = ({lastCreds, onBackPress, setUserCredentials}) => {
     const [localBio, setLocalBio] = lastCreds ? useState(lastCreds.bio) : useState(null);
 
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
         <View style={styles.container}>
             {/* Just adding spacing */}
             <View style={{marginTop: 10 * vh}}></View>
@@ -70,6 +72,7 @@ const Credentials = ({lastCreds, onBackPress, setUserCredentials}) => {
             </TouchableOpacity>
 
         </View>
+      </TouchableWithoutFeedback>
     )
 }
 
@@ -81,11 +84,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 5 * vw,
-    marginTop: -10 * vh,
+    marginTop: -20 * vh,
   },
   backButton : {
     position: "absolute",
-    top: 20 * vh,
+    top: 30 * vh,
     left: 8 * vw,
   },
   logoContainer: {

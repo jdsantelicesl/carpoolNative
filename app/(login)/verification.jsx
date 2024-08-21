@@ -2,7 +2,8 @@
 // Users enter access token and stores it in cache
 
 // Todo: Create logic to prevent user from spamming resquest and prevent brute force attacks on access tokens
-import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Dimensions, Text, View, TextInput, 
+  TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -23,6 +24,8 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
     }
 
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
         <View style={styles.container}>
 
             {/* Back Button */}
@@ -41,7 +44,7 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
             {/* Text Input */}
             <TextInput 
                 style={styles.input} 
-                placeholder="XXXX" 
+                placeholder="Enter your verification code" 
                 onChangeText={setLocalAccessToken}
                 placeholderTextColor="#888" />
             
@@ -58,6 +61,7 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
             </View>
 
         </View>
+      </TouchableWithoutFeedback>
     )
 }
 
@@ -69,11 +73,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 5 * vw,
-    marginTop: -10 * vh,
+    marginTop: -20 * vh,
   },
   backButton : {
     position: "absolute",
-    top: 20 * vh,
+    top: 30 * vh,
     left: 8 * vw,
   },
   logoContainer: {

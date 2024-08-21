@@ -15,6 +15,7 @@ import apiClient from '../../components/utilities/apiClient';
 import pickImage from '../../components/utilities/pickImage';
 import { useNavigation } from 'expo-router';
 
+// TODO: Grab user Bio/School/Profile from DB
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
@@ -28,6 +29,8 @@ const profile = () => {
 
     // user profile data
     const [userName, setName] = useState("loading...");
+    const [userSchool, setSchool] = useState("loading...");
+    const [userBio, setBio] = useState("loading...");
     const [rating, setRating] = useState(0);
     const [numRat, setNumRat] = useState(0);
 
@@ -51,7 +54,6 @@ const profile = () => {
     // Fetch user data & listens to app state
     useEffect(() => {
         // Get Rides Data (Checking Cache)
-
         onRefresh();
 
         // Handle AppState
@@ -78,11 +80,21 @@ const profile = () => {
         const cachedUserData = await getUserData('userData');
         const cachedRidesData = await getUserData('ridesData');
 
+        const cachedUserName = await getUserData('userName');
+        const cachedUserBio = await getUserData('userBio');
+        const cachedUserSchool = await getUserData('userSchool');
+
         if (cachedUserData && cachedRidesData) {
             setName(cachedUserData.name);
             setDisplayRatings(cachedUserData.ratings)
             setRating(cachedUserData.averageStars);
             setDisplayRides(cachedRidesData);
+        }
+
+        if (cachedUserName && cachedUserBio && cachedUserSchool) {
+            setName(cachedUserName);
+            setBio(cachedUserBio)
+            setSchool(cachedUserSchool)
         }
 
         // Fetch from db and store data synchronously
@@ -204,8 +216,8 @@ const profile = () => {
 
                     {/** User bio. We probably want to force users to list their school. To ensure security? */}
                     <View style={userStyle.bio}>
-                        <Text style={userStyle.bioText}>Student at Sacramento City College</Text>
-                        <Text style={userStyle.bioText}>Have you ever watched Rick and Morty?</Text>
+                        <Text style={userStyle.bioText}>{userSchool}</Text>
+                        <Text style={userStyle.bioText}>{userBio}</Text>
                     </View>
 
                     {/** Rides and Ratings, will call components for this */}

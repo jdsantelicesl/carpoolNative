@@ -3,7 +3,8 @@
 // Inputs email for access token
 // Caching: Skips Login & Verification & Credentials if Access Token found in Cache
 // TODO: Implement Cache
-import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity, Image, StatusBar } from 'react-native'
+import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity,
+		 Image, StatusBar, TouchableWithoutFeedback, Keyboard} from 'react-native'
 import React, {useState, useEffect} from 'react'
 
 const { width, height } = Dimensions.get('window');
@@ -20,6 +21,7 @@ const Login = ({ lastEmail, passEmail }) => {
 	};
 
   	return (
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 		<View style={styles.container}>
 				<StatusBar barStyle={"dark-content"}/>
 				{/* App Logo */}
@@ -31,17 +33,18 @@ const Login = ({ lastEmail, passEmail }) => {
 
 				<TextInput
 					style={styles.input}
-					placeholder="Email@apps.losrios.edu"
+					placeholder="Enter your school email (.edu)"
 					value={email} // Controlled component
 					onChangeText={setEmail}
 					placeholderTextColor="#888"
 					keyboardType="email-address"
-				/>
+					/>
 
 				<TouchableOpacity style={styles.button} onPress={handleSetEmail} disabled={!email}>
 					<Text style={styles.buttonText}>Continue</Text>
 				</TouchableOpacity>
 		</View>
+		</TouchableWithoutFeedback>
 		);
 };
 
@@ -51,7 +54,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		paddingHorizontal: 5 * vw,
-		marginTop: -10 * vh,
+		marginTop: -20 * vh,
 	},
 	logoContainer: {
 		alignItems: "center",
