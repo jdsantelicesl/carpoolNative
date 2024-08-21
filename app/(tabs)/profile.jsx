@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback,
     ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState, TouchableOpacity,
-    Alert, 
+    Alert,
 } from 'react-native';
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
@@ -12,6 +12,7 @@ import ReviewsObject from '../../components/myComponents/reviewsObject';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { saveUserData, getUserData, clearAllData } from '../../components/utilities/cache';
 import apiClient from '../../components/utilities/apiClient';
+import pickImage from '../../components/utilities/pickImage';
 import { useNavigation } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
@@ -21,7 +22,7 @@ const vw = width * 0.01;
 const profile = () => {
 
     // Navigating to (login) after clicked on log out
-    const navigation = useNavigation(); 
+    const navigation = useNavigation();
 
     const [refreshing, setRefreshing] = useState(false);
 
@@ -38,6 +39,8 @@ const profile = () => {
     const [popUpVisible, setPopUpVisible] = useState(false);
     // Passing in selected ride's data to RidePopUp
     const [selectedRide, setSelectedRide] = useState(null);
+    // for pickImage
+    const [imageUri, setImageUri] = useState(null);
 
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
@@ -90,13 +93,17 @@ const profile = () => {
             const ridesResponse = await apiClient.get((url + `/ride/getUserRides?client_id=${send_id}`));
             console.log("Fetched user & rides data")
 
+            const base64pfp = userResponse.data.pfp;
+            const pfpURI = `data:image/png;base64,${base64pfp}`;
+
             const userData = {
                 name: userResponse.data.name,
                 numRat: userResponse.data.ratings.length ? userResponse.data.ratings.length : 0,
                 ratings: userResponse.data.ratings,
                 averageStars: userResponse.data.ratings.length ? userResponse.data.ratings.reduce((accumulator, currentValue) => {
                     return accumulator + (currentValue.stars || 0);
-                }, 0) / userResponse.data.ratings.length : 0
+                }, 0) / userResponse.data.ratings.length : 0,
+                pfp: pfpURI
             };
 
             const ridesData = ridesResponse.data;
@@ -109,7 +116,8 @@ const profile = () => {
             setDisplayRatings(userData.ratings)
             setRating(userData.averageStars);
             setDisplayRides(ridesData);
-            console.log("rides: ", ridesData);
+            setImageUri(pfpURI);            
+
         } catch (error) {
             console.error("Error fetching data", error);
         }
@@ -125,8 +133,8 @@ const profile = () => {
 
     const handleLogOut = () => {
         // Show alert -- Make this a button
-        
-        Alert.alert("Log out", "Do you want to log out?",[
+
+        Alert.alert("Log out", "Do you want to log out?", [
             {
                 text: "Cancel",
                 style: "cancel"
@@ -142,8 +150,25 @@ const profile = () => {
         ])
     }
 
-    const handleProfileChange = () => {
-        alert("Change profile triggered")
+    const handleProfileChange = async () => {
+        const imageURI = await pickImage();
+        const image = await fetch(imageURI);
+        const blob = await image.blob()
+        const blobURL = URL.createObjectURL(blob);
+        setImageUri(blobURL);
+
+        const reader = new FileReader();
+
+        const base64Blob = new Promise((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+
+        const dataUrl = await base64Blob;
+        const base64Data = dataUrl.split(',')[1]; // Remove the data URL prefix
+        pfp_response = await apiClient.post(url + "/user/editProfile", {pfp: base64Data});
+        console.log("pfp post: ", pfp_response);
     }
 
     return (
@@ -158,7 +183,7 @@ const profile = () => {
                             colors={['#2E74DD']}
                         />
                     }
-                >   
+                >
                     {/* Log out button */}
                     <TouchableOpacity style={styles.logOutButton} onPress={handleLogOut} >
                         <Text style={styles.logOutText}>Log out</Text>
@@ -167,7 +192,8 @@ const profile = () => {
                     {/** User profile, name and rating */}
                     <View style={userStyle.userContainer}>
                         <TouchableOpacity onPress={() => handleProfileChange()}>
-                            <Image style={userStyle.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />
+                            {imageUri ? (<Image source={{ uri: imageUri }} style={userStyle.profile} />) :
+                                (<Image style={userStyle.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />)}
                         </TouchableOpacity>
                         <View style={userStyle.info}>
                             <Text style={userStyle.name}>{userName}</Text>
@@ -223,7 +249,7 @@ const profile = () => {
                                 )}
                                 keyExtractor={item => item.id}
                             />) : (
-                                <Text style={{marginLeft: 6*vw}}>Post a ride to see recommendations! :) </Text>
+                                <Text style={{ marginLeft: 6 * vw }}>Post a ride to see recommendations! :) </Text>
                             )}
 
                         </View>}
@@ -326,10 +352,10 @@ const styles = StyleSheet.create({
         marginBottom: -5 * vw,
 
     },
-    logOutText : {
-        fontSize: 4  * vw,
+    logOutText: {
+        fontSize: 4 * vw,
         color: "#367CE5",
-    },  
+    },
 });
 
 // styles for profile pic, name, rating, and bio

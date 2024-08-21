@@ -51,7 +51,8 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "expo-notifications": "~0.28.15",
-    "expo-device": "~6.0.2"
+    "expo-device": "~6.0.2",
+    "expo-image-picker": "~15.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
