@@ -79,10 +79,10 @@ const ride = () => {
         console.log('----refreshing | Ride Page');
         setRefreshing(true);
 
-        const cachedRidesData = await getUserData('ridesData');
+        const cachedRidesData = await getUserData('suggestedRides');
 
         setDisplayRides(cachedRidesData);
-        console.log("Cached Data");
+        console.log("Cached Data")
 
 
         try {
@@ -93,7 +93,7 @@ const ride = () => {
             const ridesData = ridesResponse.data;
             console.log("Fetched rides data");
 
-            await saveUserData('ridesData', ridesData)
+            await saveUserData('suggestedRides', ridesData)
             setDisplayRides(ridesData)
         } catch (error) {
             console.error("Failed to fetch data", error);

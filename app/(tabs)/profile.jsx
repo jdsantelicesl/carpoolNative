@@ -78,7 +78,7 @@ const profile = () => {
         setRefreshing(true);
 
         const cachedUserData = await getUserData('userData');
-        const cachedRidesData = await getUserData('ridesData');
+        const cachedRidesData = await getUserData('userRides');
 
         const cachedUserName = await getUserData('userName');
         const cachedUserBio = await getUserData('userBio');
@@ -89,12 +89,9 @@ const profile = () => {
             setDisplayRatings(cachedUserData.ratings)
             setRating(cachedUserData.averageStars);
             setDisplayRides(cachedRidesData);
-        }
-
-        if (cachedUserName && cachedUserBio && cachedUserSchool) {
-            setName(cachedUserName);
-            setBio(cachedUserBio)
-            setSchool(cachedUserSchool)
+            setBio(cachedUserData.bio);
+            setSchool(cachedUserData.school);
+            setImageUri(cachedUserData.pfp)
         }
 
         // Fetch from db and store data synchronously
@@ -106,7 +103,7 @@ const profile = () => {
             console.log("Fetched user & rides data")
 
             const base64pfp = userResponse.data.pfp;
-            const pfpURI = `data:image/png;base64,${base64pfp}`;
+            const pfpURI = base64pfp ? `data:image/png;base64,${base64pfp}` : null;
 
             const userData = {
                 name: userResponse.data.name,
@@ -115,20 +112,24 @@ const profile = () => {
                 averageStars: userResponse.data.ratings.length ? userResponse.data.ratings.reduce((accumulator, currentValue) => {
                     return accumulator + (currentValue.stars || 0);
                 }, 0) / userResponse.data.ratings.length : 0,
-                pfp: pfpURI
+                pfp: pfpURI,
+                bio: userResponse.data.bio,
+                school: userResponse.data.school
             };
 
             const ridesData = ridesResponse.data;
 
             // Save data to Async Storage
             await saveUserData('userData', userData);
-            await saveUserData('ridesData', ridesData);
+            await saveUserData('userRides', ridesData);
             // Set states
             setName(userData.name);
             setDisplayRatings(userData.ratings)
             setRating(userData.averageStars);
             setDisplayRides(ridesData);
-            setImageUri(pfpURI);            
+            setImageUri(pfpURI);
+            setBio(userData.bio);
+            setSchool(userData.school);    
 
         } catch (error) {
             console.error("Error fetching data", error);
@@ -180,7 +181,6 @@ const profile = () => {
         const dataUrl = await base64Blob;
         const base64Data = dataUrl.split(',')[1]; // Remove the data URL prefix
         pfp_response = await apiClient.post(url + "/user/editProfile", {pfp: base64Data});
-        console.log("pfp post: ", pfp_response);
     }
 
     return (
