@@ -264,22 +264,22 @@ const ride = () => {
 
                         <View style={{ marginTop: 1.5 * vh }}>
                             {(displayRides != "empty") && displayRides && <FlatList
-                                scrollEnabled={false}
-                                // data is going to taken in an object which fetches DB to get all rides
-                                data={displayRides}
-                                renderItem={({ item }) => (
-                                    <RideObject
-                                        origin={item.origins}
-                                        destination={item.destination}
-                                        day={item.day}
-                                        arrival={item.arrival}
-                                        members={item.members}
-                                        rideData={item}
-                                        onRideClick={clickedRide}
-                                    />
-                                )}
-                                keyExtractor={item => item.id}
-                            />}
+                                    scrollEnabled={false}
+                                    // data is going to taken in an object which fetches DB to get all rides
+                                    data={displayRides}
+                                    renderItem={({ item }) => (
+                                        <RideObject
+                                            origin={item.origins}
+                                            destination={item.destination}
+                                            day={item.day}
+                                            arrival={item.arrival}
+                                            members={item.members}
+                                            rideData={item}
+                                            onRideClick={clickedRide}
+                                        />
+                                    )}
+                                    keyExtractor={item => item.id}
+                                />}
 
                             {(displayRides === "empty") && <Loading text={"Submit a ride to see suggestions"} />}
                             {!displayRides && <Text>Loading...</Text>}

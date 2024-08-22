@@ -285,10 +285,13 @@ const profile = () => {
                     </View>
 
                     {/** Content: User Rides or Ratings. Use conditional rendering based on state. */}
-                    <View style={contentStyles.container}>
+                    <View >
 
                         {/** Rides */}
-                        {(page === "rides") && <View>
+                        {(page === "rides") && 
+                            <View style={displayRides && displayRides !== "empty" && displayRides.length > 0 
+                                ? contentStyles.container 
+                                : contentStyles.loadingContainer}>
                             {displayRides && (displayRides != "empty") && displayRides.length > 0 ? (<FlatList
                                 scrollEnabled={false}
                                 // data is going to taken in an object which fetches DB to get all rides
@@ -311,8 +314,12 @@ const profile = () => {
                         </View>}
 
                         {/** Reviews here, to do...  */}
-                        {(page === "reviews") && <View>
-                            {displayRatings && displayRatings.length > 0 ? (<FlatList
+                        {(page === "reviews") && 
+                            <View style={displayRatings && displayRatings.length > 0 
+                                ? contentStyles.container 
+                                : contentStyles.loadingContainer
+                              }>
+                                {displayRatings && displayRatings.length > 0 ? (<FlatList
                                 scrollEnabled={false}
                                 data={displayRatings}
                                 renderItem={({ item }) => (
@@ -326,7 +333,7 @@ const profile = () => {
                                     // destination="Stanford University"   // Hard Coded for now, need to add param in db
 
                                     />
-                                )}
+                            )}
 
 
                             />) : (
@@ -474,6 +481,10 @@ const userStyle = StyleSheet.create({
 
 const contentStyles = StyleSheet.create({
     container: {
+        marginTop: 2.5 * vh,
+        // alignItems: "center"
+    },
+    loadingContainer: {
         marginTop: 2.5 * vh,
         alignItems: "center"
     }
