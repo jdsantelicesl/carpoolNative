@@ -4,6 +4,7 @@ import Hr from './hr';
 import Rating from './rating'
 import ReviewsObject from './reviewsObject';
 import { FontAwesome6, FontAwesome } from '@expo/vector-icons';
+import Loading from './loading';
 
 import apiClient from '../../components/utilities/apiClient';
 
@@ -15,8 +16,12 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
   const [rating, setRating] = useState(null);
   const [numRatings, setNumRatings] = useState(null);
   const [reviews, setReviews] = useState(null);
+  const [school, setSchool] = useState(null);
+  const [bio, setBio] = useState(null);
 
   const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
+
+  console.log("data passed", userData)
 
   useEffect(() => {
     const sendId = encodeURIComponent(userData.id);
@@ -25,6 +30,8 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
 
     apiClient.get(sendUrl)
       .then(response => {
+        setSchool(response.data.school);
+        setBio(response.data.bio);
         if (response.data.ratings) {
           setReviews(response.data.ratings);
           setNumRatings(response.data.ratings.length);
@@ -34,7 +41,7 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
             return accumulator + (currentValue.stars || 0);
           }, 0);
 
-          const averageStars = sumStars / response.data.ratings.length;
+          const averageStars = sumStars ? sumStars / response.data.ratings.length : 0;
           setRating(averageStars);
         }
       })
@@ -67,11 +74,14 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
             <View style={styles.userInformation}>
               <Text style={styles.userName}>{userData.name}</Text>
               <View style={styles.ratingsContainer}>
-                {rating ?
-                  <Rating style={styles.rating} size={3 * vh} rating={rating} total={numRatings} /> :
-                  <Text> No rating yet </Text>}
+                <Rating style={styles.rating} size={3 * vh} rating={rating} total={numRatings} />
               </View>
             </View>
+          </View>
+
+          <View style={styles.bio}>
+            <Text style={styles.bioText}>{school}</Text>
+            <Text style={styles.bioText}>{bio}</Text>
           </View>
 
           {/* Separator */}
@@ -79,21 +89,24 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
 
           {/* Reviews section */}
 
-          <FlatList
-            scrollEnabled={true}
-            data={reviews}
-            renderItem={({ item }) => (
-              <ReviewsObject
-                name={item.name}
-                stars={item.stars}
-                content={item.content}
-                style={styles.reviewsObject}
+          {!rating == 0 ?
+            (<FlatList
+              scrollEnabled={true}
+              data={reviews}
+              renderItem={({ item }) => (
+                <ReviewsObject
+                  name={item.name}
+                  stars={item.stars}
+                  content={item.content}
+                  style={styles.reviewsObject}
 
-              />
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            style={styles.reviewList}
-          />
+                />
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              style={styles.reviewList}
+            />) :
+            (<Loading text={"Rating feature not yet enabled, coming soon..."} />)
+            }
 
 
           {/* Close button */}
@@ -194,6 +207,17 @@ const styles = StyleSheet.create({
   },
   reviewsObject: {
     width: "100%"
+  },
+  bio: {
+    width: 50 * vw,
+    marginLeft: 2 * vw,
+    marginRight: 6 * vw,
+    marginBottom: 4 * vh,
+  },
+  bioText: {
+    color: "#6E6B6B",
+    fontWeight: 'bold',
+    fontSize: 2 * vh,
   },
 });
 

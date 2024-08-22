@@ -2,12 +2,13 @@
 // Modal conditionally renders if rideObject's onRideClick is triggered 
 // Refer to './rideObject' and '../../app/(tabs)/profile.jsx' on how it is implemented
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Image } from 'react-native';
 import { FontAwesome6, FontAwesome } from '@expo/vector-icons';
 
 import apiClient from '../../components/utilities/apiClient';
 import { getUserData } from '../../components/utilities/cache';
+import UserProfilePopUp from './userProfilePopUp';
 
 const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
@@ -58,12 +59,16 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	}
 
-	const handleGiveReviews = () => {
-		alert("Give Rating")
+	const [renderProfile, setRenderProfile] = useState(false);
+	const [user, setUser] = useState(null);
+
+	const handleUserClick = (userData) => {
+		setUser(userData);
+		setRenderProfile(true);
 	}
 
 	const renderUser = ({ item }) => (
-		<TouchableOpacity style={styles.userItem} onPress={() => handleGiveReviews()}>
+		<TouchableOpacity style={styles.userItem} onPress={() => handleUserClick(item)}>
 			{ item.pfp ? (<Image style={styles.profile} source={{ uri: item.pfp }} />)
 				: (<FontAwesome name="user-circle" size={24} style={styles.icon} />) }
 			<Text style={styles.userName}>{item.name}</Text>
@@ -123,6 +128,15 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 					</View>
 				</View>
 			</View>
+
+			{/* User Profile Pop Up,
+                Grab data from user db and convert. */}
+			{renderProfile && <UserProfilePopUp
+				userData={user}
+				visible={renderProfile}
+				onClose={() => setRenderProfile(false)}
+			/>}
+
 		</Modal>
 	);
 };

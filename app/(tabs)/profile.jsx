@@ -84,6 +84,12 @@ const profile = () => {
         console.log('----refreshing | Profile Page');
         setRefreshing(true);
 
+        // force refresh the flatlists, im kinda hacking it
+        const temp_image = imageUri;
+        setImageUri(null);
+        const last_page = page;
+        setPage(null);
+
         const cachedUserData = await getUserData('userData');
         const cachedRidesData = await getUserData('userRides');
 
@@ -94,7 +100,7 @@ const profile = () => {
             setDisplayRides(cachedRidesData);
             setBio(cachedUserData.bio);
             setSchool(cachedUserData.school);
-            setImageUri(cachedUserData.pfp)
+            setImageUri(cachedUserData.pfp);
         }
 
         // Fetch from db and store data synchronously
@@ -137,12 +143,7 @@ const profile = () => {
             console.error("Error fetching data", error);
         }
 
-        // force refresh the flatlists, im kinda hacking it
-        const temp_image = imageUri;
-        setImageUri(null);
         setImageUri(temp_image);
-        const last_page = page;
-        setPage(null);
         setPage(last_page);
         setRefreshing(false);
     };
@@ -338,7 +339,7 @@ const profile = () => {
 
 
                             />) : (
-                                <Text><Loading text={"Join rides to receive reviews"}/></Text>
+                                        <Text><Loading text={"Rating feature not yet enabled, coming soon..."}/></Text>
                             )}
 
                         </View>}

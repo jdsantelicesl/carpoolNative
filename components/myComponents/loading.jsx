@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
         marginTop: -5 * vh,
         fontSize: 5 * vw,
         fontWeight: "bold",
-        color: "#888"
+        color: "#888", 
+        textAlign: 'center'
     },
     logo: {
 		height: 30 * vh,
