@@ -196,14 +196,17 @@ const styles = StyleSheet.create({
     overflow: 'visible', // Ensure the shadow is not clipped
   },
   closeButton: {
-    backgroundColor: 'red',
-    borderRadius: 5,
-    padding: 1.5 * vh,
+    marginHorizontal: 2*vw,
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    paddingVertical: 1.4 * vh,
     alignItems: 'center',
   },
   closeText: {
     color: 'white',
-    fontSize: 3 * vw,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 4 * vw,
   },
   reviewsObject: {
     width: "100%"
