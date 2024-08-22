@@ -17,7 +17,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] notifications
 - [X] add on-demand messages with ~push notifications~ backend polling 
 - [ ] design details, graphics, icons, animations
-- [ ] Test on all plataforms
+- [ ] Test on all platforms
 - [ ] deploy
 
 ## Predeployment list
@@ -28,7 +28,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] When clicked return/enter location, grabs first query in list
 - [X] Disable the request to join ride button intermittently (ride group)
 - [x] Fix keyboard spacing in Chat
-- [ ] reviewsObj pop up on pfp click ridePopUp on profile
+- [ ] ~reviewsObj pop up on pfp click ridePopUp on profile~
 - [ ] ~user has ride with another user for a peroid of time, can rate users through profilePopUp.jsx.~
 - [x] improve empty messages (no rides, etc)
 - [ ] improve alert requests
