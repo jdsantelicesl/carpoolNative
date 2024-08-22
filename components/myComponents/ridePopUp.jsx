@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Image } from 'react-native';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { FontAwesome6, FontAwesome } from '@expo/vector-icons';
 
 import apiClient from '../../components/utilities/apiClient';
 import { getUserData } from '../../components/utilities/cache';
@@ -64,7 +64,8 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 
 	const renderUser = ({ item }) => (
 		<TouchableOpacity style={styles.userItem} onPress={() => handleGiveReviews()}>
-			<Image style={styles.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />
+			{ item.pfp ? (<Image style={styles.profile} source={{ uri: item.pfp }} />)
+				: (<FontAwesome name="user-circle" size={24} style={styles.icon} />) }
 			<Text style={styles.userName}>{item.name}</Text>
 		</TouchableOpacity>
 	);

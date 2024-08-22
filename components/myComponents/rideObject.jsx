@@ -29,7 +29,7 @@ const RideObject = ({ origin, destination, day, arrival, members, rideData, onRi
                 {/* Displaying User */}
                 <View style={styles.userContainer}>
                     {/* <FontAwesome6 name="user" size={25}/>  */}
-                    <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
+                    <Image style={styles.profile} source={{uri: members[0].pfp}}/>
                     <Text style={styles.members}> {members[0].name} </Text>
                 </View>
 

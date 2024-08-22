@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity, Dimensions, FlatList, Image, } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
 import Hr from './hr';
 import Rating from './rating'
 import ReviewsObject from './reviewsObject';
+import { FontAwesome6, FontAwesome } from '@expo/vector-icons';
 
 import apiClient from '../../components/utilities/apiClient';
 
@@ -59,7 +59,8 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
 					{/* Profile section */}
 					<View style={styles.profileContainer}>
 						<FontAwesome name="user-circle" size={80} color="grey" />
-            <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
+            {userData.pfp ? (<Image style={styles.profile} source={{uri: userData.pfp}}/>) :
+                (<FontAwesome name="user-circle" size={24} style={styles.icon} />) }
 					</View>
 
 					{/* Name and Ratings section */}

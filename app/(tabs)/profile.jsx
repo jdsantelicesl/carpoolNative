@@ -77,12 +77,12 @@ const profile = () => {
         console.log('----refreshing | Profile Page');
         setRefreshing(true);
 
+        // to refesh the flatlists
+        const last_page = page;
+        setPage(null)
+
         const cachedUserData = await getUserData('userData');
         const cachedRidesData = await getUserData('userRides');
-
-        const cachedUserName = await getUserData('userName');
-        const cachedUserBio = await getUserData('userBio');
-        const cachedUserSchool = await getUserData('userSchool');
 
         if (cachedUserData && cachedRidesData) {
             setName(cachedUserData.name);
@@ -134,6 +134,8 @@ const profile = () => {
             console.error("Error fetching data", error);
         }
 
+        // force refresh the flatlists, im kinda hacking it
+        setPage(last_page);
         setRefreshing(false);
     };
 

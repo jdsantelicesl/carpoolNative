@@ -82,7 +82,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
     const renderMember = ({ item }) => (
         <TouchableOpacity style={styles.memberContainer} onPress={() => handleUserClick(item)}>
-            <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
+            { item.pfp ? (<Image style={styles.profile} source={{uri: item.pfp}}/>) : 
+                (<FontAwesome name="user-circle" size={24} style={styles.icon} />) }
             <Text style={styles.memberName}>{item.name}</Text>
         </TouchableOpacity>
     );
