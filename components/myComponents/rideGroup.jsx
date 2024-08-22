@@ -35,8 +35,10 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
     const [message, setMessage] = useState("Hello! I am interested in joining your carpool. I can contribute with gas money.");
+    const [sentRequest, setSentRequest] = useState(false);
 
     const sendRequest = async () => {
+        setSentRequest(true);
         const sendUrl = url + "/message/send";
         const user_id = await getUserData("clientId");
 
@@ -46,7 +48,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
             rideId: rideId,
             clientId: user_id
         };
-        
+
         apiClient.post(sendUrl, sendData)
             .then(response => {
                 if (response.data == "Ok") {
@@ -82,8 +84,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
     const renderMember = ({ item }) => (
         <TouchableOpacity style={styles.memberContainer} onPress={() => handleUserClick(item)}>
-            { item.pfp ? (<Image style={styles.profile} source={{uri: item.pfp}}/>) : 
-                (<FontAwesome name="user-circle" size={24} style={styles.icon} />) }
+            {item.pfp ? (<Image style={styles.profile} source={{ uri: item.pfp }} />) :
+                (<FontAwesome name="user-circle" size={24} style={styles.icon} />)}
             <Text style={styles.memberName}>{item.name}</Text>
         </TouchableOpacity>
     );
@@ -153,8 +155,8 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
                     multiline
                 />
                 {/* Submit Button */}
-                <TouchableOpacity style={styles.button} onPress={() => sendRequest()}>
-                    <FontAwesome6 name="telegram" color={"#2E74DD"} size={50} />
+                <TouchableOpacity style={styles.button} onPress={() => sendRequest()} disabled={sentRequest}>
+                        <FontAwesome6 name="telegram" color={"#2E74DD"} size={50} />
                 </TouchableOpacity>
 
             </View>
@@ -180,12 +182,12 @@ const styles = StyleSheet.create({
         marginTop: 7 * vh,
     },
     profile: {
-        width: 3 * vh, 
-        height: 3 * vh, 
+        width: 3 * vh,
+        height: 3 * vh,
         borderRadius: 1.5 * vh,
         borderColor: "black",
         borderWidth: 0.1 * vw,
-        marginRight: 1 *vw,
+        marginRight: 1 * vw,
     },
     leftArrow: {
         marginLeft: 4 * vw,
