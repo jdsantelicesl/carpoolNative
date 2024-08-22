@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar, Image } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Rating from './rating';

@@ -14,6 +14,7 @@ import { saveUserData, getUserData, clearAllData } from '../../components/utilit
 import apiClient from '../../components/utilities/apiClient';
 import pickImage from '../../components/utilities/pickImage';
 import { useNavigation } from 'expo-router';
+import Loading from '../../components/myComponents/loading';
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -227,7 +228,7 @@ const profile = () => {
                     <View style={userStyle.userContainer}>
                         <TouchableOpacity onPress={() => handleProfileChange()}>
                             {imageUri ? (<Image source={{ uri: imageUri }} style={userStyle.profile} />) :
-                                (<Image style={userStyle.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />)}
+                                (<Image style={userStyle.profile} source={{ uri: imageUri }} />)}
                         </TouchableOpacity>
                         <View style={userStyle.info}>
                             <Text style={userStyle.name}>{userName}</Text>
@@ -304,7 +305,7 @@ const profile = () => {
                                 )}
                                 keyExtractor={item => item.id}
                             />) : (
-                                <Text style={{ marginLeft: 6 * vw }}>Post a ride to see recommendations! :) </Text>
+                                <Text><Loading text={"These are going to be your rides"}/></Text>
                             )}
 
                         </View>}
@@ -329,7 +330,7 @@ const profile = () => {
 
 
                             />) : (
-                                <Text style={{ marginLeft: 6 * vw }}>No ratings yet. Join some rides...</Text>
+                                <Text><Loading text={"Join rides to receive reviews"}/></Text>
                             )}
 
                         </View>}
@@ -474,5 +475,6 @@ const userStyle = StyleSheet.create({
 const contentStyles = StyleSheet.create({
     container: {
         marginTop: 2.5 * vh,
+        alignItems: "center"
     }
 });
