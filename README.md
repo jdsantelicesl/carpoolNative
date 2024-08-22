@@ -14,11 +14,25 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] add profile bio
 - [x] fix rating obj styles on rideGroup
 - [ ] cleanup before build
-- [ ] notifications
-- [ ] add on-demand messages with push notifications
+- [X] notifications
+- [X] add on-demand messages with ~push notifications~ backend polling 
 - [ ] design details, graphics, icons, animations
 - [ ] Test on all plataforms
 - [ ] deploy
+
+## Predeployment list
+- [ ] Add bio edit
+- [ ] fix token expiry parsing
+- [ ] Make Login page keyboard not overlap on the input fields x
+- [ ] Make clear for .edu only x
+- [ ] When clicked return/enter location, grabs first query in list
+- [ ] Disable the request to join ride button intermittently (ride group)
+- [ ] Fix keyboard spacing in Chat
+- [ ] reviewsObj pop up on pfp click ridePopUp on profile
+- [ ] user has ride with another user for a peroid of time, can rate users through profilePopUp.jsx.
+- [ ] improve empty messages (no rides, etc)
+- [ ] improve alert requests
+- [ ] **Do last** delete all console.log()
 
 
 ## Get started
