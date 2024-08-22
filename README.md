@@ -25,7 +25,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] fix token expiry parsing
 - [x] Make Login page keyboard not overlap on the input fields
 - [x] Make clear for .edu only
-- [ ] When clicked return/enter location, grabs first query in list
+- [X] When clicked return/enter location, grabs first query in list
 - [X] Disable the request to join ride button intermittently (ride group)
 - [x] Fix keyboard spacing in Chat
 - [ ] ~reviewsObj pop up on pfp click ridePopUp on profile~
