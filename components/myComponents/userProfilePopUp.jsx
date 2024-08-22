@@ -17,7 +17,7 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
   const [reviews, setReviews] = useState(null);
 
   const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
-  
+
   useEffect(() => {
     const sendId = encodeURIComponent(userData.id);
 
@@ -42,7 +42,7 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
         console.log("error getUser: ", error);
       })
   }, []);
-  
+
   console.log(reviews)
 
   return (
@@ -52,59 +52,59 @@ const UserProfilePopUp = ({ userData, visible, onClose }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-		<View style={styles.centeredView}>
-			<View style={styles.modalView}>
-				<View style={styles.topContainer}>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <View style={styles.topContainer}>
 
-					{/* Profile section */}
-					<View style={styles.profileContainer}>
-						<FontAwesome name="user-circle" size={80} color="grey" />
-            {userData.pfp ? (<Image style={styles.profile} source={{uri: userData.pfp}}/>) :
-                (<FontAwesome name="user-circle" size={24} style={styles.icon} />) }
-					</View>
+            {/* Profile section */}
+            <View style={styles.profileContainer}>
+              <FontAwesome name="user-circle" size={80} color="grey" />
+              {userData.pfp ? (<Image style={styles.profile} source={{ uri: userData.pfp }} />) :
+                (<FontAwesome name="user-circle" size={24} style={styles.icon} />)}
+            </View>
 
-					{/* Name and Ratings section */}
-					<View style={styles.userInformation}>
-						<Text style={styles.userName}>{userData.name}</Text>
-						<View style={styles.ratingsContainer}>
-						{rating ?
-							<Rating style={styles.rating} size={3 * vh} rating={rating} total={numRatings} /> :
-							<Text> No rating yet </Text>}
-						</View>
-					</View>
-				</View>
+            {/* Name and Ratings section */}
+            <View style={styles.userInformation}>
+              <Text style={styles.userName}>{userData.name}</Text>
+              <View style={styles.ratingsContainer}>
+                {rating ?
+                  <Rating style={styles.rating} size={3 * vh} rating={rating} total={numRatings} /> :
+                  <Text> No rating yet </Text>}
+              </View>
+            </View>
+          </View>
 
-				{/* Separator */}
-				<Hr style={styles.hr} />
+          {/* Separator */}
+          <Hr style={styles.hr} />
 
-				{/* Reviews section */}  
-					
-				<FlatList
-					scrollEnabled={true}
-					data={reviews}
-					renderItem={({ item }) => (
-						<ReviewsObject 
-							name={item.name}
-							stars={item.stars}
-							content={item.content}
-							style={styles.reviewsObject}
-						
-						/>
-  					)}
-					keyExtractor={(item, index) => index.toString()}
-					style={styles.reviewList}
-				/>
-					
+          {/* Reviews section */}
 
-				{/* Close button */}
-				<TouchableOpacity
-					style={styles.closeButton}
-					onPress={onClose}
-				>
-					<Text style={styles.closeText}>Close</Text>
-				</TouchableOpacity>
-			</View>
-		</View>
+          <FlatList
+            scrollEnabled={true}
+            data={reviews}
+            renderItem={({ item }) => (
+              <ReviewsObject
+                name={item.name}
+                stars={item.stars}
+                content={item.content}
+                style={styles.reviewsObject}
+
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            style={styles.reviewList}
+          />
+
+
+          {/* Close button */}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={onClose}
+          >
+            <Text style={styles.closeText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </Modal>
   );
 };
@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   profile: {
-    width: 10 * vh, 
-    height: 10 * vh, 
+    width: 10 * vh,
+    height: 10 * vh,
     borderRadius: 5 * vh,
     position: 'absolute',
     borderColor: "black",
