@@ -8,14 +8,17 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "ios" : {
-        "simulator": true
-      }
+      "distribution": "internal"
     },
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "jdsantelicesl@icloud.com",
+        "ascAppId": "6657955090",
+        "appleTeamId": "B3A9TZB6G3"
+      }
+    }
   }
 }

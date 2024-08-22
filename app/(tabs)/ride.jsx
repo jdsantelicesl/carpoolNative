@@ -91,7 +91,9 @@ const ride = () => {
             const user_id = await getUserData("clientId");
             console.log("user id", user_id);
             const send_id = encodeURIComponent(user_id);
-            const ridesResponse = await apiClient.get((url + `/ride/getRides?client_id=${send_id}`));
+            const sendUrl = url + `/ride/getRides?client_id=${send_id}`
+            console.log("url, ", sendUrl)
+            const ridesResponse = await apiClient.get(sendUrl);
             const ridesData = ridesResponse.data;
             console.log("Fetched rides data");
 
