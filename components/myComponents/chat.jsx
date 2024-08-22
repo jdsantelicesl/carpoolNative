@@ -6,6 +6,7 @@ import Rating from './rating';
 
 import apiClient from '../../components/utilities/apiClient';
 import { getUserData } from '../../components/utilities/cache';
+import { format } from 'date-fns/fp/format';
 // Refer to: https://github.com/FaridSafi/react-native-gifted-chat
 // _id: 2 is self, _id: 1 is other
 const { width, height } = Dimensions.get('window');
@@ -18,7 +19,7 @@ const convertDay = (day) => {
 	return days[adjustedDay];
 };
 
-const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arrival, day, rideId }) => { 
+const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arrival, day, rideId }) => {
 	// Destructure the onClose and chatData props
 
 	// Need this to render chats. Pulling from cache is async
@@ -92,7 +93,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 				) :
 
 					(
-						<View style={[reqStyles.bubble, (usrId == clientId) && ({ backgroundColor: '#2E74DD'})]}>
+						<View style={[reqStyles.bubble, (usrId == clientId) && ({ backgroundColor: '#2E74DD' })]}>
 							<View style={reqStyles.userCard}>
 								<FontAwesome6 name="user-graduate" size={4 * vh} color="black" />
 								<View style={reqStyles.userDetails}>
@@ -111,7 +112,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 								</TouchableOpacity>
 							</View>) :
 								(<View style={reqStyles.buttonCont}>
-									<View style={[reqStyles.buttons, { backgroundColor: "#6d6d6d", width: 40 * vw, borderRadius: 1*vh }]}>
+									<View style={[reqStyles.buttons, { backgroundColor: "#6d6d6d", width: 40 * vw, borderRadius: 1 * vh }]}>
 										<Text style={reqStyles.buttonText}>{mssgStatus}</Text>
 									</View>
 								</View>)
@@ -124,19 +125,35 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	};
 
 	// Convert chatData to GiftedChat format
-	const formatChatData = (data) => {
-		return data.map((item) => ({
-			_id: item._id || Math.random().toString(), // Use unique ID from data or generate one
-			type: item.type,
-			status: item.status,
-			text: item.content,
-			createdAt: new Date(item.date), // Convert date string to Date object
-			user: {
-				_id: item.clientId,
-				name: item.name,
-				avatar: `https://picsum.photos/140/140?random=${Math.random()}`,
-			},
-		}));
+	const formatChatData = async (data) => {
+		const formattedData = await Promise.all(
+			data.map(async (item) => {
+				let user_pfp;
+
+				try {
+					const response = await apiClient.get(url + `/user/getUser?client_id=${item.clientId}`)
+					user_pfp = response.data.pfp;
+				} catch (error) {
+					console.error(`Error getting pfp for user ${item.clientId}:`, error);
+					user_pfp = null;
+				}
+
+				return {
+					_id: item._id || Math.random().toString(),
+					type: item.type,
+					status: item.status,
+					text: item.content,
+					createdAt: new Date(item.date),
+					user: {
+						_id: item.clientId,
+						name: item.name,
+						avatar: user_pfp,
+					},
+				};
+			})
+		);
+		console.log("formattedData: ", formattedData)
+		return formattedData;
 	};
 
 	const [messages, setMessages] = useState([]);
@@ -144,7 +161,11 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	useEffect(() => {
 		// Format and set messages when chatData changes
 		if (Array.isArray(chatData)) {
-			setMessages(formatChatData(chatData));
+			const loadChat = async () => {
+				const formattedChatData = await formatChatData(chatData);
+				setMessages(formattedChatData);
+			}
+			loadChat();
 		}
 		// Hack: display developer text
 		else {
@@ -200,20 +221,22 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 
 		// Function to fetch data from the server
 		const fetchData = async () => {
-		  try {
-			const response = await apiClient.get(url + `/message/getSpecific?ride_id=${sendRideId}`);
-			setMessages(formatChatData(response.data));
-		  } catch (err) {
-			setError(err);
-		  }
+			try {
+				const response = await apiClient.get(url + `/message/getSpecific?ride_id=${sendRideId}`);
+				const formattedChatData = await formatChatData(response.data)
+				setMessages(formattedChatData);
+			} catch (err) {
+				setError(err);
+			}
+			console.log("messages array: ", messages);
 		};
-		
+
 		// Start polling
 		const pollingInterval = setInterval(fetchData, interval);
-	
+
 		// Clean up function to clear the interval
 		return () => clearInterval(pollingInterval);
-	  }, []);
+	}, []);
 
 	// This appends the new message 
 	const onSend = useCallback((newMessages) => {
