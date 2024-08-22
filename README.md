@@ -22,7 +22,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Predeployment list
 - [X] Add bio edit
-- [ ] fix token expiry parsing
+- [X] fix token expiry parsing
 - [ ] Make Login page keyboard not overlap on the input fields x
 - [ ] Make clear for .edu only x
 - [ ] When clicked return/enter location, grabs first query in list
