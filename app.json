@@ -4,7 +4,7 @@
     "slug": "carpoolNative",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/applogo-leaf.png",
+    "icon": "./assets/images/applogo-fill-leaf.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
