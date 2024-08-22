@@ -84,10 +84,6 @@ const profile = () => {
         console.log('----refreshing | Profile Page');
         setRefreshing(true);
 
-        // to refesh the flatlists
-        const last_page = page;
-        setPage(null)
-
         const cachedUserData = await getUserData('userData');
         const cachedRidesData = await getUserData('userRides');
 
@@ -142,6 +138,11 @@ const profile = () => {
         }
 
         // force refresh the flatlists, im kinda hacking it
+        const temp_image = imageUri;
+        setImageUri(null);
+        setImageUri(temp_image);
+        const last_page = page;
+        setPage(null);
         setPage(last_page);
         setRefreshing(false);
     };
@@ -225,7 +226,7 @@ const profile = () => {
                     </TouchableOpacity>
 
                     {/** User profile, name and rating */}
-                    <View style={userStyle.userContainer}>
+                    <View style={userStyle.userContainer} >
                         <TouchableOpacity onPress={() => handleProfileChange()}>
                             {imageUri ? (<Image source={{ uri: imageUri }} style={userStyle.profile} />) :
                                 (<Image style={userStyle.profile} source={{ uri: imageUri }} />)}
