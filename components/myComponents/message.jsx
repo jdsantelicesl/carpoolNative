@@ -31,7 +31,28 @@ const Message = ({ style, origin, destination, day, arrival, prevText, rideData,
             <View style={[style, styles.container]}>
                 {/* This is the grey circle, currently place holder for user profile */}
                 {/* <FontAwesome style={styles.profile} name="user-circle" size={10 * vh} color="#D9D9D9" /> */}
-                <Image style={styles.profile} source={{uri: `https://picsum.photos/140/140?random=${Math.random()}`}}/>
+                {rideData ?
+                    (<View style={profileStyles.profile}>
+                        <View style={{ flexDirection: 'row' }}>
+                            {rideData.members[0] && rideData.members[0].pfp &&
+                                <Image style={profileStyles.userProfiles} source={{ uri: rideData.members[0].pfp }} />
+                            }
+                            {rideData.members[1] && rideData.members[1].pfp &&
+                                <Image style={profileStyles.userProfiles} source={{ uri: rideData.members[1].pfp }} />
+                            }
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            {rideData.members[2] && rideData.members[2].pfp &&
+                                <Image style={profileStyles.userProfiles} source={{ uri: rideData.members[2].pfp }} />
+                            }
+                            {rideData.members[3] && rideData.members[3].pfp &&
+                                <Image style={profileStyles.userProfiles} source={{ uri: rideData.members[3].pfp }} />
+                            }
+                        </View>
+                    </View>) :
+                    (<Image style={profileStyles.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />)
+                }
+
                 <View style={styles.content}>
 
                     {/* Display Ride Information Origin -> Destination */}
@@ -73,7 +94,7 @@ const Message = ({ style, origin, destination, day, arrival, prevText, rideData,
                 </View>
 
                 <FontAwesome6 style={styles.arrow} name="chevron-right" size={20} color="black" />
-                
+
             </View>
             <Hr style={styles.hr} />
         </TouchableOpacity>
@@ -84,11 +105,11 @@ export default Message;
 
 const styles = StyleSheet.create({
     componentCont: {
-        height: 14*vh,
+        height: 14 * vh,
     },
     container: {
         marginTop: 1 * vh,
-        marginBottom: 2*vh,
+        marginBottom: 2 * vh,
         marginHorizontal: 2.5 * vw,
         flexDirection: "row",
     },
@@ -106,13 +127,6 @@ const styles = StyleSheet.create({
         fontSize: 2 * vh,
         fontWeight: "bold",
         width: 60 * vw,
-    },
-    profile: {
-        width: 10 * vh, 
-        height: 10 * vh, 
-        borderRadius: 5 * vh,
-        borderColor: "black",
-        borderWidth: 0.2 * vw
     },
     arrow: {
         flex: 1,
@@ -147,3 +161,20 @@ const styles = StyleSheet.create({
         backgroundColor: "black",
     },
 });
+
+const profileStyles = StyleSheet.create({
+    profile: {
+        width: 20 * vw,
+        height: 20 * vw,
+        borderRadius: 5 * vh,
+        borderColor: "black",
+        borderWidth: 0.2 * vw,
+        backgroundColor: '#D9D9D9',
+        overflow: 'hidden', // Prevent overflow
+    },
+    userProfiles: {
+        width: 10 * vw,
+        height: 10 * vw,
+        borderRadius: 5 * vh,
+    },
+})
