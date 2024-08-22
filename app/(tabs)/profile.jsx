@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableWithoutFeedback,
     ScrollView, RefreshControl, FlatList, StatusBar, Image, AppState, TouchableOpacity,
-    Alert,
+    Alert, TextInput
 } from 'react-native';
 import Rating from '../../components/myComponents/rating';
 import Hr from '../../components/myComponents/hr';
@@ -14,6 +14,9 @@ import { saveUserData, getUserData, clearAllData } from '../../components/utilit
 import apiClient from '../../components/utilities/apiClient';
 import pickImage from '../../components/utilities/pickImage';
 import { useNavigation } from 'expo-router';
+
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Entypo from '@expo/vector-icons/Entypo';
 
 // TODO: Grab user Bio/School/Profile from DB
 const { width, height } = Dimensions.get('window');
@@ -31,6 +34,9 @@ const profile = () => {
     const [userName, setName] = useState("loading...");
     const [userSchool, setSchool] = useState("loading...");
     const [userBio, setBio] = useState("loading...");
+    // to edit bio and school
+    const [editBio, setEditBio] = useState(false);
+
     const [rating, setRating] = useState(0);
     const [numRat, setNumRat] = useState(0);
 
@@ -128,7 +134,7 @@ const profile = () => {
             setDisplayRides(ridesData);
             setImageUri(pfpURI);
             setBio(userData.bio);
-            setSchool(userData.school);    
+            setSchool(userData.school);
 
         } catch (error) {
             console.error("Error fetching data", error);
@@ -180,8 +186,23 @@ const profile = () => {
         });
 
         const dataUrl = await base64Blob;
-        const base64Data = dataUrl.split(',')[1]; // Remove the data URL prefix
-        pfp_response = await apiClient.post(url + "/user/editProfile", {pfp: base64Data});
+        const base64Data = dataUrl.split(',')[1]; // Remove the data URL prefix\
+        try {
+            pfp_response = await apiClient.post(url + "/user/editProfile", { pfp: base64Data });
+        }
+        catch {
+            console.log("error setting pfp");
+        }
+    }
+
+    const handleEditBio = async() => {
+        try {
+            await apiClient.post(url + "/user/editProfile", { bio: userBio, school: userSchool});
+        }
+        catch {
+            console.log("error updating user bio");
+        }
+        setEditBio(false);
     }
 
     return (
@@ -216,9 +237,30 @@ const profile = () => {
                     </View>
 
                     {/** User bio. We probably want to force users to list their school. To ensure security? */}
-                    <View style={userStyle.bio}>
-                        <Text style={userStyle.bioText}>{userSchool}</Text>
-                        <Text style={userStyle.bioText}>{userBio}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                        <View style={userStyle.bio}>
+                            <TextInput style={userStyle.bioText} value={userSchool} onChangeText={setSchool} editable={editBio} ></TextInput>
+                            <TextInput style={userStyle.bioText} value={userBio} onChangeText={setBio} editable={editBio} multiline></TextInput>
+                        </View>
+                        <View style={userStyle.bioOptions}>
+                            {!editBio ?
+                                (<TouchableOpacity style={[userStyle.bioEdit, {marginTop: 1*vh}]} onPress={() => setEditBio(true)}>
+                                    <FontAwesome6 name="pencil" size={24} color="black" />
+                                </TouchableOpacity>)
+                                :
+                                (
+                                    <View>
+                                        <TouchableOpacity style={[userStyle.bioButton, { backgroundColor: '#007AFF' }]} onPress={() => handleEditBio()}>
+                                            <Entypo name="check" size={24} color="black" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={[userStyle.bioButton, { backgroundColor: '#FF3B30' }]}
+                                            onPress={() => { setEditBio(false); onRefresh(); }}>
+                                            <Entypo name="cross" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+                        </View>
                     </View>
 
                     {/** Rides and Ratings, will call components for this */}
@@ -405,13 +447,27 @@ const userStyle = StyleSheet.create({
         marginLeft: 0 * vw,
     },
     bio: {
-        marginHorizontal: 10 * vw,
+        width: 50 * vw,
+        marginLeft: 2 * vw,
+        marginRight: 6 * vw,
         marginBottom: 4 * vh,
     },
     bioText: {
         color: "#6E6B6B",
         fontWeight: 'bold',
         fontSize: 2 * vh,
+    },
+    bioOptions: {
+
+    },
+    bioEdit: {
+
+    },
+    bioButton: {
+        borderRadius: 1 * vh,
+        paddingHorizontal: 2 * vw,
+        marginVertical: 0.2 * vh,
+
     }
 });
 
