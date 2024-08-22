@@ -318,7 +318,6 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "red"
 	},
 	exitChat: {
 		marginTop: 5 * vh,
