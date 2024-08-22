@@ -27,7 +27,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] Make clear for .edu only x
 - [ ] When clicked return/enter location, grabs first query in list
 - [X] Disable the request to join ride button intermittently (ride group)
-- [ ] Fix keyboard spacing in Chat
+- [x] Fix keyboard spacing in Chat
 - [ ] reviewsObj pop up on pfp click ridePopUp on profile
 - [ ] ~user has ride with another user for a peroid of time, can rate users through profilePopUp.jsx.~
 - [x] improve empty messages (no rides, etc)

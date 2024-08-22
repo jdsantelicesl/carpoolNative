@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar, Image, Platform} from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Rating from './rating';
@@ -159,6 +159,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	const [messages, setMessages] = useState([]);
 
 	useEffect(() => {
+
 		// Format and set messages when chatData changes
 		if (Array.isArray(chatData)) {
 			const loadChat = async () => {
@@ -277,7 +278,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	return (
 		<>
 			<StatusBar barStyle={"dark-content"} />
-			<View style={{ flex: 1 }}>
+			<View style={styles.container}>
 				{/* Back Button */}
 				<TouchableOpacity onPress={exitChat} style={styles.exitChat}>
 					<FontAwesome6 name="arrow-left" size={3 * vh} />
@@ -307,6 +308,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					user={{
 						_id: clientId, // Set the current user ID
 					}}
+					bottomOffset={9 * vh} // Fix spacing keyboard
 				/>
 			</View>
 		</>
@@ -314,6 +316,10 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 };
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: "red"
+	},
 	exitChat: {
 		marginTop: 5 * vh,
 		padding: 10,
@@ -323,7 +329,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "center",
 		alignContent: "center",
-	}
+	},
 });
 
 const reqStyles = StyleSheet.create({
