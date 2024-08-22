@@ -21,7 +21,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] deploy
 
 ## Predeployment list
-- [ ] Add bio edit
+- [X] Add bio edit
 - [ ] fix token expiry parsing
 - [ ] Make Login page keyboard not overlap on the input fields x
 - [ ] Make clear for .edu only x
