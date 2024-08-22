@@ -240,14 +240,14 @@ const profile = () => {
                     </View>
 
                     {/** User bio. We probably want to force users to list their school. To ensure security? */}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <View style={userStyle.bio}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginHorizontal: 4*vw, marginLeft: 7*vw }}>
+                        <View style={[userStyle.bio, editBio && { backgroundColor: '#E1E1E1', color: 'black'}]}>
                             <TextInput style={userStyle.bioText} value={userSchool} onChangeText={setSchool} editable={editBio} ></TextInput>
                             <TextInput style={userStyle.bioText} value={userBio} onChangeText={setBio} editable={editBio} multiline></TextInput>
                         </View>
                         <View style={userStyle.bioOptions}>
                             {!editBio ?
-                                (<TouchableOpacity style={[userStyle.bioEdit, {marginTop: 1*vh}]} onPress={() => setEditBio(true)}>
+                                (<TouchableOpacity style={[userStyle.bioEdit, {marginTop: 1.2*vh}]} onPress={() => setEditBio(true)}>
                                     <FontAwesome6 name="pencil" size={24} color="black" />
                                 </TouchableOpacity>)
                                 :
@@ -457,10 +457,12 @@ const userStyle = StyleSheet.create({
         marginLeft: 0 * vw,
     },
     bio: {
-        width: 50 * vw,
-        marginLeft: 2 * vw,
-        marginRight: 6 * vw,
-        marginBottom: 4 * vh,
+        width: 68 * vw,
+        marginTop: -0.5*vh,
+        padding: 0.5*vh,
+        marginLeft: 1.5 * vw,
+        marginRight: 5.5 * vw,
+        marginBottom: 3.5 * vh,
     },
     bioText: {
         color: "#6E6B6B",
