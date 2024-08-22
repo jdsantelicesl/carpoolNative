@@ -4,11 +4,11 @@
     "slug": "carpoolNative",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/applogo.png",
+    "icon": "./assets/images/applogo-leaf.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/applogo-removebg.png",
+      "image": "./assets/images/applogo-leaf.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

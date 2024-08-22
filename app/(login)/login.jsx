@@ -26,7 +26,7 @@ const Login = ({ lastEmail, passEmail }) => {
 				<StatusBar barStyle={"dark-content"}/>
 				{/* App Logo */}
 				<View style={styles.logoContainer}>
-					<Image style={styles.logo} source={require("../../assets/images/applogo-removebg.png")} />
+					<Image style={styles.logo} source={require("../../assets/images/applogo-leaf.png")} />
 				</View>
 
 				<Text style={styles.title}>Need a ride?</Text>

@@ -17,6 +17,8 @@ import RideGroup from '../../components/myComponents/rideGroup';
 import { saveUserData, getUserData } from '../../components/utilities/cache';
 
 import apiClient from '../../components/utilities/apiClient';
+import Loading from '../../components/myComponents/loading';
+import { ErrorBoundary } from 'expo-router';
 
 
 const { width, height } = Dimensions.get('window');
@@ -279,7 +281,7 @@ const ride = () => {
                                 keyExtractor={item => item.id}
                             />}
 
-                            {(displayRides === "empty") && <Text>Post a ride to see recommendations! :) </Text>}
+                            {(displayRides === "empty") && <Loading text={"Submit a ride to see suggestions"} />}
                             {!displayRides && <Text>Loading...</Text>}
                         </View>
                     </ScrollView>

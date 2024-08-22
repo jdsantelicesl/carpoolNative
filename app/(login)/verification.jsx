@@ -35,7 +35,7 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
             {/* App Logo */}
             <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require("../../assets/images/applogo-removebg.png")} />
+                <Image style={styles.logo} source={require("../../assets/images/applogo-leaf.png")} />
             </View>
 
             {/* Title */}
