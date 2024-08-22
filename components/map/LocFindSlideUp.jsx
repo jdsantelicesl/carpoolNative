@@ -33,6 +33,9 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 	const [destLat, setDestLat] = useState(null);
 	const [destLong, setDestLong] = useState(null);
 
+	// when user clicks out of TextInput
+	const [getFirst, setGetFirst] = useState(false);
+
 	const url = process.env.EXPO_PUBLIC_API_URL + "/ride/getCoordinates";
 	
 	const confirmRoute = () => {
@@ -100,6 +103,7 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 				else {
 					throw new Error("query is editing neither origin or dest");
 				}
+				setGetFirst(false);
 			})
 			.catch(error => {
 				console.log("error getting coordinates: ", error);
@@ -142,6 +146,7 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 								placeholderTextColor="grey"
 								value={originText}
 								onChangeText={(data) => { setOriginText(data); setQuery(data) }}
+								onBlur={() => setGetFirst(true)}
 							/>
 						</View>
 						<View style={styles.inputContent}>
@@ -152,12 +157,13 @@ const LocFindSlideUp = ({ setRenderMap, setDest, setFrom }) => {
 								placeholderTextColor="grey"
 								value={destinationText}
 								onChangeText={(data) => { setDestinationText(data); setQuery(data) }}
+								onBlur={() => setGetFirst(true)}
 							/>
 						</View>
 					</View>
 
 					<View style={styles.locFindListContainer}>
-						<LocFind query={query} handleLocClick={locClick} />
+						<LocFind query={query} handleLocClick={locClick} getFirst={getFirst}/>
 					</View>
 
 				</Animated.View>

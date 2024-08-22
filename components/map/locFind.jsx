@@ -11,7 +11,7 @@ const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 
-const LocFind = ({ style, query, handleLocClick }) => {
+const LocFind = ({ style, query, handleLocClick, getFirst }) => {
     const [locations, setLocations] = useState([])
     // placeholder for lat, long
     const lat = 38.5544
@@ -23,12 +23,16 @@ const LocFind = ({ style, query, handleLocClick }) => {
 
         apiClient.get(reqUrl)
             .then(response => {
-                setLocations(response.data.suggestions)
+                setLocations(response.data.suggestions);
+                if (getFirst) { 
+                    const current_suggestion = response.data.suggestions[0];
+                    handleLocClick(current_suggestion.placePrediction.placeId, current_suggestion.placePrediction.text.text, current_suggestion.placePrediction.structuredFormat.mainText.text);
+                }
             })
             .catch(error => {
                 console.log("bad request")
             });
-    }, [query]);
+    }, [query, getFirst]);
 
     return (
         <View style={style}>
