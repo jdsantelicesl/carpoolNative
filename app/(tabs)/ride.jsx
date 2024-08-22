@@ -85,7 +85,7 @@ const ride = () => {
 
         setDisplayRides(cachedRidesData);
         console.log("Cached Data")
-
+        console.log("---", cachedRidesData)
 
         try {
             const user_id = await getUserData("clientId");
@@ -279,11 +279,17 @@ const ride = () => {
                                         />
                                     )}
                                     keyExtractor={item => item.id}
-                                />}
+                                    />}
+                            
+                            {/* Checks if empty array, AKA empty suggested rides */}
+                            {Array.isArray(displayRides) && displayRides.length === 0 && (
+                                <Loading text={"Get notified when found a match"}/>
+                            )}
 
                             {(displayRides === "empty") && <Loading text={"Submit a ride to see suggestions"} />}
                             {!displayRides && <Text>Loading...</Text>}
                         </View>
+                        
                     </ScrollView>
 
 
