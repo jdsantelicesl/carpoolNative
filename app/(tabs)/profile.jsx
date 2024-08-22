@@ -102,8 +102,7 @@ const profile = () => {
             const ridesResponse = await apiClient.get((url + `/ride/getUserRides?client_id=${send_id}`));
             console.log("Fetched user & rides data")
 
-            const base64pfp = userResponse.data.pfp;
-            const pfpURI = base64pfp ? `data:image/png;base64,${base64pfp}` : null;
+            const pfpURI = userResponse.data.pfp ? userResponse.data.pfp : null;
 
             const userData = {
                 name: userResponse.data.name,

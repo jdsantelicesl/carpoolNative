@@ -13,14 +13,14 @@ apiClient.interceptors.request.use(
         const clientId = await getUserData("clientId")
         const tokenExpiry = await getTokenExpiry();
 
+        console.log("token expiry: ", tokenExpiry)
+
         if (!tokenExpiry || isTokenExpired(tokenExpiry)) {
-            console.log("refreshed")
             await refreshToken(clientId);
         }
         
         config.headers['token'] = await getAccessToken();
         config.headers['clientId'] = await getClientId();
-
 
         return config;
     },
