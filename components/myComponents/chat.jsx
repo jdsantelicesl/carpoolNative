@@ -52,7 +52,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 		};
 		apiClient.post(sendUrl, sendData)
 			.then(response => {
-				alert("user accepted/rejected");
+				alert("action done");
 			})
 			.catch(error => {
 				alert("error");
@@ -265,7 +265,6 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 
 		apiClient.post(sendUrl, sendData)
 			.then(response => {
-				alert("message sent");
 			})
 			.catch(error => {
 				alert("error sending message");
