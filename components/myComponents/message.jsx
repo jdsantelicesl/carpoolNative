@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Text, View, SafeAreaView, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native'
 import { FontAwesome6 } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
 import Hr from './hr';
 
 const { width, height } = Dimensions.get('window');
@@ -50,7 +49,7 @@ const Message = ({ style, origin, destination, day, arrival, prevText, rideData,
                             }
                         </View>
                     </View>) :
-                    (<Image style={profileStyles.profile} source={{ uri: `https://picsum.photos/140/140?random=${Math.random()}` }} />)
+                    (<Image style={profileStyles.profile} source={require("../../assets/images/applogo-fill-leaf.png")} />)
                 }
 
                 <View style={styles.content}>

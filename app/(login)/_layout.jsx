@@ -9,6 +9,7 @@ import { StatusBar } from 'react-native';
 import { saveUserData, getUserData } from '../../components/utilities/cache';
 import { registerForPushNotificationsAsync } from '../../components/utilities/getPushToken';
 import apiClient from '../../components/utilities/apiClient';
+import * as Device from 'expo-device';
 
 const Stack = createStackNavigator();
 
@@ -91,20 +92,22 @@ const LoginStack = () => {
 			await saveUserData("refresh", response.data.refreshToken);
 			console.log("cached tokens", response.data);
 
-			// Register for push token
-			const pushToken = await registerForPushNotificationsAsync();
+			// Register for push token if physical device
+			if (Device.isDevice) {
+				const pushToken = await registerForPushNotificationsAsync();
 
-			if (pushToken) {
-				await saveUserData("pushToken", pushToken)
-				setExpoPushToken(pushToken);
+				if (pushToken) {
+					await saveUserData("pushToken", pushToken)
+					setExpoPushToken(pushToken);
 
-				// Post to save push token unique to user
-				apiClient.post(url + "/user/pushToken", {"pushToken": pushToken})
-					.then(response =>{
+					// Post to save push token unique to user
+					apiClient.post(url + "/user/pushToken", {"pushToken": pushToken})
+						.then(response =>{
 
-					}).catch((error)=>{
-						console.log(error)
-					})
+						}).catch((error)=>{
+							console.log(error)
+						})
+				}
 			}
 			// Check if existing email
 			if (exists) {

@@ -178,7 +178,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					user: {
 						_id: 1,
 						name: 'Cracked Developers',
-						avatar: 'https://picsum.photos/140/140',
+						avatar: require("../../assets/images/applogo-fill-leaf.png"),
 					},
 				},
 				{
@@ -188,7 +188,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					user: {
 						_id: 1,
 						name: 'Cracked Developers',
-						avatar: 'https://picsum.photos/140/140',
+						avatar: require("../../assets/images/applogo-fill-leaf.png"),
 					},
 				},
 				{
@@ -198,7 +198,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					user: {
 						_id: 1,
 						name: 'Cracked Developers',
-						avatar: 'https://picsum.photos/140/140',
+						avatar: require("../../assets/images/applogo-fill-leaf.png"),
 					},
 				},
 				{
@@ -208,7 +208,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					user: {
 						_id: 1,
 						name: 'Cracked Developers',
-						avatar: 'https://picsum.photos/140/140',
+						avatar: require("../../assets/images/applogo-fill-leaf.png"),
 					},
 				},
 			]);
