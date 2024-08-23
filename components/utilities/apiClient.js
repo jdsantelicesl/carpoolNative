@@ -16,11 +16,15 @@ apiClient.interceptors.request.use(
         console.log("token expiry: ", tokenExpiry)
 
         if (!tokenExpiry || isTokenExpired(tokenExpiry)) {
+            console.log("fetched new");
             await refreshToken(clientId);
         }
         
         config.headers['token'] = await getAccessToken();
         config.headers['clientId'] = await getClientId();
+
+        const token = await getAccessToken();
+        console.log("token :", token)
 
         return config;
     },

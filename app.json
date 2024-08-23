@@ -14,14 +14,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.carpoolNative"
+      "bundleIdentifier": "com.carpoolNative",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.carpoolNative"
+      "package": "com.carpoolNative",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +46,9 @@
       "eas": {
         "projectId": "4e5c1efc-a65e-42d9-bc7f-6b471a4f1270"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4e5c1efc-a65e-42d9-bc7f-6b471a4f1270"
     }
   }
 }
