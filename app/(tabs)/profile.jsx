@@ -85,8 +85,6 @@ const profile = () => {
         setRefreshing(true);
 
         // force refresh the flatlists, im kinda hacking it
-        const temp_image = imageUri;
-        setImageUri(null);
         const last_page = page;
         setPage(null);
 
@@ -120,12 +118,13 @@ const profile = () => {
                 averageStars: userResponse.data.ratings.length ? userResponse.data.ratings.reduce((accumulator, currentValue) => {
                     return accumulator + (currentValue.stars || 0);
                 }, 0) / userResponse.data.ratings.length : 0,
-                pfp: pfpURI,
+                pfp: pfpURI + `?${new Date().getTime()}`,
                 bio: userResponse.data.bio,
                 school: userResponse.data.school
             };
 
             const ridesData = ridesResponse.data;
+            console.log("uri img: ", userData.pfp);
 
             // Save data to Async Storage
             await saveUserData('userData', userData);
@@ -135,7 +134,7 @@ const profile = () => {
             setDisplayRatings(userData.ratings)
             setRating(userData.averageStars);
             setDisplayRides(ridesData);
-            setImageUri(pfpURI);
+            setImageUri(userData.pfp);
             setBio(userData.bio);
             setSchool(userData.school);
 
@@ -143,7 +142,7 @@ const profile = () => {
             console.error("Error fetching data", error);
         }
 
-        setImageUri(temp_image);
+        
         setPage(last_page);
         setRefreshing(false);
     };
@@ -177,8 +176,6 @@ const profile = () => {
         const imageURI = await pickImage();
         const image = await fetch(imageURI);
         const blob = await image.blob()
-        const blobURL = URL.createObjectURL(blob);
-        setImageUri(blobURL);
 
         const reader = new FileReader();
 
@@ -196,6 +193,7 @@ const profile = () => {
         catch {
             console.log("error setting pfp");
         }
+        onRefresh();
     }
 
     const handleEditBio = async() => {
