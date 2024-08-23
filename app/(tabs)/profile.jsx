@@ -413,8 +413,11 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
         alignItems: "flex-end",
         marginHorizontal: 5 * vw,
-        marginTop: 5 * vw,
+        marginTop: 1 * vw,
         marginBottom: -5 * vw,
+        width: "15%",
+        position: 'absolute',
+        right: 5,
 
     },
     logOutText: {
