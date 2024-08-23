@@ -1,72 +1,24 @@
-# Welcome to your Expo app 👋
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![logo banner](assets/images/carpool-native-banner.png)
 
-# Todo List:
+## Inspiration 🌟
+A group of members in our local community struggled to find ways to commute to colleges from a nearby town 20 miles away. The distress from having to rely on ridiculously expensive ride booking apps and busy family members is daunting. That's why we created an eco-friendly rideshare app, exclusive to college students with our safe and secure authentication system, helping them find not only a carpool to school, but also long lasting friends along the way.
 
-- [X] maps
-- [X] routes
-- [X] rides
-- [X] messages
-- [X] ratings
-- [X] profile
-- [X] cache
-- [X] auth
-- [X] add profile bio
-- [x] fix rating obj styles on rideGroup
-- [ ] cleanup before build
-- [X] notifications
-- [X] add on-demand messages with ~push notifications~ backend polling 
-- [ ] design details, graphics, icons, animations
-- [ ] Test on all platforms
-- [ ] deploy
+## What it does ⚙️
+Carpool Native connects users with similar origins and destinations and shows lists of suggested rides. 
+- Ride page for submitting a ride, when and where you need to be, using an interactive location query and map system.
+- Messages page for communicating with other ride share members and getting to know carpool buddies.
+- Ratings feature, you can see user's past reviews and ratings, you can also give your carpool buddies ratings too. 
+- Profile page to see your current ride submissions.
 
-## Predeployment list
-- [X] Add bio edit
-- [X] fix token expiry parsing
-- [x] Make Login page keyboard not overlap on the input fields
-- [x] Make clear for .edu only
-- [X] When clicked return/enter location, grabs first query in list
-- [X] Disable the request to join ride button intermittently (ride group)
-- [x] Fix keyboard spacing in Chat
-- [ ] ~reviewsObj pop up on pfp click ridePopUp on profile~
-- [ ] ~user has ride with another user for a peroid of time, can rate users through profilePopUp.jsx.~
-- [x] improve empty messages (no rides, etc)
-- [ ] improve alert requests
-- [ ] **Do last** delete all console.log()
-
-
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## How we built it 🔨
+| Front-End | Back-End | Dev Tools |
+| :---: | :---: | :---: |
+| [![React Native Badge][React Native Badge]](https://reactnative.dev/) | [![Python Badge][Python Badge]](https://www.python.org/) | [![Android Simulator](https://img.shields.io/badge/Android%20Simulator-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/studio/run/emulator) |
+| [![JavaScript Badge][JavaScript Badge]](https://developer.mozilla.org/en-US/docs/Web/JavaScript) | [![MongoDB Badge][MongoDB Badge]](https://www.mongodb.com/) | [![Xcode](https://img.shields.io/badge/Xcode-1575F9?style=for-the-badge&logo=xcode&logoColor=white)](https://developer.apple.com/xcode/) |
+| [![Expo Badge][Expo Badge]](https://expo.dev/) | [![Flask Badge][Flask Badge]](https://flask.palletsprojects.com/) | [![TestFlight](https://img.shields.io/badge/TestFlight-00A3E0?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/testflight/) |
+| | [![Amazon S3 Badge][Amazon S3 Badge]](https://aws.amazon.com/s3/) | |
+| | [![Twilio Badge][Twilio Badge]](https://www.twilio.com/) | |
+| | [![Google Cloud Badge][Google Cloud Badge]](https://cloud.google.com/) | |
 
 ## Learn more
 
@@ -81,3 +33,14 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+<!-- Badges for Technologies -->
+[React Native Badge]: https://img.shields.io/badge/React%20Native-61DAFB?style=for-the-badge&logo=react&logoColor=black
+[JavaScript Badge]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
+[Expo Badge]: https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white
+[Python Badge]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
+[MongoDB Badge]: https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white
+[Flask Badge]: https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white
+[Amazon S3 Badge]: https://img.shields.io/badge/Amazon%20S3-569A31?style=for-the-badge&logo=amazonaws&logoColor=white
+[Twilio Badge]: https://img.shields.io/badge/Twilio-EA4E3D?style=for-the-badge&logo=twilio&logoColor=white
+[Google Cloud Badge]: https://img.shields.io/badge/Google%20Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white
