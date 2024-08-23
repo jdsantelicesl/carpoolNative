@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { saveUserData, getUserData, clearAllData } from '../../components/utilities/cache';
 import apiClient from '../../components/utilities/apiClient';
 import pickImage from '../../components/utilities/pickImage';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from 'expo-router';
 import Loading from '../../components/myComponents/loading';
 
@@ -174,8 +175,18 @@ const profile = () => {
 
     const handleProfileChange = async () => {
         const imageURI = await pickImage();
-        const image = await fetch(imageURI);
-        const blob = await image.blob()
+        if (!imageUri) return;
+
+        // Compress and resize the image
+        const manipResult = await ImageManipulator.manipulateAsync(
+            imageURI,
+            [{ resize: { width: 800 } }], // Resize width to 800 pixels
+            { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG } // Compress and convert to JPEG
+        );
+
+        const { uri: compressedUri } = manipResult;
+        const response = await fetch(compressedUri);
+        const blob = await response.blob();
 
         const reader = new FileReader();
 
@@ -188,12 +199,13 @@ const profile = () => {
         const dataUrl = await base64Blob;
         const base64Data = dataUrl.split(',')[1]; // Remove the data URL prefix\
         try {
-            pfp_response = await apiClient.post(url + "/user/editProfile", { pfp: base64Data });
+            const pfp_response = await apiClient.post(url + "/user/editProfile", { pfp: base64Data });
+            onRefresh();
         }
         catch {
             console.log("error setting pfp");
+            alert("could not change pfp");
         }
-        onRefresh();
     }
 
     const handleEditBio = async() => {
