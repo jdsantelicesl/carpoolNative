@@ -8,7 +8,7 @@ A group of members in our local community struggled to find ways to commute to c
 
 ## What it does ⚙️
 Carpool Native connects users with similar origins and destinations and shows lists of suggested rides. 
-- Ride page for submitting a ride, when and where you need to be, using an interactive location query and map system.
+- Ride page for submitting a ride, when and where you need to be, with interactive location query and map system.
 - Messages page for communicating with other ride share members and getting to know carpool buddies.
 - Ratings feature, you can see user's past reviews and ratings, you can also give your carpool buddies ratings too. 
 - Profile page to see your current ride submissions.
@@ -22,6 +22,20 @@ Carpool Native connects users with similar origins and destinations and shows li
 | | [![Amazon S3 Badge][Amazon S3 Badge]](https://aws.amazon.com/s3/) | |
 | | [![Twilio Badge][Twilio Badge]](https://www.twilio.com/) | |
 | | [![Google Cloud Badge][Google Cloud Badge]](https://cloud.google.com/) | |
+
+## Challenges we conquered 💪
+- Beta release on IOS
+- Pushing notifications using unique Tokens
+- Authorization exclusive to only .edu email
+- Algorithmic approach to render ride suggestions
+- Caching data asynchronously
+- Countless bugs squashed 🐞
+
+## Contact Us 📞
+
+Project Lead / Developer - [Juan Diego Santelices](https://www.linkedin.com/in/jdsantelicesl/)
+
+Developer - [Edward Chhun](https://www.linkedin.com/in/edwardchhun3/)
 
 ## Learn more
 
