@@ -3,6 +3,9 @@
 ## Inspiration 🌟
 A group of members in our local community struggled to find ways to commute to colleges from a nearby town 20 miles away. The distress from having to rely on ridiculously expensive ride booking apps and busy family members is daunting. That's why we created an eco-friendly rideshare app, exclusive to college students with our safe and secure authentication system, helping them find not only a carpool to school, but also long lasting friends along the way.
 
+![App-preview](assets/images/App-preview.png)
+
+
 ## What it does ⚙️
 Carpool Native connects users with similar origins and destinations and shows lists of suggested rides. 
 - Ride page for submitting a ride, when and where you need to be, using an interactive location query and map system.
