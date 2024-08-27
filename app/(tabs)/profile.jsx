@@ -146,6 +146,13 @@ const profile = () => {
         
         setPage(last_page);
         setRefreshing(false);
+
+        // refresh if cache is empty, means refresh token is bad
+        if (!user_id) {
+            console.log("user id not found, logging out: ", user_id);
+            clearAllData();
+            navigation.navigate("(login)")
+        }
     };
 
     const handleRideClick = (ride) => {

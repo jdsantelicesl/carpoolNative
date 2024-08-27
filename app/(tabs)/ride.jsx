@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome6 } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { getHours, getMinutes } from 'date-fns';
+import { useNavigation } from 'expo-router';
 import Hr from '../../components/myComponents/hr';
 import { render } from 'react-native-web';
 import LocFindSlideUp from '../../components/map/LocFindSlideUp';
@@ -35,6 +36,8 @@ const DayButton = ({ title, onPress, isSelected }) => (
 );
 
 const ride = () => {
+    // Navigating to (login) after clicked on log out
+    const navigation = useNavigation();
 
     const [displayRides, setDisplayRides] = useState(null)
     const [renderRideGroup, setRenderRideGroup] = useState(false);
@@ -79,6 +82,9 @@ const ride = () => {
 
     const onRefresh = async () => {
         console.log('----refreshing | Ride Page');
+
+        const user_id = await getUserData("clientId");
+
         setRefreshing(true);
 
         const cachedRidesData = await getUserData('suggestedRides');
@@ -88,7 +94,6 @@ const ride = () => {
         console.log("---", cachedRidesData)
 
         try {
-            const user_id = await getUserData("clientId");
             console.log("user id", user_id);
             const send_id = encodeURIComponent(user_id);
             const sendUrl = url + `/ride/getRides?client_id=${send_id}`
@@ -103,6 +108,13 @@ const ride = () => {
             console.error("Failed to fetch data", error);
         }
         setRefreshing(false);
+
+        // check if cache is valid, log out if not
+        // using this to 'log out' from api Interceptor
+        if (!user_id) {
+            console.log("user id not found, logging out: ", user_id);
+            navigation.navigate("(login)");
+        }
     };
 
     const onClearInput = () => {

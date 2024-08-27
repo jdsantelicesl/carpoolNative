@@ -5,6 +5,7 @@ import Message from '../../components/myComponents/message';
 import Chat from '../../components/myComponents/chat';
 
 import { saveUserData, getUserData } from '../../components/utilities/cache'
+import { useNavigation } from 'expo-router';
 import apiClient from '../../components/utilities/apiClient';
 
 const { width, height } = Dimensions.get('window');
@@ -12,6 +13,8 @@ const vh = height * 0.01;
 const vw = width * 0.01;
 
 const messages = () => {
+
+    const navigation = useNavigation();
 
     const [disableComposer, setDisableComposer] = useState(false); // Disable send chat
     const [listMessages, setMessages] = useState(null);
@@ -61,6 +64,9 @@ const messages = () => {
 
     const onRefresh = async () => {
         console.log("----refreshing | Messages Page")
+
+        const user_id = await getUserData("clientId");
+
         // display refreshing animation
         setRefreshing(true);
         const cachedMessages = await getUserData('messagesData');
@@ -68,7 +74,6 @@ const messages = () => {
         setMessages(cachedMessages)
         console.log("Cached Messages")
 
-        const user_id = await getUserData("clientId");
         const sendId = encodeURIComponent(user_id);
         try {
             const messagesResponse = await apiClient.get((url + `/message/getChats?client_id=${sendId}`));
@@ -84,7 +89,15 @@ const messages = () => {
 
         setRefreshing(false);
 
-    }
+        // check if cache is valid, log out if not
+        // using this to 'log out' from api Interceptor
+        if (!user_id) {
+            console.log("user id not found, logging out: ", user_id);
+            clearAllData();
+            navigation.navigate("(login)")
+        }
+
+    };
 
 
     return (

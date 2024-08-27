@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { saveUserData, getUserData } from './cache';
+import { saveUserData, getUserData, clearAllData } from './cache';
 import { parseISO } from 'date-fns';
 
 
@@ -15,7 +15,7 @@ apiClient.interceptors.request.use(
 
         console.log("token expiry: ", tokenExpiry)
 
-        if (!tokenExpiry || isTokenExpired(tokenExpiry)) {
+        if (true) {
             console.log("fetched new");
             await refreshToken(clientId);
         }
@@ -65,7 +65,13 @@ const refreshToken = async (clientId) => {
         refreshToken: cached_refresh
     };
 
-    result = await axios.post(url, data);
+    try {
+        result = await axios.post(url, data);
+    }
+    catch {
+        console.log("could not refresh token, logging out");
+        clearAllData();
+    }
     
     saveUserData("token", result.data.accessToken);
     saveUserData("expiry", result.data.expiry);
