@@ -4,7 +4,7 @@
 // Caching: Skips Login & Verification & Credentials if Access Token found in Cache
 // TODO: Implement Cache
 import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity,
-		 Image, StatusBar, TouchableWithoutFeedback, Keyboard} from 'react-native'
+		 Image, StatusBar, TouchableWithoutFeedback, Keyboard, ActivityIndicator} from 'react-native'
 import React, {useState, useEffect} from 'react'
 
 const { width, height } = Dimensions.get('window');
@@ -19,6 +19,12 @@ const Login = ({ lastEmail, passEmail }) => {
 	const handleSetEmail = () => {
 			passEmail(email); // Call the onSendCode function with email
 	};
+
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		setLoading(false);
+	}, [])
 
   	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -40,9 +46,11 @@ const Login = ({ lastEmail, passEmail }) => {
 					keyboardType="email-address"
 					/>
 
-				<TouchableOpacity style={styles.button} onPress={handleSetEmail} disabled={!email}>
-					<Text style={styles.buttonText}>Continue</Text>
+				<TouchableOpacity style={styles.button} onPress={() => {setLoading(true); handleSetEmail();}} disabled={!email || loading}>
+					{loading && <ActivityIndicator color="#fff" />}
+					{!loading && <Text style={styles.buttonText}>Continue</Text>}
 				</TouchableOpacity>
+				
 		</View>
 		</TouchableWithoutFeedback>
 		);
