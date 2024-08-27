@@ -40,7 +40,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] Loading screen when fetch takes too long (user has bad signal)
 - [ ] Clear cache to redirect user to login page if refresh token does not match with token in db. (Signing on different device)
 - [ ] Credentials page (part of login) to avoid keyboard overlap on input boxes
-- [ ] Add mutiple account creation protextions to backend
+- [ ] Add mutiple account creation protections to backend
 
 ## Get started
 
