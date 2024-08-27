@@ -20,11 +20,6 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] Test on all platforms
 - [ ] deploy
 
-## Debug List
-- [x] Add loading animation to prevent spamming buttons. (login)
-- [ ] Loading screen when fetch takes too long (user has bad signal)
-- [ ] Clear cache to redirect user to login page if refresh token does not match with token in db. (Signing on different device)
-- [ ] Credentials page (part of login) to avoid keyboard overlap on input boxes
 
 ## Predeployment list
 - [X] Add bio edit
@@ -40,6 +35,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] improve alert requests
 - [ ] **Do last** delete all console.log()
 
+## Debug List
+- [x] Add loading animation to prevent spamming buttons. (login)
+- [ ] Loading screen when fetch takes too long (user has bad signal)
+- [ ] Clear cache to redirect user to login page if refresh token does not match with token in db. (Signing on different device)
+- [ ] Credentials page (part of login) to avoid keyboard overlap on input boxes
+- [ ] Add mutiple account creation protextions to backend
 
 ## Get started
 
