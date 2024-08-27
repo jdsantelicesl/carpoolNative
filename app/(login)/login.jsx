@@ -4,7 +4,7 @@
 // Caching: Skips Login & Verification & Credentials if Access Token found in Cache
 // TODO: Implement Cache
 import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity,
-		 Image, StatusBar, TouchableWithoutFeedback, Keyboard, ActivityIndicator} from 'react-native'
+		 Image, StatusBar, TouchableWithoutFeedback, Keyboard, ActivityIndicator, Alert} from 'react-native'
 import React, {useState, useEffect} from 'react'
 
 const { width, height } = Dimensions.get('window');
@@ -16,15 +16,27 @@ const vw = width * 0.01;
 const Login = ({ lastEmail, passEmail }) => {
 	const [email, setEmail] = lastEmail ? useState(lastEmail) : useState('');
 
-	const handleSetEmail = () => {
-			passEmail(email); // Call the onSendCode function with email
-	};
-
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		setLoading(false);
 	}, [])
+
+	// Preventing user from inputting bad email (Preventing error: 404)
+	const correctEmailExtension = (email) => {
+		return email.toLowerCase().endsWith(".edu")
+	}
+
+	const handleSetEmail = () => {
+		// Check if ending with .edu
+		if (!correctEmailExtension(email)) {
+			Alert.alert("Invalid Email", "Please enter email ending with .edu")
+		} else {
+			// If email has .edu, we move on and set loading screen to prevent spam
+			setLoading(true)
+			passEmail(email); // Call the onSendCode function with email
+		}
+	};
 
   	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -46,7 +58,7 @@ const Login = ({ lastEmail, passEmail }) => {
 					keyboardType="email-address"
 					/>
 
-				<TouchableOpacity style={styles.button} onPress={() => {setLoading(true); handleSetEmail();}} disabled={!email || loading}>
+				<TouchableOpacity style={styles.button} onPress={() => {handleSetEmail()}} disabled={!email || loading}>
 					{loading && <ActivityIndicator color="#fff" />}
 					{!loading && <Text style={styles.buttonText}>Continue</Text>}
 				</TouchableOpacity>
