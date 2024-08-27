@@ -3,7 +3,7 @@
 
 // Todo: Create logic to prevent user from spamming resquest and prevent brute force attacks on access tokens
 import { StyleSheet, Dimensions, Text, View, TextInput, 
-  TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard } from 'react-native'
+  TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -22,6 +22,12 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
     const handleLogin = (localAccessToken) =>{
         onSubmitCode(localAccessToken);
     }
+
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      setLoading(false);
+    },[])
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -49,8 +55,9 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
                 placeholderTextColor="#888" />
             
             {/* Login Button */}
-            <TouchableOpacity style={styles.button} disabled={!localAccessToken} onPress={() => {handleLogin(localAccessToken)}}>
-                <Text style={styles.buttonText}>LOGIN</Text>
+            <TouchableOpacity style={styles.button} disabled={!localAccessToken || loading} onPress={() => {setLoading(true); handleLogin(localAccessToken);}}>
+                {loading && <ActivityIndicator color="#fff"/>}
+                {!loading && <Text style={styles.buttonText}>LOGIN</Text>}
             </TouchableOpacity>
 
             {/* Resend Button */}

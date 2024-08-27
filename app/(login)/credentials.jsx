@@ -5,7 +5,7 @@
 // 3. userBio
 // For profile picture, let them edit in profile page
 
-import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { StyleSheet, Dimensions, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -31,6 +31,12 @@ const Credentials = ({lastCreds, onBackPress, setUserCredentials}) => {
     const [localName, setLocalName] = lastCreds ? useState(lastCreds.name) : useState(null);
     const [localSchool, setLocalSchool] = lastCreds ? useState(lastCreds.school) : useState(null);
     const [localBio, setLocalBio] = lastCreds ? useState(lastCreds.bio) : useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      setLoading(false);
+    },[])
+    
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -66,9 +72,10 @@ const Credentials = ({lastCreds, onBackPress, setUserCredentials}) => {
                 onChangeText={setLocalBio}
                 placeholderTextColor="#888" />    
 
-            {/* Carpool Button */}
-            <TouchableOpacity style={styles.button} onPress={() => {handleSubmit();}}>
-                <Text style={styles.buttonText}>Continue</Text>
+            {/* Continue Button */}
+            <TouchableOpacity style={styles.button} onPress={() => {setLoading(true); handleSubmit();}} disabled={!(localName && localBio && localSchool) || loading}>
+                {loading && <ActivityIndicator color="#fff"/>}
+                {!loading && <Text style={styles.buttonText}>Continue</Text>}
             </TouchableOpacity>
 
         </View>
