@@ -15,7 +15,7 @@ apiClient.interceptors.request.use(
 
         console.log("token expiry: ", tokenExpiry)
 
-        if (true) {
+        if (!tokenExpiry || isTokenExpired(tokenExpiry)) {
             console.log("fetched new");
             await refreshToken(clientId);
         }
