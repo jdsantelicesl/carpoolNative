@@ -18,16 +18,40 @@ const vw = width * 0.01;
 const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
     const [localAccessToken, setLocalAccessToken] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [isResendDisabled, setIsResendDisabled] = useState(false);
+	const [countdown, setCountdown] = useState(30);
+
+	useEffect(() => {
+	  setLoading(false);
+	},[])
 
     const handleLogin = (localAccessToken) =>{
         onSubmitCode(localAccessToken);
     }
 
-    const [loading, setLoading] = useState(false);
+	const handleResend = () => {
+		setIsResendDisabled(true);
+		// Your code resend logic here
+		startCountdown();
+	};
 
-    useEffect(() => {
-      setLoading(false);
-    },[])
+	const startCountdown = () => {
+		setCountdown(30);
+		const timer = setInterval(() => {
+			setCountdown((prevCount) => {
+
+				if (prevCount <= 1) {
+					clearInterval(timer);
+					setIsResendDisabled(false);
+					return 0;
+				}
+				return prevCount - 1;
+			});
+
+		}, 1000)
+	} 
+	  
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -62,8 +86,10 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
             {/* Resend Button */}
             <View style={styles.resendButtonContainer}>
-                <TouchableOpacity onPress={onResendCode} style={styles.resendButton}> 
-                    <Text style={{color: "#367CE5"}}> Resend Code</Text>
+                <TouchableOpacity onPress={() => {onResendCode(); handleResend();}} style={styles.resendButton} disabled={isResendDisabled}> 
+                    <Text style={isResendDisabled ? {color: "#888"} : {color: "#367CE5"}}> 
+						{isResendDisabled ? `Resend in ${countdown}s` : 'Resend Code'}
+					</Text>
                 </TouchableOpacity>
             </View>
 

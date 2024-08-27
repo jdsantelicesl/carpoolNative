@@ -155,12 +155,6 @@ const LoginStack = () => {
 		setPage("email")
 	}
 
-
-	const onResendCode = () => {
-		alert("Resend Code, Fix")
-	}
-
-
 	return (
 		<>
 		<StatusBar barStyle={"dark-content"} />
@@ -181,7 +175,7 @@ const LoginStack = () => {
 				<Stack.Screen name="Verification">
 					{(props) => <Verification {...props}
 						onBackPress={() => setPage("email")}
-						onResendCode={onResendCode}
+						onResendCode={() => {handleEmailSubmit(email)}}
 						onSubmitCode={(code) => { onSubmitCode(code) }}
 						/>}
 				</Stack.Screen>
