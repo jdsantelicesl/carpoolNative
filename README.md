@@ -42,6 +42,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] Credentials page (part of login) to avoid keyboard overlap on input boxes
 - [X] Add mutiple account creation protections to backend. Fixed empty profile bug.
 - [X] Convert email to lower on backend
+- [X] log out users on bad access token (not refresh), that is not expired
 
 ## Get started
 
