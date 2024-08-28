@@ -148,9 +148,9 @@ const profile = () => {
         setRefreshing(false);
 
         // refresh if cache is empty, means refresh token is bad
-        if (!user_id) {
+        const check_id = await getUserData("clientId");
+        if (!check_id) {
             console.log("user id not found, logging out: ", user_id);
-            clearAllData();
             navigation.navigate("(login)")
         }
     };

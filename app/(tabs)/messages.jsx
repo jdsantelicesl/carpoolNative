@@ -91,7 +91,8 @@ const messages = () => {
 
         // check if cache is valid, log out if not
         // using this to 'log out' from api Interceptor
-        if (!user_id) {
+        const check_id = await getUserData("clientId");
+        if (!check_id) {
             console.log("user id not found, logging out: ", user_id);
             clearAllData();
             navigation.navigate("(login)")
