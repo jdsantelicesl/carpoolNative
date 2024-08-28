@@ -2,7 +2,7 @@
   "expo": {
     "name": "carpoolNative",
     "slug": "carpoolNative",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/applogo-fill-leaf.png",
     "scheme": "myapp",
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.carpoolNative",
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.2",
       "runtimeVersion": {
         "policy": "appVersion"
       }
