@@ -32,8 +32,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] ~reviewsObj pop up on pfp click ridePopUp on profile~
 - [ ] ~user has ride with another user for a peroid of time, can rate users through profilePopUp.jsx.~
 - [x] improve empty messages (no rides, etc)
-- [ ] improve alert requests
-- [ ] **Do last** delete all console.log()
+- [x] improve alert requests
+- [ ] ~**Do last** delete all console.log()~
 
 ## Debug List
 - [x] Add loading animation to prevent spamming buttons. (login)
