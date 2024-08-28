@@ -32,7 +32,6 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
 	const handleResend = () => {
 		setIsResendDisabled(true);
-		// Your code resend logic here
 		startCountdown();
 	};
 
