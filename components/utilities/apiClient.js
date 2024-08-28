@@ -31,6 +31,22 @@ apiClient.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+apiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const { response } = error;
+        if (response && response.status === 401) {
+            // Handle the 401 error
+            // If a user is not auth and it was not caught by an expired token then the user "must"
+            // have signed in on a different device and refresh token is bad too, so clear all to redirect to login
+            console.log("unauthorized fetch, clearing all");
+            clearAllData();
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 const getAccessToken = async () => {
     const token = await getUserData("token");
     return token;

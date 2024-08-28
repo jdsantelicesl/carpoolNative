@@ -84,6 +84,7 @@ const ride = () => {
         console.log('----refreshing | Ride Page');
 
         const user_id = await getUserData("clientId");
+        console.log("userid: ", user_id);
 
         setRefreshing(true);
 
