@@ -5,6 +5,9 @@ A group of members in our local community struggled to find ways to commute to c
 
 ![App-preview](assets/images/App-preview.png)
 
+## Progress 📈
+- Currently in Apple's Testflight stage for beta testing
+- Launching on IOS App Store on first week of September
 
 ## What it does ⚙️
 Carpool Native connects users with similar origins and destinations and shows lists of suggested rides. 
