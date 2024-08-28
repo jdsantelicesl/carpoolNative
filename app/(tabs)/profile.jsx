@@ -356,7 +356,7 @@ const profile = () => {
 
 
                             />) : (
-                                        <Text><Loading text={"Rating feature not yet enabled, coming soon..."}/></Text>
+                                        <Text><Loading text={"Rating feature not yet enabled, coming soon...."}/></Text>
                             )}
 
                         </View>}
