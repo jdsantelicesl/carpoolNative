@@ -14,7 +14,7 @@ import { render } from 'react-native-web';
 import LocFindSlideUp from '../../components/map/LocFindSlideUp';
 import RideObject from '../../components/myComponents/rideObject';
 import RideGroup from '../../components/myComponents/rideGroup';
-
+import ConfettiCannon from 'react-native-confetti-cannon';
 import { saveUserData, getUserData } from '../../components/utilities/cache';
 
 import apiClient from '../../components/utilities/apiClient';
@@ -38,7 +38,7 @@ const DayButton = ({ title, onPress, isSelected }) => (
 const ride = () => {
     // Navigating to (login) after clicked on log out
     const navigation = useNavigation();
-
+    const [isConfettiActive,setIsConfettiActive] = useState(false);
     const [displayRides, setDisplayRides] = useState(null)
     const [renderRideGroup, setRenderRideGroup] = useState(false);
     // Used for when user wants to refresh by pulling down page
@@ -147,6 +147,12 @@ const ride = () => {
         }
     }
 
+    // Turn on the confetti
+    const handleConfetti = () => {
+        setIsConfettiActive(true);
+        setTimeout(() => setIsConfettiActive(false), 5000);
+    }
+
     // Needs to be implemented, could be JSON object
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -185,7 +191,7 @@ const ride = () => {
             send_url = url + "/ride/post"
             try {
                 await apiClient.post(send_url, data)
-                alert('Data sent to /data');
+                alert('Successfully submitted ride');
                 onRefresh();
             }
             catch {
@@ -203,6 +209,19 @@ const ride = () => {
 
     return (
         <>
+        {/* Confetti cannon after submit ride */}
+        {/* The pointerEvents let's us interact with children components behind the confetti */}
+        <View style={styles.confettiContainer} pointerEvents="box-none">
+            {isConfettiActive && (
+                <ConfettiCannon
+                count={500}
+                origin={{x: vw * 1/2, y: 0}}
+                explosionSpeed={150}
+                autoStart={true}
+                fadeOut={true}
+                />
+            )}
+        </View>
             {!renderMap && !renderRideGroup &&
                 <SafeAreaView style={styles.container}>
                     <ScrollView
@@ -264,7 +283,7 @@ const ride = () => {
                         {/* Handle Submit Component */}
                         <View style={styles.submitContainer}>
                             <TouchableOpacity
-                                onPress={(e) => handleSubmit(e)}
+                                onPress={(e) => {handleSubmit(e); handleConfetti()}}
 
                                 // Apply disabled style conditionally
                                 style={[styles.submitButton, (destination && from && day) && { backgroundColor: '#2E74DD' }]}
@@ -335,6 +354,15 @@ const styles = StyleSheet.create({
         paddingTop: 4 * vh,
         flex: 1,
         backgroundColor: '#F5F5F5',
+    },
+    confettiContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1000, // Ensure it's above other elements
+        pointerEvents: "none",
     },
     title: {
         marginTop: 1 * vh,
