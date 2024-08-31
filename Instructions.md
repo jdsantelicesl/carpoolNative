@@ -13,12 +13,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] auth
 - [X] add profile bio
 - [x] fix rating obj styles on rideGroup
-- [ ] cleanup before build
+- [X] cleanup before build
 - [X] notifications
 - [X] add on-demand messages with ~push notifications~ backend polling 
-- [ ] design details, graphics, icons, animations
-- [ ] Test on all platforms
-- [ ] deploy
+- [X] design details, graphics, icons, animations
+- [X] Test on all platforms (IOS)
+- [X] deploy
 
 
 ## Predeployment list
@@ -43,6 +43,13 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] Add mutiple account creation protections to backend. Fixed empty profile bug.
 - [X] Convert email to lower on backend
 - [X] log out users on bad access token (not refresh), that is not expired
+- [ ] fix pfp refresh on all instances
+
+# Features to add
+- [x] Confetti animation on post
+- [ ] Make rides for multiple days
+- [ ] Suggest ride to user if it matches for at least 1 day
+- [ ] Auto delete ride after user joins a similar one
 
 ## Get started
 
