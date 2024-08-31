@@ -47,9 +47,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 # Features to add
 - [x] Confetti animation on post
-- [ ] Make rides for multiple days
+- [ ] Make rides for multiple days (make day param an array and allow multiple button select)
 - [ ] Suggest ride to user if it matches for at least 1 day
 - [ ] Auto delete ride after user joins a similar one
+- [ ] Auto delete rides after 2 weeks of inactivity
 
 ## Get started
 
