@@ -128,16 +128,8 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	const formatChatData = async (data) => {
 		const formattedData = await Promise.all(
 			data.map(async (item) => {
-				let user_pfp;
-
-				try {
-					const response = await apiClient.get(url + `/user/getUser?client_id=${item.clientId}`)
-					user_pfp = response.data.pfp;
-				} catch (error) {
-					console.error(`Error getting pfp for user ${item.clientId}:`, error);
-					user_pfp = null;
-				}
-
+				// the date at the end is a useless argument that changes the state of the url everytime so it rerenders on change
+				const user_pfp = `https://carpool-app-images.s3.us-east-2.amazonaws.com/images/pfp/${item.clientId}.jpg?${new Date().getTime()}`;
 				return {
 					_id: item._id || Math.random().toString(),
 					type: item.type,
@@ -152,7 +144,6 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 				};
 			})
 		);
-		console.log("formattedData: ", formattedData)
 		return formattedData;
 	};
 
@@ -229,7 +220,6 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			} catch (err) {
 				setError(err);
 			}
-			console.log("messages array: ", messages);
 		};
 
 		// Start polling
