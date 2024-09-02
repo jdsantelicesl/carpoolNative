@@ -53,6 +53,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [ ] Auto delete ride after user joins a similar one. (big assignment will try to do sunday)
 - [ ] Add all user requests to a page in messages--so user can see their requests.
 - [ ] Auto delete rides after 2 weeks of inactivity (low priority)
+- [ ] Prompt user to install update when available (force them with an alert that takes them to testflight or appstore) (research)
 
 ## Get started
 
