@@ -50,7 +50,7 @@ const ride = () => {
     const [sendDate, setSendDate] = useState(getHours(Date()) + (getMinutes(Date()) / 60)) // need to use Date() directly!
     const [destination, setDest] = useState(null);
     const [from, setFrom] = useState(null);
-    const [day, setDay] = useState(null); // 1 - 7, Sun - Sat
+    const [day, setDay] = useState([]); // 1 - 7, Sun - Sat
     const days = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     const url = process.env.EXPO_PUBLIC_API_URL; // placeholder
 
@@ -92,7 +92,6 @@ const ride = () => {
 
         setDisplayRides(cachedRidesData);
         console.log("Cached Data")
-        console.log("---", cachedRidesData)
 
         try {
             console.log("user id", user_id);
@@ -145,7 +144,19 @@ const ride = () => {
         } else {
             console.log('No date selected or invalid date:', new_date);
         }
-    }
+    };
+
+    const handleDayPress = (index) => {
+        setDay(prevDay => {
+            if (prevDay.includes(index + 1)) {
+                // Remove the index if it's already selected
+                return prevDay.filter(day => day !== index + 1);
+            } else {
+                // Add the index if it's not selected
+                return [...prevDay, index + 1];
+            }
+        });
+    };
 
     // Turn on the confetti
     const handleConfetti = () => {
@@ -165,7 +176,6 @@ const ride = () => {
             response = await apiClient.get(detailsUrl)
 
             const user_name = response.data.name;
-            const user_id = await getUserData("clientId");
             console.log(user_id);
 
             const data = {
@@ -260,8 +270,8 @@ const ride = () => {
                                 <DayButton
                                     key={index}
                                     title={d}
-                                    onPress={() => setDay(index + 1)}
-                                    isSelected={day === index + 1}
+                                    onPress={() => handleDayPress(index)}
+                                    isSelected={day.includes(index + 1)}
                                 />
                             ))}
                         </View>
