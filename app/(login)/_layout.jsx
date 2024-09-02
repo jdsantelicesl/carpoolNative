@@ -101,12 +101,14 @@ const LoginStack = () => {
 					setExpoPushToken(pushToken);
 
 					// Post to save push token unique to user
-					apiClient.post(url + "/user/pushToken", {"pushToken": pushToken})
-						.then(response =>{
-
-						}).catch((error)=>{
-							console.log(error)
-						})
+					const token = await getUserData("token");
+					const clientId = await getUserData("clientId");
+					try {
+						await axios.post(url + "/user/pushToken", { "pushToken": pushToken }, { headers: { token: token, clientId: clientId } });
+					}
+					catch {
+						console.log("error passing push token");
+					}
 				}
 			}
 			// Check if existing email
