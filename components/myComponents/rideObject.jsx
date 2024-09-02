@@ -7,13 +7,13 @@ const vw = width * 0.01;
 
 
 const convertDay = (day) => {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
     const adjustedDay = (day - 1 + 7) % 7;
     return days[adjustedDay];
 };
 
 const RideObject = ({ origin, destination, day, arrival, members, rideData, onRideClick}) => {
-    const dayOfWeek = convertDay(day);
+    const daysOfWeek = day.map(convertDay);
 
     // sets hour, minute, amPm from 24h to 12h clock
     const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
@@ -44,7 +44,7 @@ const RideObject = ({ origin, destination, day, arrival, members, rideData, onRi
 
                 {/* Time */}
                 <View style={styles.timeContainer}>
-                    <Text>Arrive {dayOfWeek} by {formattedTime} </Text>
+                    <Text>{daysOfWeek.join(', ')} by {formattedTime} </Text>
                 </View>
             </View>
 

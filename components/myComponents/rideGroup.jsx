@@ -18,14 +18,14 @@ const { width, height } = Dimensions.get('window');
 const vh = height * 0.01;
 const vw = width * 0.01;
 const convertDay = (day) => {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
     const adjustedDay = (day - 1 + 7) % 7;
     return days[adjustedDay];
 };
 
 const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, setRenderRideGroup }) => {
 
-    const dayOfWeek = convertDay(day);
+    const daysOfWeek = day.map(convertDay); 
     const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
     const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
     const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
@@ -112,7 +112,7 @@ const RideGroup = ({ origin, destination, day, arrival, memberGroup, rideId, set
 
                 {/* Time and Date */}
                 <View style={styles.time}>
-                    <Text style={styles.time}> Every {dayOfWeek} at {formattedTime} </Text>
+                    <Text style={styles.time}> Every {daysOfWeek.join(', ')} at {formattedTime} </Text>
                 </View>
 
                 {/* Map Container */}

@@ -15,7 +15,7 @@ const vh = height * 0.01;
 const vw = width * 0.01;
 
 const convertDay = (day) => {
-	const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	const days = ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
 	const adjustedDay = (day - 1 + 7) % 7;
 	return days[adjustedDay];
 };
@@ -31,7 +31,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 	// Had problems getting the origins.short earlier, it is because in json object name is "origins" instead of "origin"
 	// Need to keep in mind that "origins" is the key name from backend
 
-	const dayOfWeek = convertDay(day);
+	const daysOfWeek = day.map(convertDay); 
 
 	const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
 	const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
@@ -97,7 +97,7 @@ const RidePopUp = ({ visible, onClose, rideData }) => {
 						</View>
 
 						{/* Display Arrival & Day */}
-						<Text style={styles.timeText}>Every {dayOfWeek} at {formattedTime}</Text>
+						<Text style={styles.timeText}>Every {daysOfWeek.join(', ')} at {formattedTime}</Text>
 
 						{/* Displaying Ride Members */}
 						<Text style={styles.membersTitle}>Ride Members:</Text>
