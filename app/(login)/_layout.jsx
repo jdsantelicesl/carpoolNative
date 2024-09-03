@@ -102,10 +102,15 @@ const LoginStack = () => {
 		// Check if TestFlight is installed
 		const canOpenTestFlight = await Linking.canOpenURL(testFlightUrl);
 	  
+		// App Store URL (replace APP_ID once get from app store)
+		const appStoreUrl = 'https://apps.apple.com/app/APP_ID';
+
 		if (canOpenTestFlight) {
 			// Open TestFlight
 			await Linking.openURL(testFlightUrl);
-		} 
+		} else {
+			await Linking.openURL(appStoreUrl);
+		}
 	};
 
 	const handleEmailSubmit = async (passEmail) => {
