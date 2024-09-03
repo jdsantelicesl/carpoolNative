@@ -25,7 +25,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	// Need this to render chats. Pulling from cache is async
 	const [clientId, setId] = useState(null);
 
-	const dayOfWeek = convertDay(day);
+	const daysOfWeek = day.map(convertDay);
 	const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
 	const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
 	const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
@@ -282,7 +282,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 					</Text>
 				</View>
 				<View style={styles.location}>
-					<Text style={{ fontSize: 2 * vh }}>Arrive {dayOfWeek} by {formattedTime}</Text>
+					<Text style={{ fontSize: 2 * vh, textAlign: 'center' }}>{daysOfWeek.join(', ')} at {formattedTime}</Text>
 				</View>
 
 				{/* Chat Interface */}
