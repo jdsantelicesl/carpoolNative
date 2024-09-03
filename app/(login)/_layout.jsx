@@ -5,11 +5,12 @@ import Login from './login'; // Adjust the import path if needed
 import Verification from './verification'; // Adjust the import path if needed
 import Credentials from './credentials'; // Adjust the import path if needed
 import axios from 'axios';
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert, Linking } from 'react-native';
 import { saveUserData, getUserData } from '../../components/utilities/cache';
 import { registerForPushNotificationsAsync } from '../../components/utilities/getPushToken';
 import apiClient from '../../components/utilities/apiClient';
 import * as Device from 'expo-device';
+import appJson from '../../app.json';
 
 const Stack = createStackNavigator();
 
@@ -49,7 +50,13 @@ const LoginStack = () => {
 	const [userId, setId] = useState(null);
 	const [expoPushToken, setExpoPushToken] = useState(null);
 
+	// Local app version as String : "1.x.x"
+	const localVersion = appJson.expo.version;
+	
 	useEffect(() => {
+		
+		// Check user version
+		checkVersion();
 		// Check if user has stored credentials
 		const checkCache = async () => {
 			storedId = await getUserData("clientId");
@@ -61,6 +68,45 @@ const LoginStack = () => {
 
 		checkCache();
 	}, []);
+
+	const checkVersion = async () => {
+		console.log("🚀 ~ LoginStack ~ localVersion:", localVersion);
+		// Get request from backend if localVersion is up-to-date
+		const sendUrl = process.env.EXPO_PUBLIC_API_URL + "/user/version";
+		try {
+			const response = await axios.get(sendUrl);
+			const serverVersion = response.data.version;
+			console.log("🚀 ~ checkVersion ~ serverVersion:", serverVersion);
+	
+			if (serverVersion !== localVersion) {
+				Alert.alert(
+					"Update Available",
+					"A new version of the app is available. Please update.",
+					[
+						{
+							text: "Update",
+							onPress: openUpdateLink
+						},
+					]
+				);
+			}
+		} catch (error) {
+			console.error("Failed to grab latest version", error);
+		}
+	};
+
+	const openUpdateLink = async () => {
+		// TestFlight URL scheme
+		const testFlightUrl = 'itms-beta://beta.itunes.apple.com';
+	  
+		// Check if TestFlight is installed
+		const canOpenTestFlight = await Linking.canOpenURL(testFlightUrl);
+	  
+		if (canOpenTestFlight) {
+			// Open TestFlight
+			await Linking.openURL(testFlightUrl);
+		} 
+	};
 
 	const handleEmailSubmit = async (passEmail) => {
 		setEmail(passEmail);
