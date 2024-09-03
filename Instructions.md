@@ -50,7 +50,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - [X] Make rides for multiple days (make day param an array and allow multiple button select)
 - [X] Backend received multiple days and perform search in multiple day rides.
 - [X] Suggest ride to user if it matches for at least 1 day (need to wipe all rides for this and next)
-- [ ] Auto delete ride after user joins a similar one. (big assignment will try to do sunday)
+- [X] Auto delete ride after user joins a similar one. (big assignment will try to do sunday)
 - [ ] Add all user requests to a page in messages--so user can see their requests.
 - [ ] Auto delete rides after 2 weeks of inactivity (low priority)
 - [x] Prompt user to install update when available (Works for Testflight)
