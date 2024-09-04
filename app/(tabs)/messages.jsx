@@ -148,7 +148,8 @@ const messages = () => {
                     <Message
                         origin={"Message from Developers :)"}
                         prevText={"Remember to rate others after carpooling"}
-                        onPress={() => { openChat(); setOrigin("Messages from"); setDestination("developers"); setDisableComposer(true); }}
+                        // setRideId(1) is a hack to prevent
+                        onPress={() => { setRideId(1); openChat(); setOrigin("Messages from"); setDestination("developers"); setDisableComposer(true); }}
                     />
 
                 </ScrollView>
