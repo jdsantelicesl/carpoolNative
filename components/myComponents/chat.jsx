@@ -229,7 +229,10 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 	}, []);
 
 	// This appends the new message 
-	const onSend = useCallback((newMessages) => {
+	const onSend = useCallback(async (newMessages) => {
+		// await getting client id, new var for this
+		const userId = await getUserData("clientId");
+
 		// Append new messages with correct user ID
 		// This does render new user messages when sent but it is server sided
 		// chatData is passed in as prop to be stored in messages
@@ -239,7 +242,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 				...newMessages[0],
 				user: {
 					...newMessages[0].user,
-					_id: clientId, // 2 is User ID, it renders as Self
+					_id: userId, // 2 is User ID, it renders as Self
 				}
 			}),
 		);
@@ -249,7 +252,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 			messageType: "message",
 			content: newMessages[0].text,
 			rideId: rideId,
-			clientId: clientId
+			clientId: userId
 		};
 
 		apiClient.post(sendUrl, sendData)
