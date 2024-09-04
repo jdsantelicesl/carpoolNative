@@ -173,6 +173,7 @@ const LoginStack = () => {
 			
 		}
 		catch (error) {
+			Alert.alert("Error", "Incorrect code, please try again.");
 			console.error("error fetching token: ", error);
 		}
 
