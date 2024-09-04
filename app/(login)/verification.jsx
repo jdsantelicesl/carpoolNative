@@ -17,7 +17,7 @@ const vw = width * 0.01;
 // onAccessTokenChange : func
 const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 
-    const [localAccessToken, setLocalAccessToken] = useState(null);
+  const [localAccessToken, setLocalAccessToken] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [isResendDisabled, setIsResendDisabled] = useState(false);
 	const [countdown, setCountdown] = useState(30);
@@ -26,14 +26,22 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
 	  setLoading(false);
 	},[])
 
-    const handleLogin = (localAccessToken) =>{
-        onSubmitCode(localAccessToken);
-    }
+  const handleLogin = (localAccessToken) =>{
+      onSubmitCode(localAccessToken);
+  }
 
 	const handleResend = () => {
 		setIsResendDisabled(true);
+    setLoading(false);
 		startCountdown();
 	};
+
+  const handleLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  }
 
 	const startCountdown = () => {
 		setCountdown(30);
@@ -78,7 +86,7 @@ const Verification = ({onBackPress, onResendCode, onSubmitCode}) => {
                 placeholderTextColor="#888" />
             
             {/* Login Button */}
-            <TouchableOpacity style={styles.button} disabled={!localAccessToken || loading} onPress={() => {setLoading(true); handleLogin(localAccessToken);}}>
+            <TouchableOpacity style={styles.button} disabled={!localAccessToken || loading} onPress={() => {handleLoading(); handleLogin(localAccessToken);}}>
                 {loading && <ActivityIndicator color="#fff"/>}
                 {!loading && <Text style={styles.buttonText}>LOGIN</Text>}
             </TouchableOpacity>
