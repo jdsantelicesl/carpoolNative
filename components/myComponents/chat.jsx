@@ -24,8 +24,7 @@ const Chat = ({ disableComposer, exitChat, chatData, origin, destination, arriva
 
 	// Need this to render chats. Pulling from cache is async
 	const [clientId, setId] = useState(null);
-
-	const daysOfWeek = day.map(convertDay);
+	const daysOfWeek = day ? day.map(convertDay) : ["Message from developers"];
 	const hour = (Math.floor(arrival) > 12) ? (Math.floor(arrival) - 12) : Math.floor(arrival);
 	const roundMin = Math.round((arrival - Math.floor(arrival)) * 60);
 	const minute = roundMin < 10 ? `0${roundMin}` : roundMin;
